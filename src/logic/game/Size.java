@@ -12,6 +12,7 @@ public class Size
      * A size object, the size of an object.
      * @param width must be more than 0
      * @param height must be more than 0
+     * @throws IndexOutOfBoundsException width and height need to be more than 0
      */
     public Size(double width, double height)
     {
