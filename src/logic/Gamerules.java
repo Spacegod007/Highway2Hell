@@ -1,5 +1,9 @@
 package logic;
 
-public enum Gamerules {
-    //waardes met hoofdletters zoals Color.RED etc
+/**
+ * The available gamerules
+ */
+public enum Gamerules
+{
+    //values in full caps example: "Color.RED"
 }

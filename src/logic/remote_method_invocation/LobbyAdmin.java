@@ -9,27 +9,68 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin{
+/**
+ * The server-side of the lobby administration
+ */
+public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
+{
+    /**
+     * The currently active lobbies
+     */
     private ArrayList<Lobby> lobbies;
+
+    /**
+     * The currently active users
+     */
     private ArrayList<User> users;
+
+    /**
+     * The publisher which will notify the subscribers when a new lobby became active
+     */
     private IRemotePublisherForDomain rpd;
-    private static int nextID = 0;
+
+    /**
+     * The next id for a lobby
+     */
+    private static int nextLobbyId = 0;
+
+    /**
+     * The next id for a user
+     */
     private static int nextUserID = 0;
 
+    /**
+     * A synchronizer object for the lobby system
+     */
     private final Object lobbiesynchronizer = new Object();
 
-    static int getNextID(){
-        int i = nextID;
-        nextID++;
+    /**
+     * Gets the next lobby Id
+     * @return the next lobby id
+     */
+    static int getNextID()
+    {
+        int i = nextLobbyId;
+        nextLobbyId++;
         return i;
     }
-    static int getNextUserID(){
+
+    /**
+     * Gets the next user Id
+     * @return the next user id
+     */
+    static int getNextUserID()
+    {
         int i = nextUserID;
         nextUserID++;
         return i;
     }
 
-    // Constructor
+    /**
+     * Constructor of the server-side lobby administration
+     * @param rpd to publish to subscribers
+     * @throws RemoteException if there is a problem in the connection
+     */
     public LobbyAdmin(IRemotePublisherForDomain rpd) throws RemoteException {
         this.rpd = rpd;
         rpd.registerProperty("lobbies");
@@ -37,6 +78,11 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin{
         users = new ArrayList<>();
     }
 
+    /**
+     * Gets the number of lobbies available
+     * @return the number of lobbies
+     * @throws RemoteException if there is a problem in the connection
+     */
     public int getNumberOfLobbies() throws RemoteException {
         System.out.println("LobbyAdmin: Request for number of Lobbies");
         return lobbies.size();
@@ -52,6 +98,13 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin{
         }
     }
 
+    /**
+     * Adds a lobby to the system
+     * @param user user that created the lobby (aka host)
+     * @param ipAddress of the user who will run the server later
+     * @return The newly created lobby
+     * @throws RemoteException if there is a problem in the connection
+     */
     public Lobby addLobby(String name, User user, String ipAddress) throws RemoteException {
         Lobby lobby = new Lobby(name, getNextID(), ipAddress);
         synchronized (lobbiesynchronizer)
@@ -64,6 +117,13 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin{
         return lobby;
     }
 
+    /**
+     * Makes a user leave a lobby
+     * @param userId of the user who will leave the lobby
+     * @param issuerId of the user who made the other user leave the lobby
+     * @return true if the user left the lobby, false if leaving the lobby failed
+     * @throws RemoteException if there is a problem in the connection
+     */
     public boolean leaveLobby(int lobbyId, int userId, int issuerId)
     {
         synchronized (lobbiesynchronizer)
@@ -101,11 +161,23 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin{
         return false;
     }
 
+    /**
+     * Gets a list of all the lobbies
+     * @return a list of all the lobbies
+     * @throws RemoteException if there is a problem in the connection
+     */
     public List<Lobby> getLobbies() throws RemoteException
     {
         return lobbies;
     }
 
+    /**
+     * Makes a user join a lobby
+     * @param lobby to be joined
+     * @param user to join the lobby
+     * @return true if the user succeeded joining, false if the user failed to join
+     * @throws RemoteException if there is a problem in the connection
+     */
     public boolean joinLobby(Lobby lobby, User user)
     {
         synchronized (lobbiesynchronizer)
@@ -123,6 +195,13 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin{
         return false;
     }
 
+    /**
+     * Sets the active lobby of the specified user
+     * @param userId of the user
+     * @param lobby which will be set as active lobby
+     * @return the lobby which was set active
+     * @throws RemoteException if there is a problem in the connection
+     */
     public Lobby setActiveLobby(int userId, Lobby lobby)
     {
         if(lobby != null)
@@ -149,6 +228,12 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin{
         return getActiveLobby(userId);
     }
 
+    /**
+     * Adds a user to the list of users
+     * @param username of the user
+     * @return A user object containing the name of the user
+     * @throws RemoteException if there is a problem in the connection
+     */
     public User addUser(String username)
     {
         User user = new User(username, getNextUserID());
@@ -182,6 +267,12 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin{
         }
     }
 
+    /**
+     * Gets the active lobby of the specified user
+     * @param userId who's lobby is requested
+     * @return the lobby the user is located in
+     * @throws RemoteException if there is a problem in the connection
+     */
     public Lobby getActiveLobby(int userId)
     {
         for(User u : users)
