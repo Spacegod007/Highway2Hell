@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * A lobby where users which users will be able to join before the game started
+ */
 public class Lobby implements Runnable, Serializable
 {
     /**
