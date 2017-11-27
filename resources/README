@@ -1,0 +1,7 @@
+Uit testen van mij is gebleken dat
+de background images en de .fxmlfile in dezelfde resources folder moeten zitten
+ook als je de resource folder een andere naam geeft werkt deze ook niet.
+ik denk dat het iets te maken heeft met de standaard ingebouwde naamgeving in javafx
+deze map MOET gemarkeerd worden als een rescource map!!!!
+
+ook heb ik gemerkt dat de image die als tweede inkomt dus ineens weg glitched
