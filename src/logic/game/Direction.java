@@ -1,5 +1,10 @@
 package logic.game;
 
-public enum Direction {
-    LEFT, RIGHT, A, D
+/**
+ * Controls the direction of a character
+ */
+public enum Direction
+{
+    LEFT,
+    RIGHT
 }
