@@ -102,7 +102,7 @@ public class Game implements Runnable, Observer
         for(GameObject GO : getGameObjects())
         {
             //GO scroll.
-            if(GO.getClass() != ObstacleObject.class)
+            if (GO instanceof ObstacleObject)
             {
                 GO.setAnchor(new Point(GO.getAnchor().getX(), GO.getAnchor().getY() + scrollSpeed));
             }
@@ -114,7 +114,7 @@ public class Game implements Runnable, Observer
             //Check if GO is dead.
             //Game window: 1200x1000
             //Character size 52x36
-            if(GO.getClass() == PlayerObject.class)
+            if (GO instanceof PlayerObject)
             {
                 //Setting the borders of the map for player death.
                 //Might need some tweaking, leave to the tester.
@@ -122,14 +122,14 @@ public class Game implements Runnable, Observer
                 Point anchor = PO.getAnchor();
                 double[] size = PO.getPlayerSize();
 
-                if(anchor.getX() + size[1] < 0 || anchor.getX() > 1200 || anchor.getY() + (size[1]/2) > 1000 || anchor.getY() + (size[1]/2) < 0)
+                if (anchor.getX() + size[1] < 0 || anchor.getX() > 1200 || anchor.getY() + (size[1]/2) > 1000 || anchor.getY() + (size[1]/2) < 0)
                 {
                     PO.setIsDead(true);
                 }
 
                 for (GameObject GO2: gameObjects)
                 {
-                    if(GO2.getClass() == ObstacleObject.class && PO.checkForObstacleCollision((ObstacleObject) GO2))
+                    if (GO2 instanceof ObstacleObject && PO.checkForObstacleCollision((ObstacleObject) GO2))
                     {
                         PO.setIsDead(true);
                         //System.out.println("RIP");
@@ -137,7 +137,7 @@ public class Game implements Runnable, Observer
                 }
             }
 
-            if (GO.getClass() == ObstacleObject.class)
+            if (GO instanceof ObstacleObject)
             {
                 ObstacleObject OO = (ObstacleObject) GO;
                 if(OO.getAnchor().getY() + (OO.getHeight()) > 1000)
@@ -194,7 +194,7 @@ public class Game implements Runnable, Observer
     {
         for (GameObject g : gameObjects)
         {
-            if (g.getClass() == PlayerObject.class)
+            if (g instanceof PlayerObject)
             {
                 PlayerObject p = (PlayerObject) g;
 
