@@ -18,23 +18,24 @@ import logic.Score;
 import logic.game.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class Main extends Application {
 
     private PlayerObject PO1 = new PlayerObject(new Point(960, 900),"Player1", Color.BLACK);
-    private ArrayList<ObstacleObject> obstacleObjects = new ArrayList<>();
+    private List<ObstacleObject> obstacleObjects = new ArrayList<>();
 
     //Playerimages for creating characters for later versions that use sockets.
     private Image playerImage = new Image("characters/character_black_blue.png");
 
     private Image obstacleImage = new Image("objects/barrel_red_down.png");
-    private ArrayList<ImageView> playerImageViews = new ArrayList<>();
-    private ArrayList<ImageView> obstacleImageViews = new ArrayList<>();
+    private List<ImageView> playerImageViews = new ArrayList<>();
+    private List<ImageView> obstacleImageViews = new ArrayList<>();
     private Game game = new Game(new ArrayList<>());
     private Scene scoreboardScene;
     private Label distanceLabel = new Label("0");
-    private ArrayList<Label> playerLabels = new ArrayList<>();
+    private List<Label> playerLabels = new ArrayList<>();
     private ObservableList<Label> observablePlayerLabels;
 
     //Failsafe for if someone decides to hold in one of the buttons.
