@@ -4,6 +4,7 @@
  */
 package logic.remote_method_invocation;
 
+import logic.administration.Administration;
 import logic.fontyspublisher.IRemotePublisherForListener;
 import logic.administration.Lobby;
 import logic.administration.User;
@@ -26,7 +27,7 @@ import java.util.Scanner;
 /**
  * The client for RMI
  */
-public class RMIClient
+public class RMILobbyClient
 {
     /**
      * The binding name for the administration
@@ -80,7 +81,7 @@ public class RMIClient
      * Constructs the RMI client by use of specified properties
      * @param properties used to construct the RMI client
      */
-    public RMIClient(Properties properties)
+    public RMILobbyClient(Properties properties)
     {
         String ip = properties.getProperty("ipAddress");
         int port = Integer.parseInt(properties.getProperty("port"));
@@ -93,7 +94,7 @@ public class RMIClient
      * @param ipAddress of the host
      * @param portNumber of the host should he decide to open a lobby
      */
-    public RMIClient(String ipAddress, int portNumber)
+    public RMILobbyClient(String ipAddress, int portNumber)
     {
         callClient(ipAddress, portNumber);
     }
@@ -242,22 +243,28 @@ public class RMIClient
      * @param name of the lobby
      * @return The newly created lobby
      */
-    public Lobby addLobby(String name)
+    public Lobby addLobby(String name, Administration admin)
     {
+        Lobby ret = null;
         try
         {
-            return lobbyAdmin.addLobby(name, user, Inet4Address.getLocalHost().getHostAddress());
+            ret = lobbyAdmin.addLobby(name, user, Inet4Address.getLocalHost().getHostAddress());
+            if(ret != null)
+            {
+                System.out.print("Subscribing on ID: ");
+                System.out.println(ret.getId());
+                remotePublisherForListener.subscribeRemoteListener(admin, Integer.toString(ret.getId()));
+            }
         }
         catch(RemoteException ex)
         {
             System.out.println("Client: RemoteException: " + ex.getMessage());
-            return null;
         }
         catch(UnknownHostException ex)
         {
             System.out.println("Client: Unknown host");
-            return null;
         }
+        return ret;
     }
 
     /**
@@ -293,15 +300,23 @@ public class RMIClient
      * @param lobby that the current player will join
      * @return true if joining the lobby succeeded, false if joining the lobby failed
      */
-    public boolean joinLobby(Lobby lobby)
+    public boolean joinLobby(Lobby lobby, Administration admin)
     {
+        boolean ret = false;
         try
         {
-            return lobbyAdmin.joinLobby(lobby, user);
+            if(lobbyAdmin.joinLobby(lobby, user))
+            {
+                System.out.print("Subscribing on ID: ");
+                System.out.println(lobby.getId());
+                remotePublisherForListener.subscribeRemoteListener(admin, Integer.toString(lobby.getId()));
+                ret = true;
+            }
+            return ret;
         }
         catch(RemoteException ex){
             System.out.println("Client: RemoteException: " + ex.getMessage());
-            return false;
+            return ret;
         }
     }
 
@@ -331,6 +346,8 @@ public class RMIClient
     {
         try
         {
+            System.out.print("Active lobby: " + lobby.getId() + ", ");
+            System.out.println(userId);
             lobbyAdmin.setActiveLobby(userId, lobby);
         }
         catch(RemoteException ex)
@@ -362,6 +379,20 @@ public class RMIClient
         }
     }
 
+    public void startGame(Lobby l)
+    {
+        try
+        {
+            System.out.println("starting (lc)");
+            System.out.println(l.getId());
+            lobbyAdmin.startGame(l);
+        }
+        catch(RemoteException ex)
+        {
+            ex.printStackTrace();
+        }
+    }
+
     /**
      * Test RMI connection
      */
@@ -377,30 +408,6 @@ public class RMIClient
             System.out.println("Client: Cannot connect");
             System.out.println("Client: RemoteException: " + ex.getMessage());
         }
-    }
-
-
-    /**
-     * Main method to start the RMI client
-     * @param args
-     */
-    @Deprecated
-    public static void main(String[] args)
-    {
-        // Welcome message
-        System.out.println("CLIENT USING REGISTRY");
-
-        // Get ip address of server
-        Scanner input = new Scanner(System.in);
-        System.out.print("Client: Enter IP address of server: ");
-        String ipAddress = input.nextLine();
-
-        // Get port number
-        System.out.print("Client: Enter port number: ");
-        int portNumber = input.nextInt();
-
-        // Create client
-        new RMIClient(ipAddress, portNumber);
     }
 
     /**

@@ -19,6 +19,8 @@ public class Lobby implements Runnable, Serializable
      */
     private int id;
 
+    private boolean started = false;
+
     /**
      * The host of the lobby
      */
@@ -76,12 +78,14 @@ public class Lobby implements Runnable, Serializable
      * Sets the host of this lobby
      * @param host to be set
      */
-    public void setHost(User host)
+    public void setHost(User host, String ipAddress)
     {
+        
         this.host = host;
+        this.ipAddress = ipAddress;
     }
 
-    /**
+     /**
      * Gets a list of all players in this lobby
      * @return a list of users containing individual players
      */
@@ -152,6 +156,7 @@ public class Lobby implements Runnable, Serializable
      * @param player to be added to this lobby
      * @return true if the player was added, false if the adding of the player failed
      */
+    // TODO: 4-12-2017 fix ipAddress 
     public boolean join(User player)
     {
         try
@@ -159,7 +164,7 @@ public class Lobby implements Runnable, Serializable
             if (host == null)
             {
                 System.out.println("Host set: " + player.toString());
-                setHost(player);
+                setHost(player, null);
             }
             this.players.add(player);
             System.out.println("Player added: " + player.toString());
@@ -184,7 +189,7 @@ public class Lobby implements Runnable, Serializable
      */
     public void startGame()
     {
-        throw new UnsupportedOperationException();
+        started = true;
     }
 
     /**
@@ -212,4 +217,8 @@ public class Lobby implements Runnable, Serializable
         catch(Exception ignored){}
     }
 
+    public String getIpAddress()
+    {
+        return ipAddress;
+    }
 }
