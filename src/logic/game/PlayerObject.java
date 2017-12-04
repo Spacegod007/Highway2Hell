@@ -32,13 +32,6 @@ public class PlayerObject extends GameObject
      */
     private double currentRotation;
 
-    //TODO please change this to the gameobject size which needs to be added, Size class has already been made -Jordi
-    //Who's idea was this? i want to cry right now
-    /**
-     * The size of the player
-     */
-    private double[] playerSize;
-
     /**
      * Constructs a playerobject
      * @param anchor marks the location of the player
@@ -47,10 +40,9 @@ public class PlayerObject extends GameObject
      */
     public PlayerObject(Point anchor, String name, Color color)
     {
-        super(anchor);
+        super(anchor, new Size(78, 54));
         this.name = name;
         this.color = color;
-        this.playerSize = new double[]{78, 54};
     }
 
     /**
@@ -111,18 +103,18 @@ public class PlayerObject extends GameObject
      * Gets the current size of the player
      * @return an array containing the size of a player
      */
-    public double[] getPlayerSize()
+    public Size getPlayerSize()
     {
-        return playerSize;
+        return getSize();
     }
 
     /**
      * Sets the size of the player
      * @param playerSize to be set
      */
-    public void setPlayerSize(double[] playerSize)
+    public void setPlayerSize(Size playerSize)
     {
-        this.playerSize = playerSize;
+        setSize(playerSize);
     }
 
     /**
@@ -207,8 +199,8 @@ public class PlayerObject extends GameObject
     {
         double POX = this.getAnchor().getX();
         double POY = this.getAnchor().getY();
-        double POXWithWidth = POX + this.getPlayerSize()[0];
-        double POYWithHeight = POY + this.getPlayerSize()[1];
+        double POXWithWidth = POX + getSize().getWidth();
+        double POYWithHeight = POY + getSize().getHeight();
 
         double OOX = obstacleObject.getAnchor().getX();
         double OOY = obstacleObject.getAnchor().getY();

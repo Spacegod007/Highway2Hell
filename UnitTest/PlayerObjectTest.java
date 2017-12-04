@@ -2,6 +2,7 @@ import javafx.scene.paint.Color;
 import logic.game.Direction;
 import logic.game.PlayerObject;
 import logic.game.Point;
+import logic.game.Size;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,7 +16,7 @@ public class PlayerObjectTest {
     public void setUp() throws Exception {
         PO.setDistance(100);
         PO.setCurrentRotation(180d);
-        PO.setPlayerSize(new double[]{10,11});
+        PO.setPlayerSize(new Size(10, 11));
     }
 
     @Test
@@ -57,16 +58,16 @@ public class PlayerObjectTest {
 
     @Test
     public void getPlayerSize() throws Exception {
-        assertEquals(10d, PO.getPlayerSize()[0], 0.001);
-        assertEquals(11d, PO.getPlayerSize()[1], 0.001);
+        assertEquals(10d, PO.getPlayerSize().getWidth(), 0.001);
+        assertEquals(11d, PO.getPlayerSize().getHeight(), 0.001);
     }
 
     @Test
     public void setPlayerSize() throws Exception {
-        assertEquals(10d, PO.getPlayerSize()[0], 0.001);
-        PO.setPlayerSize(new double[]{5,6});
-        assertEquals(5d, PO.getPlayerSize()[0], 0.001);
-        assertEquals(6d, PO.getPlayerSize()[1], 0.001);
+        assertEquals(10d, PO.getPlayerSize().getWidth(), 0.001);
+        PO.setPlayerSize(new Size(5, 6));
+        assertEquals(5d, PO.getPlayerSize().getWidth(), 0.001);
+        assertEquals(6d, PO.getPlayerSize().getHeight(), 0.001);
     }
 
     @Test

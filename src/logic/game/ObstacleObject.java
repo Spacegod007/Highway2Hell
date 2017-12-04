@@ -7,18 +7,6 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class ObstacleObject extends GameObject
 {
-    //TODO change the width and height to a size object in the gameobject class, Size class has already been made -Jordi
-
-    /**
-     * The Width of an object
-     */
-    private int width;
-
-    /**
-     * The height of an object
-     */
-    private int height;
-
     /**
      * Constructs a new obstacle object
      * @param width of the object
@@ -26,9 +14,7 @@ public class ObstacleObject extends GameObject
      */
     public ObstacleObject(int width, int height)
     {
-        super(new Point(ThreadLocalRandom.current().nextInt(0, 1150  + 1), ThreadLocalRandom.current().nextInt(-500, 1)));
-        this.width = width;
-        this.height = height;
+        super(new Point(ThreadLocalRandom.current().nextInt(0, 1150  + 1), ThreadLocalRandom.current().nextInt(-500, 1)), new Size(width, height));
     }
 
     /**
@@ -37,7 +23,7 @@ public class ObstacleObject extends GameObject
      */
     public int getWidth()
     {
-        return width;
+        return (int) getSize().getWidth();
     }
 
     /**
@@ -46,7 +32,7 @@ public class ObstacleObject extends GameObject
      */
     public void setWidth(int width)
     {
-        this.width = width;
+        getSize().setWidth(width);
     }
 
     /**
@@ -55,7 +41,7 @@ public class ObstacleObject extends GameObject
      */
     public int getHeight()
     {
-        return height;
+        return (int) getSize().getHeight();
     }
 
     /**
@@ -64,6 +50,6 @@ public class ObstacleObject extends GameObject
      */
     public void setHeight(int height)
     {
-        this.height = height;
+        getSize().setHeight(height);
     }
 }

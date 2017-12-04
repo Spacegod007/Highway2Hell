@@ -11,11 +11,17 @@ public abstract class GameObject
     private Point anchor;
 
     /**
+     * The size of the game object
+     */
+    private Size size;
+
+    /**
      * Constructs an object in the game
      * @param anchor the position of the object
      */
-    public GameObject(Point anchor) {
+    public GameObject(Point anchor, Size size) {
         this.anchor = anchor;
+        this.size = size;
     }
 
     /**
@@ -32,5 +38,23 @@ public abstract class GameObject
      */
     public void setAnchor(Point anchor) {
         this.anchor = anchor;
+    }
+
+    /**
+     * Gets the size of the game object
+     * @return the size of the game object
+     */
+    public Size getSize()
+    {
+        return size;
+    }
+
+    /**
+     * Sets the size of the game object
+     * @param size to be set
+     */
+    public void setSize(Size size)
+    {
+        this.size = size;
     }
 }
