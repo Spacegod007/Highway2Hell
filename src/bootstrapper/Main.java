@@ -18,12 +18,13 @@ import logic.Score;
 import logic.game.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class Main extends Application {
 
     private PlayerObject PO1 = new PlayerObject(new Point(960, 900),"Player1", Color.BLACK);
-    private ArrayList<ObstacleObject> obstacleObjects = new ArrayList<>();
+    private List<ObstacleObject> obstacleObjects = new ArrayList<>();
 
     //Playerimages for creating characters for later versions that use sockets.
     private Image playerImage = new Image("characters/character_black_blue.png");
