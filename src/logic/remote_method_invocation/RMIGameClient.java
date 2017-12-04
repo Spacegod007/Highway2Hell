@@ -210,30 +210,6 @@ public class RMIGameClient
 
     }
 
-
-    /**
-     * Main method to start the RMI client
-     * @param args
-     */
-    @Deprecated
-    public static void main(String[] args)
-    {
-        // Welcome message
-        System.out.println("CLIENT USING REGISTRY");
-
-        // Get ip address of server
-        Scanner input = new Scanner(System.in);
-        System.out.print("Client: Enter IP address of server: ");
-        String ipAddress = input.nextLine();
-
-        // Get port number
-        System.out.print("Client: Enter port number: ");
-        int portNumber = input.nextInt();
-
-        // Create client
-        new RMILobbyClient(ipAddress, portNumber);
-    }
-
     /**
      * Gets the connection properties from the properties file
      * @return a properties object containing the connection values
