@@ -6,11 +6,11 @@ import static org.junit.Assert.*;
 
 public class ObstacleObjectTest {
 
-    ObstacleObject OO = new ObstacleObject(100, 200);
+    private final ObstacleObject OO = new ObstacleObject(100, 200);
 
     @Before
     public void setUp() throws Exception {
-
+        //Nothing for now
     }
 
     @Test

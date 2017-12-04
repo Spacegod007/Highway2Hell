@@ -71,7 +71,7 @@ public class Game implements Runnable, Observer
     public void setGameObjects(List<GameObject> gameObjects)
     {
         //todo make this useless statement do something, it is called 3 times and doesn't do anything
-        gameObjects = gameObjects;
+        this.gameObjects = gameObjects;
     }
 
     /**

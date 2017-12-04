@@ -1,4 +1,6 @@
 import javafx.scene.paint.Color;
+import logic.Gamerule;
+import logic.Gamerules;
 import logic.game.*;
 import org.junit.Assert;
 import org.junit.Before;
@@ -20,6 +22,7 @@ public class GameTestJU4 {
         gameObject.add(new PlayerObject(new Point(860, 890),"Player2", Color.RED));
         gameObject.add(new PlayerObject(new Point(960, 700),"Player1", Color.GREEN));
         gameObject.add(new PlayerObject(new Point(860, 690),"Player2", Color.BLUE));
+        gameObject.add(new ObstacleObject(100,100));
         game.setGameObjects(gameObject);
     }
 
@@ -94,12 +97,73 @@ public class GameTestJU4 {
 
     @Test
     public void endGame() throws Exception {
-
+        //Nothing to be tested
     }
 
     @Test
     public void run() throws Exception {
+        //Nothing to be tested
+    }
 
+    @Test
+    public void ReturnPlayerObjects() throws Exception {
+        //Assert the default value
+        assertEquals(4, game.returnPlayerObjects().size());
+
+        //Change the value
+        List<GameObject> GO = new ArrayList<>();
+        GO.add(new PlayerObject(new Point(0,0), "lol", Color.RED));
+        game.setGameObjects(GO);
+
+        //Assert the new value
+        assertEquals(1, game.returnPlayerObjects().size());
+    }
+
+    @Test
+    public void ReturnObstacleObjects() throws Exception {
+        //Assert the default value
+        assertEquals(1, game.returnObstacleObjects().size());
+
+        //Change the value
+        List<GameObject> GO = new ArrayList<>();
+        GO.add(new ObstacleObject(50, 100));
+        GO.add(new ObstacleObject(100, 50));
+        game.setGameObjects(GO);
+
+        //Assert the new value
+        assertEquals(2, game.returnObstacleObjects().size());
+    }
+
+    @Test
+    public void SetGameRules() throws Exception {
+        //Assert default value
+        assertEquals(0, game.getGamerules().size());
+
+        List<Gamerule> GR = new ArrayList<>();
+        GR.add(new Gamerule(Gamerules.GAMERULE1));
+        game.setGamerules(GR);
+
+        //Assert new value
+        assertEquals(1, game.getGamerules().size());
+        assertEquals(Gamerules.GAMERULE1, game.getGamerules().get(0).getGamerules());
+    }
+
+    @Test
+    public void GetGameRules() throws Exception {
+        //Change 1
+        List<Gamerule> GR = new ArrayList<>();
+        GR.add(new Gamerule(Gamerules.GAMERULE2));
+        game.setGamerules(GR);
+
+        //Assert first change
+        assertEquals(Gamerules.GAMERULE2, game.getGamerules().get(0).getGamerules());
+
+        //Change 2
+        GR.clear();
+        GR.add(new Gamerule(Gamerules.GAMERULE1));
+
+        //Assert second change
+        assertEquals(Gamerules.GAMERULE1, game.getGamerules().get(0).getGamerules());
     }
 
     @Test
@@ -120,4 +184,5 @@ public class GameTestJU4 {
     public void getGameRules() throws Exception {
         //Gamerules are not present yet, nothing to test.
     }
+
 }

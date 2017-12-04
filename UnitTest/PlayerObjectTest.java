@@ -1,5 +1,6 @@
 import javafx.scene.paint.Color;
 import logic.game.Direction;
+import logic.game.ObstacleObject;
 import logic.game.PlayerObject;
 import logic.game.Point;
 import org.junit.Before;
@@ -16,6 +17,7 @@ public class PlayerObjectTest {
         PO.setDistance(100);
         PO.setCurrentRotation(180d);
         PO.setPlayerSize(new double[]{10,11});
+        PO.setAnchor(new Point(50,50));
     }
 
     @Test
@@ -97,6 +99,20 @@ public class PlayerObjectTest {
     public void move() throws Exception {
         PO.move(Direction.LEFT);
         assertEquals(170d, PO.getCurrentRotation(), 0.001);
+
+        PO.move(Direction.RIGHT);
+        assertEquals(190d, PO.getCurrentRotation(), 0.001);
     }
 
+    @Test
+    public void CheckForObstacleCollision() throws Exception {
+        ObstacleObject OO = new ObstacleObject(100,100);
+
+        //Assert default.
+        assertEquals(false, PO.checkForObstacleCollision(OO));
+
+        //Change the anchor
+        OO.setAnchor(new Point(0,0));
+        assertEquals(true, PO.checkForObstacleCollision(OO));
+    }
 }
