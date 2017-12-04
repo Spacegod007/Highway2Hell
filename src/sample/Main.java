@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
@@ -35,6 +36,9 @@ public class Main extends Application{
         private TextField txtEnterName = new TextField();
         private Button btnLaunchlobbyScreen = new Button();
     private FlowPane inLobbyScreen;
+    private Scene waitingScene;
+    private Label waitingMessage = new Label();
+    private FlowPane waitingScreen;
     private Scene inLobbyScene;
         private ListView<User> listvwPlayersInLobby = new ListView<>();
     //endregion
@@ -60,16 +64,19 @@ public class Main extends Application{
             titleScreen = new FlowPane();
             lobbyScreen = new FlowPane();
             inLobbyScreen = new FlowPane();
+            waitingScreen = new FlowPane();
             //root = FXMLLoader.load(getClass().getResource("main.fxml"));
             //deze dingen moeten zoals 'root' allebei uit een fxml komen
 
             titleScreen.getChildren().addAll(txtEnterName, btnLaunchlobbyScreen);
             lobbyScreen.getChildren().addAll(btnHostLobby, btnJoinLobby, text, listvwLobby, listvwPlayers, btnRefresh);
             inLobbyScreen.getChildren().addAll(btnLeaveLobby, btnKickPlayer,  btnStartGame, listvwPlayersInLobby);
+            waitingScreen.getChildren().addAll(waitingMessage);
 
             titleScene = new Scene(titleScreen, 700, 600);
             lobbyScene = new Scene(lobbyScreen, 700, 600);
             inLobbyScene = new Scene(inLobbyScreen, 700, 600);
+            waitingScene = new Scene(waitingScreen, 700,600);
 
             primaryStage.setTitle("Highway to Hell");
             primaryStage.setScene(titleScene);
@@ -294,6 +301,29 @@ public class Main extends Application{
     // TODO: 4-12-2017 implement starting the game
     private void startGame(){
         administration.startGame();
+    }
+
+    public void setWaitingScreen()
+    {
+        if(stage.getScene() != waitingScene)
+        {
+            Platform.runLater(() ->
+            {
+                stage.setScene(waitingScene);
+            });
+        }
+    }
+
+    /**
+     *
+     * @param x is the amount of players not yet connected
+     */
+    public void setWaitingPlayers(int x)
+    {
+        Platform.runLater(()->
+        {
+            waitingMessage.setText("Waiting for " + x + " players");
+        });
     }
 
     public void setListvwLobby(ObservableList<Lobby> lobbies)

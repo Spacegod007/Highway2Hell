@@ -193,8 +193,19 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
         }
         if(evt.getPropertyName().equals(Integer.toString(rmiClient.getActiveLobby().getId())))
         {
-            rmiGameClient = new RMIGameClient(rmiClient.getActiveLobby().getIpAddress());
+            if(rmiGameClient == null)
+            {
+                rmiGameClient = new RMIGameClient(rmiClient.getActiveLobby().getIpAddress(), this);
+            }
+
+            main.setWaitingScreen();
+            main.setWaitingPlayers((int)evt.getNewValue());
             System.out.println("lobby started");
+        }
+        if(evt.getPropertyName().equals("playersconnected"))
+        {
+            System.out.println("playersconnected: " + evt.getNewValue());
+            main.setWaitingPlayers((rmiClient.getActiveLobby().getPlayers().size()) - (int)evt.getNewValue());
         }
     }
 
@@ -217,8 +228,14 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
         Lobby lobby = rmiClient.getActiveLobby();
         if(lobby != null)
         {
-            gameThread = new Thread(new AdministrationGame(lobby));
-            gameThread.start();
+            try
+            {
+                gameThread = new Thread(new AdministrationGame(lobby));
+                gameThread.start();
+            } catch (RemoteException e)
+            {
+                e.printStackTrace();
+            }
             rmiClient.startGame(lobby);
         }
         else
