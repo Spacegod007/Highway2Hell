@@ -1,4 +1,3 @@
-
 package logic.remote_method_invocation;
 
 import logic.fontyspublisher.RemotePublisher;
@@ -8,28 +7,26 @@ import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.Timer;
-import java.util.TimerTask;
 
-public class RMIServer
+public class RMIGameServer
 {
 
     // Set port number
-    private static final int portNumber = 1100;
+    private static final int portNumber = 1111;
 
     // Set binding name for student administration
-    private static final String bindingName = "LobbyAdmin";
+    private static final String bindingName = "gameAdmin";
     private static final String bindingNamePublisher = "publisher";
 
     // References to registry and student administration
     private Registry registry = null;
-    private LobbyAdmin lobbyAdmin = null;
+    private GameAdmin gameAdmin;
     private RemotePublisher publisher = null;
 
     /**
      * Constructs the RMI server
      */
-    public RMIServer()
+    public RMIGameServer()
     {
 
         // Print port number for registry
@@ -39,18 +36,15 @@ public class RMIServer
         try
         {
             publisher = new RemotePublisher();
-            lobbyAdmin = new LobbyAdmin(publisher);
-            System.out.println("Server: Lobby administration created");
+            gameAdmin = new GameAdmin(publisher);
+            System.out.println("Server: game created");
         }
         catch (RemoteException ex)
         {
-            System.out.println("Server: Cannot create lobby administration");
+            System.out.println("Server: Cannot create game");
             System.out.println("Server: RemoteException: " + ex.getMessage());
-            lobbyAdmin = null;
+            gameAdmin = null;
         }
-
-        //Start the timer to clean the list of lobbies
-        updateLobbies();
 
         // Create registry at port number
         try
@@ -77,29 +71,13 @@ public class RMIServer
         // Bind student administration using registry
         try
         {
-            registry.rebind(bindingName, lobbyAdmin);
+            registry.rebind(bindingName, gameAdmin);
         }
         catch (RemoteException ex)
         {
-            System.out.println("Server: Cannot bind lobby administration");
+            System.out.println("Server: Cannot bind o");
             System.out.println("Server: RemoteException: " + ex.getMessage());
         }
-    }
-
-    /**
-     * Start the timer to clean the list of lobbies
-     */
-    private void updateLobbies()
-    {
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask()
-        {
-            @Override
-            public void run()
-            {
-                lobbyAdmin.cleanLobbies();
-            }
-        }, 0, 1000);
     }
 
     /**
@@ -110,12 +88,12 @@ public class RMIServer
         try
         {
             InetAddress localhost = InetAddress.getLocalHost();
-            System.out.println("Server: IP Address: " + localhost.getHostAddress());
+            System.out.println("GameServer: IP Address: " + localhost.getHostAddress());
             // Just in case this host has multiple IP addresses....
             InetAddress[] allMyIps = InetAddress.getAllByName(localhost.getCanonicalHostName());
             if (allMyIps != null && allMyIps.length > 1)
             {
-                System.out.println("Server: Full list of IP addresses:");
+                System.out.println("GameServer: Full list of IP addresses:");
 
                 for (InetAddress allMyIp : allMyIps)
                 {
@@ -137,12 +115,12 @@ public class RMIServer
     public static void main(String[] args) {
 
         // Welcome message
-        System.out.println("SERVER USING REGISTRY");
+        System.out.println("GAMESERVER USING REGISTRY");
 
         // Print IP addresses and network interfaces
         printIPAddresses();
 
         // Create server
-        RMIServer server = new RMIServer();
+        RMIGameServer server = new RMIGameServer();
     }
 }

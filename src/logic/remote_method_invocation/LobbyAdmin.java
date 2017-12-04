@@ -4,6 +4,7 @@ import logic.fontyspublisher.IRemotePublisherForDomain;
 import logic.administration.Lobby;
 import logic.administration.User;
 
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -110,6 +111,7 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
         synchronized (lobbiesynchronizer)
         {
             lobbies.add(lobby);
+            rpd.registerProperty(Integer.toString(lobby.getId()));
             joinLobby(lobby, user);
         }
         System.out.println("LobbyAdmin: Lobby " + lobby.toString() + " added to Lobby administration");
@@ -124,6 +126,7 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
      * @return true if the user left the lobby, false if leaving the lobby failed
      * @throws RemoteException if there is a problem in the connection
      */
+    // TODO: 4-12-2017 Migrate host : make sure ipAddress is forwarded
     public boolean leaveLobby(int lobbyId, int userId, int issuerId)
     {
         synchronized (lobbiesynchronizer)
@@ -141,10 +144,10 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
                             {
                                 if (l.getPlayers().size() > 0) //and there are players remaining
                                 {
-                                    l.setHost(l.getPlayers().get(0)); //migrate host
+                                    l.setHost(l.getPlayers().get(0), null); //migrate host
                                 } else
                                 {
-                                    l.setHost(null); //else, set host to null, lobby will be removed by the next tick of the timer
+                                    l.setHost(null, null); //else, set host to null, lobby will be removed by the next tick of the timer
                                 }
                             }
                             rpd.inform("lobbies", null, lobbies);
@@ -180,6 +183,7 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
      */
     public boolean joinLobby(Lobby lobby, User user)
     {
+        boolean ret = false;
         synchronized (lobbiesynchronizer)
         {
             for (Lobby l : lobbies)
@@ -188,11 +192,14 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
                 {
                     try{rpd.inform("lobbies", null, lobbies);}
                     catch(RemoteException ex){ex.printStackTrace();}
-                    return l.join(user);
+                    if(l.join(user))
+                    {
+                        ret = true;
+                    }
                 }
             }
         }
-        return false;
+        return ret;
     }
 
     /**
@@ -280,8 +287,23 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
             if(u.getID() == userId)
             {
                 return u.getActiveLobby();
-            }
+        }
         }
         return null;
+    }
+
+    public void startGame(Lobby l)
+    {
+        System.out.println("Starting game?");
+        l.startGame();
+        try
+        {
+            System.out.print("Informing startgame now: ");
+            System.out.println(l.getId());
+            rpd.inform(Integer.toString(l.getId()), null, true);
+        } catch (RemoteException e)
+        {
+            e.printStackTrace();
+        }
     }
 }
