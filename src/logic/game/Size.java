@@ -16,7 +16,7 @@ public class Size
      */
     public Size(double width, double height)
     {
-        if (width >= 0 || height >= 0)
+        if (width <= 0 || height <= 0)
         {
             throw new IndexOutOfBoundsException("width nor height of object cannot be less or equal to 0.");
         }
@@ -40,7 +40,7 @@ public class Size
      */
     public void setWidth(double width)
     {
-        if (width >= 0)
+        if (width <= 0)
             throw new IndexOutOfBoundsException("Width of object cannot be less or equal to 0.");
 
         this.width = width;
@@ -61,7 +61,7 @@ public class Size
      */
     public void setHeight(double height)
     {
-        if (height >= 0)
+        if (height <= 0)
             throw new IndexOutOfBoundsException("Height of object cannot be less or equal to 0.");
         
         this.height = height;
