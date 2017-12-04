@@ -1,16 +1,23 @@
 package logic.administration;
 
+import logic.remote_method_invocation.RMIGameClient;
 import logic.remote_method_invocation.RMIGameServer;
+
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Main entry point to start the game server as host
  */
-public class AdministrationGame implements Runnable
+public class AdministrationGame extends UnicastRemoteObject implements Runnable
 {
 
     /**
      * The lobby from which the host starts the game
      */
+    private List<RMIGameClient> clientsConnected;
     private final Lobby lobby;
 
     /**
@@ -25,13 +32,15 @@ public class AdministrationGame implements Runnable
     public void run()
     {
         server = new RMIGameServer();
+        clientsConnected = new ArrayList<>();
     }
+
 
     /**
      * Constructs the game administration object
      * @param lobby from which the game is being started
      */
-    AdministrationGame(Lobby lobby)
+    AdministrationGame(Lobby lobby) throws RemoteException
     {
         this.lobby = lobby;
     }

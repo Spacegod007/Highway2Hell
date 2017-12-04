@@ -18,7 +18,7 @@ public class Size
     {
         if (width >= 0 || height >= 0)
         {
-            throw new IndexOutOfBoundsException("width nor height of object cannot be less or equal to 0.");
+            throw new IndexOutOfBoundsException("width nor height of object can be less or equal to 0.");
         }
 
         this.width = width;

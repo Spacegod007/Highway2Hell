@@ -4,29 +4,20 @@
  */
 package logic.remote_method_invocation;
 
+import logic.administration.Administration;
 import logic.fontyspublisher.IRemotePublisherForListener;
-import logic.administration.Lobby;
-import logic.administration.User;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.Inet4Address;
-import java.net.UnknownHostException;
+import java.io.*;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
-import java.util.Scanner;
 
 /**
  * The client for RMI
  */
-public class RMIGameClient
+public class RMIGameClient implements Serializable
 {
     /**
      * The binding name for the administration
@@ -66,19 +57,9 @@ public class RMIGameClient
      * Constructs the RMI client by use of specified properties
      * @param ipAddress used to construct the RMI client
      */
-    public RMIGameClient(String ipAddress)
+    public RMIGameClient(String ipAddress, Administration admin)
     {
-        callClient(ipAddress, 1111);
-    }
-
-    /**
-     * Constructs the RMI client
-     * @param ipAddress of the host
-     * @param portNumber of the host should he decide to open a lobby
-     */
-    public RMIGameClient(String ipAddress, int portNumber)
-    {
-        callClient(ipAddress, portNumber);
+        callClient(ipAddress, 1111, admin);
     }
 
     /**
@@ -86,7 +67,7 @@ public class RMIGameClient
      * @param ipAddress of the host
      * @param portNumber of the server-lobby
      */
-    private void callClient(String ipAddress, int portNumber)
+    private void callClient(String ipAddress, int portNumber, Administration admin)
     {
         // Print IP address and port number for registry
         System.out.println("GameClient: IP Address: " + ipAddress);
@@ -165,8 +146,36 @@ public class RMIGameClient
             System.out.println("Client: Student administration is null pointer");
         }
 
+        try
+        {
+            remotePublisherForListener.subscribeRemoteListener(admin, "playersconnected");
+        } catch (RemoteException e)
+        {
+            e.printStackTrace();
+        }
+
         // Test RMI connection
-        System.out.println("CONNECTED!");
+
+        try
+        {
+            System.out.println("CONNECTED!");
+            gameAdmin.connect(this);
+        } catch (RemoteException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public int getConnected()
+    {
+        try
+        {
+            return gameAdmin.getPlayersConnected();
+        } catch (RemoteException e)
+        {
+            e.printStackTrace();
+            return 0;
+        }
     }
 
 
