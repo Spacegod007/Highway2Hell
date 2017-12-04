@@ -1,7 +1,8 @@
 package logic.administration;
 
 import logic.fontyspublisher.IRemotePropertyListener;
-import logic.remote_method_invocation.RMIClient;
+import logic.remote_method_invocation.RMIGameClient;
+import logic.remote_method_invocation.RMILobbyClient;
 import javafx.collections.FXCollections;
 import sample.Main;
 
@@ -18,7 +19,10 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     /**
      * The client which interacts with the server
      */
-    private RMIClient rmiClient;
+    private RMILobbyClient rmiClient;
+
+    private RMIGameClient rmiGameClient;
+    private Thread gameThread;
 
     /**
      * The user on who's behalf interactions will happen
@@ -35,7 +39,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
      * @param rmiClient which is used to connect to the server
      * @throws RemoteException if there is an error within the rmiClient
      */
-    public Administration(RMIClient rmiClient) throws RemoteException{
+    public Administration(RMILobbyClient rmiClient) throws RemoteException{
         this.rmiClient = rmiClient;
         this.user = rmiClient.getUser();
         try
@@ -93,7 +97,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     public boolean joinLobby(Lobby lobby){
         try
         {
-            if(rmiClient.joinLobby(lobby))
+            if(rmiClient.joinLobby(lobby, this))
             {
                 rmiClient.setActiveLobby(lobby, rmiClient.getUser().getID());
                 return true;
@@ -157,11 +161,12 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
         Lobby lobby = null;
 
         try{
-            lobby = rmiClient.addLobby(name);
+            lobby = rmiClient.addLobby(name, this);
 
             if (lobby != null)
             {
                 rmiClient.setActiveLobby(lobby, rmiClient.getUser().getID());
+
             }
 
             return lobby;
@@ -180,8 +185,17 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     @Override
     public void propertyChange(PropertyChangeEvent evt) throws RemoteException
     {
-        main.setListvwLobby(FXCollections.observableList((List<Lobby>)evt.getNewValue()));
-        System.out.println("property changed: " + evt.getPropertyName());
+        if(evt.getPropertyName().equals("lobbies"))
+        {
+            main.setListvwLobby(FXCollections.observableList((List<Lobby>) evt.getNewValue()));
+            System.out.println("property changed: " + evt.getPropertyName());
+            return;
+        }
+        if(evt.getPropertyName().equals(Integer.toString(rmiClient.getActiveLobby().getId())))
+        {
+            rmiGameClient = new RMIGameClient(rmiClient.getActiveLobby().getIpAddress());
+            System.out.println("lobby started");
+        }
     }
 
     /**
@@ -191,5 +205,25 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     public void setMain(Main main)
     {
         this.main = main;
+    }
+
+    /**
+     * Starts the game in a separate thread
+     * Can only be called by Host
+     */
+    public void startGame()
+    {
+        System.out.println("starting");
+        Lobby lobby = rmiClient.getActiveLobby();
+        if(lobby != null)
+        {
+            gameThread = new Thread(new AdministrationGame(lobby));
+            gameThread.start();
+            rmiClient.startGame(lobby);
+        }
+        else
+            {
+                System.out.println("null lobby");
+            }
     }
 }

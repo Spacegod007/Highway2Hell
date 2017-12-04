@@ -77,4 +77,6 @@ public interface ILobbyAdmin extends Remote
      * @throws RemoteException if there is a problem in the connection
      */
     User addUser(String name) throws RemoteException;
+
+    void startGame(Lobby l) throws RemoteException;
 }

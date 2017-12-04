@@ -1,6 +1,6 @@
 package bootstrapper;
 
-import logic.remote_method_invocation.RMIClient;
+import logic.remote_method_invocation.RMILobbyClient;
 import logic.administration.Administration;
 import sample.Main;
 
@@ -18,10 +18,10 @@ public class Program
         {
             //TODO: initiating the entire application from this point
 
-            Properties properties = RMIClient.getConnectionProperties();
+            Properties properties = RMILobbyClient.getConnectionProperties();
             System.out.println("properties made");
 
-            RMIClient rmiClient = new RMIClient(properties);
+            RMILobbyClient rmiClient = new RMILobbyClient(properties);
             System.out.println("rmi client created");
 
             Administration administration = new Administration(rmiClient);

@@ -64,8 +64,8 @@ public class Main extends Application{
             //deze dingen moeten zoals 'root' allebei uit een fxml komen
 
             titleScreen.getChildren().addAll(txtEnterName, btnLaunchlobbyScreen);
-            lobbyScreen.getChildren().addAll(btnHostLobby, btnJoinLobby, btnStartGame, text, listvwLobby, listvwPlayers, btnRefresh);
-            inLobbyScreen.getChildren().addAll(btnLeaveLobby, btnKickPlayer, listvwPlayersInLobby);
+            lobbyScreen.getChildren().addAll(btnHostLobby, btnJoinLobby, text, listvwLobby, listvwPlayers, btnRefresh);
+            inLobbyScreen.getChildren().addAll(btnLeaveLobby, btnKickPlayer,  btnStartGame, listvwPlayersInLobby);
 
             titleScene = new Scene(titleScreen, 700, 600);
             lobbyScene = new Scene(lobbyScreen, 700, 600);
@@ -231,6 +231,7 @@ public class Main extends Application{
                 if(administration.joinLobby(lobby))
                 {
                     stage.setScene(inLobbyScene);
+                    btnStartGame.setDisable(true);
                 }
                 else
                 {
@@ -289,8 +290,10 @@ public class Main extends Application{
             e.printStackTrace();
         }
     }
+
+    // TODO: 4-12-2017 implement starting the game
     private void startGame(){
-        text.setText("Startgame");
+        administration.startGame();
     }
 
     public void setListvwLobby(ObservableList<Lobby> lobbies)

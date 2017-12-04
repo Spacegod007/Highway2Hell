@@ -18,7 +18,7 @@ public class AdministrationTest{
     {
 
     }
-    Administration administration = new Administration(new RMIClient( "test", 1102));
+    Administration administration = new Administration(new RMILobbyClient( "test", 1102));
 
     @Test
     public void getUserTest(){
