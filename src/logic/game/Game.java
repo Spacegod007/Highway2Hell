@@ -120,9 +120,9 @@ public class Game implements Runnable, Observer
                 //Might need some tweaking, leave to the tester.
                 PlayerObject PO = (PlayerObject)GO;
                 Point anchor = PO.getAnchor();
-                double[] size = PO.getPlayerSize();
+                Size size = PO.getPlayerSize();
 
-                if (anchor.getX() + size[1] < 0 || anchor.getX() > 1200 || anchor.getY() + (size[1]/2) > 1000 || anchor.getY() + (size[1]/2) < 0)
+                if (anchor.getX() + size.getHeight() < 0 || anchor.getX() > 1200 || anchor.getY() + (size.getHeight()/2) > 1000 || anchor.getY() + (size.getHeight()/2) < 0)
                 {
                     PO.setIsDead(true);
                 }
