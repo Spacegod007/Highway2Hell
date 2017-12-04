@@ -104,11 +104,11 @@ public class Game implements Runnable, Observer
             //GO scroll.
             if (GO instanceof ObstacleObject)
             {
-                GO.setAnchor(new Point(GO.getAnchor().getX(), GO.getAnchor().getY() + scrollSpeed));
+                GO.setAnchor(new Point(GO.getAnchor().getX(), GO.getAnchor().getY() + scrollSpeed * 3));
             }
             else
             {
-                GO.setAnchor(new Point(GO.getAnchor().getX(), GO.getAnchor().getY() + scrollSpeed * 3));
+                GO.setAnchor(new Point(GO.getAnchor().getX(), GO.getAnchor().getY() + scrollSpeed));
             }
 
             //Check if GO is dead.
