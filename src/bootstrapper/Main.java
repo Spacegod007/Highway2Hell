@@ -1,39 +1,43 @@
 package bootstrapper;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import logic.Score;
 import logic.game.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Main extends Application {
 
-    private PlayerObject PO1 = new PlayerObject(new Point(960, 900),"Player1", Color.BLACK);
+    private PlayerObject PO1 = new PlayerObject(new Point(960, 900), "Player1", Color.BLACK);
     private List<ObstacleObject> obstacleObjects = new ArrayList<>();
 
     //Playerimages for creating characters for later versions that use sockets.
     private Image playerImage = new Image("characters/character_black_blue.png");
-
     private Image obstacleImage = new Image("objects/barrel_red_down.png");
     private List<ImageView> playerImageViews = new ArrayList<>();
     private List<ImageView> obstacleImageViews = new ArrayList<>();
+
     private Game game = new Game(new ArrayList<>());
-    private Scene scoreboardScene;
+
     private Label distanceLabel = new Label("0");
     private List<Label> playerLabels = new ArrayList<>();
     private ObservableList<Label> observablePlayerLabels;
@@ -45,45 +49,58 @@ public class Main extends Application {
     private int playersDead = 0;
     private int players = 0;
 
-    Scene scene;
+    // game scenes
+    private Scene scene;
+    private Scene scoreboardScene;
+    private Scene countdownScene;
+
     Pane gamePane;
-    static Thread thread = new Thread();
-    Label label = new Label();
-    scoreboardController sbc;
+
+    // for countdown
+    private Integer seconds = 4;
+    private Label label = new Label();
+
+    // controllers
+    scoreboardController scoreboardController;
+    BackgroundController backgroundController;
+
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) throws Exception {
 
-        // background scroller
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/Background.fxml") );
-        Parent p = fxmlLoader.load();
-        BackgroundController c = fxmlLoader.getController();
-        scene = new Scene(p);
-
-        fxmlLoader = new FXMLLoader(getClass().getResource("/views/Scoreboard.fxml"));
-        Parent root = fxmlLoader.load();
-        sbc = fxmlLoader.getController();
-        scoreboardScene = new Scene(root);
-
-        primaryStage.setTitle( "Game" );
-        primaryStage.setOnShown( (evt) -> c.startAmination() );
-        gamePane = (Pane) p.lookup("#gamePane");
-
+        // set primary stage size and name
+        primaryStage.setTitle("Game");
         primaryStage.setWidth(1200);
         primaryStage.setHeight(1000);
-        primaryStage.setScene(scene);
-        primaryStage.show();
 
-        for(int count = 3; count >= 0; count --) {
-            thread.sleep(1000);
-            System.out.println(count);
-            if (count == 0) {
-                InitializeGame(primaryStage);
-            }
-        }
+        // background scroller scene
+        FXMLLoader fxmlLoaderBackground = new FXMLLoader(getClass().getResource("/Background.fxml"));
+        Parent parent1 = fxmlLoaderBackground.load();
+        backgroundController = fxmlLoaderBackground.getController();
+        scene = new Scene(parent1);
+        gamePane = (Pane) parent1.lookup("#gamePane");
+
+        // scoreboard scene
+        FXMLLoader fxmlLoaderScoreBoard = new FXMLLoader(getClass().getResource("/views/Scoreboard.fxml"));
+        Parent parent2 = fxmlLoaderScoreBoard.load();
+        scoreboardController = fxmlLoaderScoreBoard.getController();
+        scoreboardScene = new Scene(parent2);
+
+        // primaryStage.setScene
+        AnchorPane anchorPane = new AnchorPane();
+        anchorPane.getChildren().add(label);
+        countdownScene = new Scene(anchorPane);
+        Font font = new Font("Comic Sans MS", 400);
+        label.setTranslateX(310);
+        label.setTranslateY(190);
+        label.setFont(font);
+
+        primaryStage.setScene(countdownScene);
+        primaryStage.show();
+        doTime(primaryStage);
     }
 
-    private void InitializeGame(Stage primaryStage){
+    private void InitializeGame(Stage primaryStage) {
         // player movement
         playerImageViews.add(addPlayerImageView());
 
@@ -96,20 +113,16 @@ public class Main extends Application {
         obstacleImageViews.add(addObstacleImageView());
         obstacleImageViews.add(addObstacleImageView());
 
-        for(ImageView player : playerImageViews)
-        {
+        for (ImageView player : playerImageViews) {
             gamePane.getChildren().add(player);
         }
 
-        for(ImageView obstacle : obstacleImageViews)
-        {
+        for (ImageView obstacle : obstacleImageViews) {
             gamePane.getChildren().add(obstacle);
         }
 
-        for(GameObject GO : game.getGameObjects())
-        {
-            if(GO.getClass() == PlayerObject.class)
-            {
+        for (GameObject GO : game.getGameObjects()) {
+            if (GO.getClass() == PlayerObject.class) {
                 players++;
             }
         }
@@ -128,8 +141,7 @@ public class Main extends Application {
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
                 case LEFT:
-                    if(!leftPressed)
-                    {
+                    if (!leftPressed) {
                         PO1 = game.moveCharacter("Player1", Direction.LEFT);
                         playerImageViews.get(0).setRotate(PO1.getCurrentRotation());
                         playerImageViews.get(0).setX(PO1.getAnchor().getX());
@@ -160,6 +172,7 @@ public class Main extends Application {
         obstacleObjects.add(new ObstacleObject(70, 48));
         obstacleObjects.add(new ObstacleObject(70, 48));
 
+        // distance labelfor player score
         distanceLabel.setFont(new Font("Calibri", 22));
         distanceLabel.setTranslateX(6);
         distanceLabel.setTranslateY(3);
@@ -177,34 +190,26 @@ public class Main extends Application {
                     playerLabels.get(i).setTranslateY(PO1.getAnchor().getY() - 23);
                 }
 
-                //System.out.println(playerLabels.get(0).getTranslateX() + " " + playerLabels.get(0).getTranslateY());
-
                 game.update();
-                for(ImageView PI : playerImageViews)
-                {
+                for (ImageView PI : playerImageViews) {
                     PI.setX(PO1.getAnchor().getX());
                     PI.setY(PO1.getAnchor().getY());
                 }
 
                 for (GameObject GO : game.getGameObjects()) {
                     //Check if the game is allowed to end.
-                    if(GO.getClass() == PlayerObject.class)
-                    {
-                        if(((PlayerObject) GO).getisDead())
-                        {
+                    if (GO.getClass() == PlayerObject.class) {
+                        if (((PlayerObject) GO).getisDead()) {
                             playersDead++;
-                            if(playersDead == players)
-                            {
+                            if (playersDead == players) {
                                 ArrayList<Score> scores = new ArrayList<>();
-                                for(GameObject tempGO : game.getGameObjects())
-                                {
-                                    if(tempGO.getClass() == PlayerObject.class)
-                                    {
-                                        PlayerObject PO = (PlayerObject)GO;
-                                        scores.add(new Score(PO.getName(), (double)PO.getDistance()));
+                                for (GameObject tempGO : game.getGameObjects()) {
+                                    if (tempGO.getClass() == PlayerObject.class) {
+                                        PlayerObject PO = (PlayerObject) GO;
+                                        scores.add(new Score(PO.getName(), (double) PO.getDistance()));
                                     }
                                 }
-                                sbc.setScore(scores);
+                                scoreboardController.setScore(scores);
                                 game.endGame(scoreboardScene, primaryStage);
                                 scores.clear();
                             }
@@ -220,6 +225,7 @@ public class Main extends Application {
                 }
                 distanceLabel.setText("Distance: " + Long.toString(PO1.getDistance()));
 
+                // player name labels
                 ArrayList<Label> tempPlayerLabels = new ArrayList<>();
                 int index = 0;
                 for (PlayerObject player : game.returnPlayerObjects()) {
@@ -232,8 +238,10 @@ public class Main extends Application {
                 observablePlayerLabels = FXCollections.observableArrayList(tempPlayerLabels);
             }
         };
-        aTimer.start();
 
+        // start animation for background
+        backgroundController.startAmination();
+        aTimer.start();
     }
 
     private ImageView addPlayerImageView() {
@@ -277,5 +285,27 @@ public class Main extends Application {
             playerLabels.add(index, tempPlayerLabel);
             index++;
         }
+    }
+
+    private void doTime(Stage primaryStage) {
+        Timeline time = new Timeline();
+        time.setCycleCount(Timeline.INDEFINITE);
+        if(time != null){
+            time.stop();
+        }
+        KeyFrame frame = new KeyFrame(Duration.seconds(1),new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent event){
+                seconds --;
+                label.setText(" " + seconds.toString());
+                if(seconds <= 0){
+                    primaryStage.setScene(scene);
+                    InitializeGame(primaryStage);
+                    time.stop();
+                }
+            }
+        });
+        time.getKeyFrames().add(frame);
+        time.playFromStart();
     }
 }
