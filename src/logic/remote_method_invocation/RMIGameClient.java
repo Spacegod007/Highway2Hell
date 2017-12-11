@@ -12,12 +12,14 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.List;
+import java.util.Observable;
 import java.util.Properties;
 
 /**
  * The client for RMI
  */
-public class RMIGameClient implements Serializable
+public class RMIGameClient extends Observable implements Serializable
 {
     /**
      * The binding name for the administration
@@ -149,6 +151,7 @@ public class RMIGameClient implements Serializable
         try
         {
             remotePublisherForListener.subscribeRemoteListener(admin, "playersconnected");
+            remotePublisherForListener.subscribeRemoteListener(admin, "gameIsStarted");
         } catch (RemoteException e)
         {
             e.printStackTrace();
@@ -175,6 +178,18 @@ public class RMIGameClient implements Serializable
         {
             e.printStackTrace();
             return 0;
+        }
+    }
+
+    public List<RMIGameClient> getConnectedClients()
+    {
+        try
+        {
+            return gameAdmin.getConnectedClients();
+        } catch (RemoteException e)
+        {
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -208,7 +223,6 @@ public class RMIGameClient implements Serializable
         }
     }
 
-
     /**
      * Test RMI connection
      * !Should implement working test
@@ -239,5 +253,16 @@ public class RMIGameClient implements Serializable
         }
 
         return properties;
+    }
+
+    public void gameIsStarted()
+    {
+        try
+        {
+            gameAdmin.gameIsStarted();
+        } catch (RemoteException e)
+        {
+            e.printStackTrace();
+        }
     }
 }

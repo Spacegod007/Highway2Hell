@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Main extends Application {
-
     private PlayerObject PO1 = new PlayerObject(new Point(960, 900), "Player1", Color.BLACK);
     private List<ObstacleObject> obstacleObjects = new ArrayList<>();
 
@@ -61,7 +60,6 @@ public class Main extends Application {
     // controllers
     scoreboardController scoreboardController;
     BackgroundController backgroundController;
-
 
     @Override
     public void start(Stage primaryStage) throws Exception {

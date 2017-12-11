@@ -19,6 +19,7 @@ import logic.administration.User;
 public class Main extends Application{
 
     //region Form controls
+    Application game;
     private Stage stage;
     private FlowPane titleScreen;
     private Scene titleScene;
@@ -82,7 +83,6 @@ public class Main extends Application{
             primaryStage.setScene(titleScene);
             primaryStage.show();
             administration.setMain(this);
-
         }
         catch(Exception e /*IOException*/)
         {
@@ -352,6 +352,28 @@ public class Main extends Application{
                 listvwPlayers.setItems(finalSelectLobby.getPlayers());
                 listvwPlayersInLobby.setItems(finalSelectLobby.getPlayers());
                 checkForKicked();
+            }
+        });
+    }
+
+    /**
+     * Observer pattern update
+     * Is called by RMIGameClient when the game starts
+     * //TODO its a tryout to safely start the game
+     * @param obj the stage of the Game
+     */
+    public void update(Object obj)
+    {
+        System.out.println("updated");
+        Platform.runLater(() ->
+        {
+            game = new bootstrapper.Main();
+            try
+            {
+                game.start(new Stage());
+            } catch (Exception e)
+            {
+                e.printStackTrace();
             }
         });
     }

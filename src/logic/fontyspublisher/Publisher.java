@@ -7,11 +7,7 @@ package logic.fontyspublisher;
 
 import java.beans.PropertyChangeEvent;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -29,7 +25,8 @@ import java.util.logging.Logger;
  *
  * @author Frank Peeters, Nico Kuijpers
  */
-public class Publisher {
+public class Publisher
+{
 
     /**
      * Local and remote property listeners subscribed to a property.
@@ -55,11 +52,12 @@ public class Publisher {
      * Number of threads in thread pool.
      */
     private final int nrThreads = 10;
-    
+
     /**
      * Default no-arg constructor for Publisher.
      */
-    public Publisher() {
+    public Publisher()
+    {
         this(new String[0]);
     }
 
@@ -69,16 +67,18 @@ public class Publisher {
      *
      * @param properties
      */
-    public Publisher(String[] properties) {
-        
+    public Publisher(String[] properties)
+    {
+
         // Ensure that hash map is synchronized
         propertyListeners = Collections.synchronizedMap(new HashMap<>());
 
         // Register null-String as property
         propertyListeners.put(null, Collections.synchronizedList(new ArrayList<>()));
-        
+
         // Register remaining properties
-        for (String s : properties) {
+        for (String s : properties)
+        {
             propertyListeners.put(s, Collections.synchronizedList(new ArrayList<>()));
         }
 
@@ -97,7 +97,8 @@ public class Publisher {
      * @param listener local property listener to be subscribed
      * @param property null-String allowed
      */
-    public void subscribeLocalListener(ILocalPropertyListener listener, String property) {
+    public void subscribeLocalListener(ILocalPropertyListener listener, String property)
+    {
 
         // Subscribe local property listener
         subscribePropertyListener(listener, property);
@@ -111,14 +112,16 @@ public class Publisher {
      * @param listener remote property listener to be subscribed
      * @param property null-String allowed
      */
-    public void subscribeRemoteListener(IRemotePropertyListener listener, String property) {
+    public void subscribeRemoteListener(IRemotePropertyListener listener, String property)
+    {
 
         // Subscribe remote property listener
         subscribePropertyListener(listener, property);
     }
 
     // Subscribe local or remote property listener
-    private void subscribePropertyListener(IPropertyListener listener, String property) {
+    private void subscribePropertyListener(IPropertyListener listener, String property)
+    {
 
         // Check whether property is registered
         checkInBehalfOfProgrammer(property);
@@ -135,10 +138,11 @@ public class Publisher {
      * @param listener local property listener to be unsubscribed
      * @param property null-String allowed
      */
-    public void unsubscribeLocalListener(ILocalPropertyListener listener, String property) {
-        unsubscribeListener(listener,property);
+    public void unsubscribeLocalListener(ILocalPropertyListener listener, String property)
+    {
+        unsubscribeListener(listener, property);
     }
-    
+
     /**
      * Unsubscribe remote property listener. Listener will be
      * unsubscribed from given property. In case given property is the
@@ -147,20 +151,25 @@ public class Publisher {
      * @param listener remote property listener to be unsubscribed
      * @param property null-String allowed
      */
-    public void unsubscribeRemoteListener(IRemotePropertyListener listener, String property) {
-        unsubscribeListener(listener,property);
-    }    
-        
+    public void unsubscribeRemoteListener(IRemotePropertyListener listener, String property)
+    {
+        unsubscribeListener(listener, property);
+    }
+
     // Unsubscribe local or remote property listener
-    private void unsubscribeListener(IPropertyListener listener, String property) {
-        if (property != null) {
+    private void unsubscribeListener(IPropertyListener listener, String property)
+    {
+        if (property != null)
+        {
             // Unsubscribe property listener from given property
             List<IPropertyListener> listeners = propertyListeners.get(property);
-            if (listeners != null) {
+            if (listeners != null)
+            {
                 listeners.remove(listener);
                 propertyListeners.get(null).remove(listener);
             }
-        } else {
+        } else
+        {
             // Unsubscribe property listener from all propertys
             /*
               REMARK BY NICO KUIJPERS.
@@ -170,7 +179,8 @@ public class Publisher {
               to an ArrayList.
              */
             List<String> keyset = new ArrayList<>(propertyListeners.keySet());
-            for (String key : keyset) {
+            for (String key : keyset)
+            {
                 propertyListeners.get(key).remove(listener);
             }
         }
@@ -187,7 +197,8 @@ public class Publisher {
      * @param oldValue original value of property at domain (null is allowed)
      * @param newValue new value of property at domain
      */
-    public void inform(String property, Object oldValue, Object newValue) {
+    public void inform(String property, Object oldValue, Object newValue)
+    {
         // Check whether property is registered
         checkInBehalfOfProgrammer(property);
 
@@ -195,12 +206,14 @@ public class Publisher {
         List<IPropertyListener> listenersToBeInformed;
         listenersToBeInformed = new ArrayList<>();
 
-        if (property != null) {
+        if (property != null)
+        {
             // Listeners that are subscribed to given property
             listenersToBeInformed.addAll(propertyListeners.get(property));
             // Listeners that are subscribed to null-String
             listenersToBeInformed.addAll(propertyListeners.get(null));
-        } else {
+        } else
+        {
             // Inform all listeners, including listeners that are subscribed
             // to null-String
             /*
@@ -211,13 +224,15 @@ public class Publisher {
               to an ArrayList.
              */
             List<String> keyset = new ArrayList<>(propertyListeners.keySet());
-            for (String key : keyset) {
+            for (String key : keyset)
+            {
                 listenersToBeInformed.addAll(propertyListeners.get(key));
             }
         }
 
         // Inform property listeners concurrently
-        for (IPropertyListener listener : listenersToBeInformed) {
+        for (IPropertyListener listener : listenersToBeInformed)
+        {
 
             // Define property change event to be sent to listener
             final PropertyChangeEvent event = new PropertyChangeEvent(
@@ -239,17 +254,20 @@ public class Publisher {
      *
      * @param property empty string not allowed
      */
-    public void registerProperty(String property) {
-        if (property.equals("")) {
+    public void registerProperty(String property)
+    {
+        if (property.equals(""))
+        {
             throw new RuntimeException("a property cannot be an empty string");
         }
-        
-        if (propertyListeners.containsKey(property)) {
+
+        if (propertyListeners.containsKey(property))
+        {
             return;
         }
-        
+
         propertyListeners.put(property, Collections.synchronizedList(new ArrayList<>()));
-        
+
         setPropertiesString();
     }
 
@@ -261,14 +279,17 @@ public class Publisher {
      *
      * @param property registered property at this publisher
      */
-    public void unregisterProperty(String property) {
+    public void unregisterProperty(String property)
+    {
         // Check whether property is registered
         checkInBehalfOfProgrammer(property);
 
-        if (property != null) {
+        if (property != null)
+        {
             // Unsubscribe listeners from this property
             propertyListeners.remove(property);
-        } else {
+        } else
+        {
             /*
               REMARK BY NICO KUIJPERS.
               Set<String> keyset = propertyListeners.keySet();
@@ -278,27 +299,32 @@ public class Publisher {
               Corresponding test method: testUnregisterPropertyAllProperties().
              */
             List<String> keyset = new ArrayList<>(propertyListeners.keySet());
-            for (String key : keyset) {
-                if (key != null) {
+            for (String key : keyset)
+            {
+                if (key != null)
+                {
                     propertyListeners.remove(key);
                 }
             }
         }
-        
+
         setPropertiesString();
     }
 
     // Set string of all registered properties 
-    private void setPropertiesString() {
+    private void setPropertiesString()
+    {
         List<String> properties = getProperties();
         StringBuilder sb = new StringBuilder();
         sb.append("{ ");
         boolean firstProperty = true;
-        for (String property : properties) {
-            if (firstProperty) {
+        for (String property : properties)
+        {
+            if (firstProperty)
+            {
                 firstProperty = false;
-            }
-            else {
+            } else
+            {
                 sb.append(", ");
             }
             sb.append(property);
@@ -309,8 +335,10 @@ public class Publisher {
 
     // Check whether property is registered
     private void checkInBehalfOfProgrammer(String property)
-            throws RuntimeException {
-        if (!propertyListeners.containsKey(property)) {
+            throws RuntimeException
+    {
+        if (!propertyListeners.containsKey(property))
+        {
             throw new RuntimeException("property " + property + " is not a "
                     + "published property, please make a choice out of: "
                     + propertiesString);
@@ -323,13 +351,15 @@ public class Publisher {
      *
      * @return list of registered properties including null
      */
-    public List<String> getProperties() {
+    public List<String> getProperties()
+    {
         List<String> properties = new ArrayList<>(propertyListeners.keySet());
         return Collections.unmodifiableList(properties);
     }
 
     // Inner class to enable concurrent method invocation of propertyChange()
-    private class InformListenerRunnable implements Runnable {
+    private class InformListenerRunnable implements Runnable
+    {
 
         // Property listener to be informed
         IPropertyListener listener;
@@ -337,23 +367,30 @@ public class Publisher {
         // Property change event to be sent to listener
         PropertyChangeEvent event;
 
-        public InformListenerRunnable(IPropertyListener listener, PropertyChangeEvent event) {
+        public InformListenerRunnable(IPropertyListener listener, PropertyChangeEvent event)
+        {
             this.listener = listener;
             this.event = event;
         }
 
         @Override
-        public void run() {
-            if (listener instanceof ILocalPropertyListener) {
+        public void run()
+        {
+            if (listener instanceof ILocalPropertyListener)
+            {
                 // Property listener is local
                 ILocalPropertyListener localListener = (ILocalPropertyListener) listener;
                 localListener.propertyChange(event);
-            } else {
+            } else
+            {
                 // Property listener is remote
                 IRemotePropertyListener remoteListener = (IRemotePropertyListener) listener;
-                try {
-                    remoteListener.propertyChange(event);
-                } catch (RemoteException ex) {
+                try
+                {
+                        remoteListener.propertyChange(event);
+
+                } catch (RemoteException ex)
+                {
                     // No connection to remote property listener
                     unsubscribeListener(listener, null);
                     Logger.getLogger(Publisher.class.getName()).log(Level.SEVERE, null, ex);

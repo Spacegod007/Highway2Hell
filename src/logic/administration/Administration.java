@@ -1,11 +1,11 @@
 package logic.administration;
 
+import javafx.collections.FXCollections;
 import logic.fontyspublisher.IRemotePropertyListener;
 import logic.remote_method_invocation.RMIGameClient;
 import logic.remote_method_invocation.RMILobbyClient;
-import javafx.collections.FXCollections;
 import sample.Main;
-import javafx.stage.Stage;
+
 import java.beans.PropertyChangeEvent;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -20,7 +20,6 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
      * The client which interacts with the server
      */
     private RMILobbyClient rmiClient;
-
     private RMIGameClient rmiGameClient;
     private Thread gameThread;
     private AdministrationGame administrationGame;
@@ -186,12 +185,14 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     @Override
     public void propertyChange(PropertyChangeEvent evt) throws RemoteException
     {
+        //Deze property houdt in dat de lobbies geupdate worden
         if(evt.getPropertyName().equals("lobbies"))
         {
             main.setListvwLobby(FXCollections.observableList((List<Lobby>) evt.getNewValue()));
             System.out.println("property changed: " + evt.getPropertyName());
             return;
         }
+        //Deze property zorgt dat er begonnen wordt met verbinden naar de Game
         if(evt.getPropertyName().equals(Integer.toString(rmiClient.getActiveLobby().getId())))
         {
             if(rmiGameClient == null)
@@ -203,6 +204,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
             main.setWaitingPlayers((int)evt.getNewValue());
             System.out.println("lobby started");
         }
+        //Deze property wordt elke keer aangeroepen als er een speler verbindt.
         if(evt.getPropertyName().equals("playersconnected"))
         {
                 System.out.println("playersconnected: " + evt.getNewValue());
@@ -211,12 +213,20 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
                 if (waitingPlayers <= 0)
                 {
                     //Dit wordt alleen op de host gedaan nu, want dat is de enige met en administrationGame
-                    if(administrationGame != null)
+                    if(administrationGame != null && rmiGameClient != null)
                     {
                         //add parameters
-                        administrationGame.startGame();
+                        //startGame would mean that the game shows up and starts running, everyone was already connected at this point.
+                        //TODO this makes actually no sense because only the host would be starting the game
+                        administrationGame.startGame(rmiGameClient.getConnectedClients());
+                        rmiGameClient.gameIsStarted();
                     }
                 }
+        }
+        if(evt.getPropertyName().equals("gameIsStarted"))
+        {
+            System.out.println("game is started");
+            main.update(new Object());
         }
     }
 
@@ -243,11 +253,13 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
             {
                 administrationGame = new AdministrationGame(lobby);
                 gameThread = new Thread(administrationGame);
+                //Starts the administrationGame on a new thread. The only thing this class does at this point is starting the server
                 gameThread.start();
             } catch (RemoteException e)
             {
                 e.printStackTrace();
             }
+            //Says to the lobby -through the client- that he can inform all his listeners to start connecting
             rmiClient.startConnectingToGame(lobby);
         }
         else

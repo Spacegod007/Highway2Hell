@@ -1,11 +1,9 @@
 package logic.remote_method_invocation;
 
 import logic.administration.Lobby;
-import logic.administration.User;
 import logic.fontyspublisher.IRemotePublisherForDomain;
 
 import java.rmi.RemoteException;
-import java.rmi.server.RMIClassLoader;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +26,7 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
     {
         return clientsConnected.size();
     }
-    public List<RMIGameClient> getClientsConnected()
+    public List<RMIGameClient> getConnectedClients()
     {
         return clientsConnected;
     }
@@ -49,6 +47,7 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
         clientsConnected = new ArrayList<>();
         this.rpd = publisher;
         rpd.registerProperty("playersconnected");
+        rpd.registerProperty("gameIsStarted");
     }
 
     public void connect(RMIGameClient client)
@@ -57,6 +56,17 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
         try
         {
             rpd.inform("playersconnected", null, clientsConnected.size());
+        } catch (RemoteException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void gameIsStarted()
+    {
+        try
+        {
+            rpd.inform("gameIsStarted", null, 1);
         } catch (RemoteException e)
         {
             e.printStackTrace();
