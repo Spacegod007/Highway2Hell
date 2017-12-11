@@ -39,15 +39,19 @@ public class Game implements Runnable, Observer
      * Constructs the game object
      * @param gameRules the gamerules that are bound to this current game
      */
-    public Game(List<Gamerule> gameRules)
+    public Game(List<Gamerule> gameRules, List<GameObject> rmiGameObjects)
     {
         this.gameRules = gameRules;
         gameObjects = new ArrayList<>();
+
+        //Adds remote players
+        this.gameObjects.addAll(rmiGameObjects);
 
         //Add players here
         gameObjects.add(new PlayerObject(new Point(600, 900),"Player1", Color.BLACK));
         //gameObjects.add(new PlayerObject(new Point(540, 900),"Player2", Color.BLACK));
 
+        //Adds obstacles
         for (int i=0; i<obstacleCount; i++)
         {
             gameObjects.add(new ObstacleObject(70, 48));

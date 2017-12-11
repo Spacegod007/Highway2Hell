@@ -14,7 +14,7 @@ import static junit.framework.TestCase.assertEquals;
 public class GameTestJU4 {
 
     private final List<GameObject> gameObject = new ArrayList<>();
-    private final Game game = new Game(new ArrayList<>());
+    private final Game game = new Game(new ArrayList<>(), new ArrayList<>());
 
     @Before
     public void setUp() throws Exception {
