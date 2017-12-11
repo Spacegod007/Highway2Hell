@@ -294,13 +294,10 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
 
     public void startGame(Lobby l)
     {
-        System.out.println("Starting game?");
         l.startGame();
         try
         {
-            System.out.print("Informing startgame now: ");
-            System.out.println(l.getId());
-            rpd.inform(Integer.toString(l.getId()), null, true);
+            rpd.inform(Integer.toString(l.getId()), null, l.getPlayers().size());
         } catch (RemoteException e)
         {
             e.printStackTrace();
