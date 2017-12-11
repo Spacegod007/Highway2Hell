@@ -9,7 +9,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import java.util.ArrayList;
 
-public class scoreboardController {
+//todo move to more logical location, example "view"
+
+public class ScoreboardController {
 
     private ObservableList<Score> scores;
 
