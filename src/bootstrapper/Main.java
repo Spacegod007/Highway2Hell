@@ -35,9 +35,7 @@ public class Main extends Application {
     private Image obstacleImage = new Image("objects/barrel_red_down.png");
     private List<ImageView> playerImageViews = new ArrayList<>();
     private List<ImageView> obstacleImageViews = new ArrayList<>();
-
-    private Game game = new Game(new ArrayList<>());
-
+    private Game game = new Game(new ArrayList<>(), new ArrayList<>());
     private Label distanceLabel = new Label("0");
     private List<Label> playerLabels = new ArrayList<>();
     private ObservableList<Label> observablePlayerLabels;
