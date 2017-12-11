@@ -5,7 +5,7 @@ import logic.remote_method_invocation.RMIGameClient;
 import logic.remote_method_invocation.RMILobbyClient;
 import javafx.collections.FXCollections;
 import sample.Main;
-
+import javafx.stage.Stage;
 import java.beans.PropertyChangeEvent;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -23,6 +23,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
 
     private RMIGameClient rmiGameClient;
     private Thread gameThread;
+    private AdministrationGame administrationGame;
 
     /**
      * The user on who's behalf interactions will happen
@@ -204,8 +205,18 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
         }
         if(evt.getPropertyName().equals("playersconnected"))
         {
-            System.out.println("playersconnected: " + evt.getNewValue());
-            main.setWaitingPlayers((rmiClient.getActiveLobby().getPlayers().size()) - (int)evt.getNewValue());
+                System.out.println("playersconnected: " + evt.getNewValue());
+                int waitingPlayers = (rmiClient.getActiveLobby().getPlayers().size()) - (int) evt.getNewValue();
+                main.setWaitingPlayers(waitingPlayers);
+                if (waitingPlayers <= 0)
+                {
+                    //Dit wordt alleen op de host gedaan nu, want dat is de enige met en administrationGame
+                    if(administrationGame != null)
+                    {
+                        //add parameters
+                        administrationGame.startGame();
+                    }
+                }
         }
     }
 
@@ -222,7 +233,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
      * Starts the game in a separate thread
      * Can only be called by Host
      */
-    public void startGame()
+    public void startConnectingToGame()
     {
         System.out.println("starting");
         Lobby lobby = rmiClient.getActiveLobby();
@@ -230,13 +241,14 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
         {
             try
             {
-                gameThread = new Thread(new AdministrationGame(lobby));
+                administrationGame = new AdministrationGame(lobby);
+                gameThread = new Thread(administrationGame);
                 gameThread.start();
             } catch (RemoteException e)
             {
                 e.printStackTrace();
             }
-            rmiClient.startGame(lobby);
+            rmiClient.startConnectingToGame(lobby);
         }
         else
             {

@@ -1,5 +1,6 @@
 package logic.administration;
 
+import bootstrapper.Main;
 import logic.remote_method_invocation.RMIGameClient;
 import logic.remote_method_invocation.RMIGameServer;
 
@@ -13,6 +14,11 @@ import java.util.List;
  */
 public class AdministrationGame extends UnicastRemoteObject implements Runnable
 {
+
+    /**
+     * The game application which runs when the game starts
+     */
+    Main gameApplication;
 
     /**
      * The lobby from which the host starts the game
@@ -43,5 +49,18 @@ public class AdministrationGame extends UnicastRemoteObject implements Runnable
     AdministrationGame(Lobby lobby) throws RemoteException
     {
         this.lobby = lobby;
+    }
+
+    /**
+     * Starts the game when the Administration says everyone is connected
+     */
+    public synchronized void startGame()
+    {
+        System.out.println("Start game");
+        gameApplication = new Main();
+        for(RMIGameClient client : clientsConnected)
+        {
+            System.out.println(client.toString());
+        }
     }
 }

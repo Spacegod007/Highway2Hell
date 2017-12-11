@@ -300,7 +300,7 @@ public class Main extends Application{
 
     // TODO: 4-12-2017 implement starting the game
     private void startGame(){
-        administration.startGame();
+        administration.startConnectingToGame();
     }
 
     public void setWaitingScreen()

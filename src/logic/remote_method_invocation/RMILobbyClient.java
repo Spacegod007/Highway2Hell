@@ -379,7 +379,7 @@ public class RMILobbyClient
         }
     }
 
-    public void startGame(Lobby l)
+    public void startConnectingToGame(Lobby l)
     {
         try
         {
