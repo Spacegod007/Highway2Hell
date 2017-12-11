@@ -5,6 +5,7 @@
 package logic.remote_method_invocation;
 
 import logic.administration.Administration;
+import logic.administration.User;
 import logic.fontyspublisher.IRemotePublisherForListener;
 
 import java.io.*;
@@ -21,6 +22,9 @@ import java.util.Properties;
  */
 public class RMIGameClient extends Observable implements Serializable
 {
+    private User user;
+    public User getUser(){return user;}
+
     /**
      * The binding name for the administration
      */
@@ -71,6 +75,8 @@ public class RMIGameClient extends Observable implements Serializable
      */
     private void callClient(String ipAddress, int portNumber, Administration admin)
     {
+        this.user = admin.getUser();
+
         // Print IP address and port number for registry
         System.out.println("GameClient: IP Address: " + ipAddress);
         System.out.println("GameClient: Port number " + portNumber);

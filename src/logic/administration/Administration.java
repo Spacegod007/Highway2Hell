@@ -22,7 +22,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     private RMILobbyClient rmiClient;
     private RMIGameClient rmiGameClient;
     private Thread gameThread;
-    private AdministrationGame administrationGame;
+    private HostAdministration hostAdministration;
 
     /**
      * The user on who's behalf interactions will happen
@@ -212,13 +212,13 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
                 main.setWaitingPlayers(waitingPlayers);
                 if (waitingPlayers <= 0)
                 {
-                    //Dit wordt alleen op de host gedaan nu, want dat is de enige met en administrationGame
-                    if(administrationGame != null && rmiGameClient != null)
+                    //Dit wordt alleen op de host gedaan nu, want dat is de enige met en hostAdministration
+                    if(hostAdministration != null && rmiGameClient != null)
                     {
                         //add parameters
                         //startGame would mean that the game shows up and starts running, everyone was already connected at this point.
                         //TODO this makes actually no sense because only the host would be starting the game
-                        administrationGame.startGame(rmiGameClient.getConnectedClients());
+                        hostAdministration.startGame(rmiGameClient.getConnectedClients());
                         rmiGameClient.gameIsStarted();
                     }
                 }
@@ -226,7 +226,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
         if(evt.getPropertyName().equals("gameIsStarted"))
         {
             System.out.println("game is started");
-            main.update(new Object());
+            main.update(evt.getNewValue());
         }
     }
 
@@ -251,9 +251,9 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
         {
             try
             {
-                administrationGame = new AdministrationGame(lobby);
-                gameThread = new Thread(administrationGame);
-                //Starts the administrationGame on a new thread. The only thing this class does at this point is starting the server
+                hostAdministration = new HostAdministration(lobby);
+                gameThread = new Thread(hostAdministration);
+                //Starts the hostAdministration on a new thread. The only thing this class does at this point is starting the server
                 gameThread.start();
             } catch (RemoteException e)
             {

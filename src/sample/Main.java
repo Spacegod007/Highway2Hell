@@ -13,8 +13,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 import logic.administration.Administration;
+import logic.administration.InGameAdministration;
 import logic.administration.Lobby;
 import logic.administration.User;
+
+import java.lang.reflect.Array;
+import java.util.List;
 
 public class Main extends Application{
 
@@ -46,6 +50,7 @@ public class Main extends Application{
     private static Administration administration;
     private final int minCharsName = 4;
     private final int minCharsLobbyName = 4;
+    private InGameAdministration ingameAdministration;
 
     public static void launchView(String[] args, Administration admin)
     {
@@ -370,7 +375,7 @@ public class Main extends Application{
             game = new bootstrapper.Main();
             try
             {
-                game.start(new Stage());
+                ((bootstrapper.Main)game).start(new Stage(), (List<User>)obj);
             } catch (Exception e)
             {
                 e.printStackTrace();

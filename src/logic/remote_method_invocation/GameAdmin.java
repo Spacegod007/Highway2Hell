@@ -1,6 +1,7 @@
 package logic.remote_method_invocation;
 
 import logic.administration.Lobby;
+import logic.administration.User;
 import logic.fontyspublisher.IRemotePublisherForDomain;
 
 import java.rmi.RemoteException;
@@ -66,10 +67,21 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
     {
         try
         {
-            rpd.inform("gameIsStarted", null, 1);
+            rpd.inform("gameIsStarted", null, toUserList(clientsConnected));
+            rpd.registerProperty("gameState");
         } catch (RemoteException e)
         {
             e.printStackTrace();
         }
+    }
+
+    private List<User> toUserList(List<RMIGameClient> list)
+    {
+        List<User> ret = new ArrayList<>();
+        for(RMIGameClient c : list)
+        {
+            ret.add(c.getUser());
+        }
+        return ret;
     }
 }

@@ -20,7 +20,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import logic.Gamerule;
 import logic.Score;
+import logic.administration.User;
 import logic.game.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +36,7 @@ public class Main extends Application {
     private Image obstacleImage = new Image("objects/barrel_red_down.png");
     private List<ImageView> playerImageViews = new ArrayList<>();
     private List<ImageView> obstacleImageViews = new ArrayList<>();
-    private Game game = new Game(new ArrayList<>(), new ArrayList<>());
+    private Game game;
     private Label distanceLabel = new Label("0");
     private List<Label> playerLabels = new ArrayList<>();
     private ObservableList<Label> observablePlayerLabels;
@@ -61,13 +63,16 @@ public class Main extends Application {
     scoreboardController scoreboardController;
     BackgroundController backgroundController;
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage, List<User> userList) throws Exception {
 
         // set primary stage size and name
         primaryStage.setTitle("Game");
         primaryStage.setWidth(1200);
         primaryStage.setHeight(1000);
+
+        // build game
+        game = new Game(new ArrayList<>(), new ArrayList<>());
+
 
         // background scroller scene
         FXMLLoader fxmlLoaderBackground = new FXMLLoader(getClass().getResource("/Background.fxml"));
@@ -303,5 +308,11 @@ public class Main extends Application {
         });
         time.getKeyFrames().add(frame);
         time.playFromStart();
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception
+    {
+
     }
 }

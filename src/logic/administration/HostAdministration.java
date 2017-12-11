@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Main entry point to start the game server as host
  */
-public class AdministrationGame extends UnicastRemoteObject implements Runnable
+public class HostAdministration extends UnicastRemoteObject implements Runnable
 {
 
     /**
@@ -46,7 +46,7 @@ public class AdministrationGame extends UnicastRemoteObject implements Runnable
      * Constructs the game administration object
      * @param lobby from which the game is being started
      */
-    AdministrationGame(Lobby lobby) throws RemoteException
+    HostAdministration(Lobby lobby) throws RemoteException
     {
         this.lobby = lobby;
     }
