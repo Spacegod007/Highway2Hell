@@ -58,7 +58,7 @@ public class Main extends Application {
     private Label label = new Label();
 
     // controllers
-    scoreboardController scoreboardController;
+    ScoreboardController scoreboardController;
     BackgroundController backgroundController;
 
     @Override
