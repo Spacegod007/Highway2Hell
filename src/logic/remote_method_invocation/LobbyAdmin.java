@@ -144,10 +144,10 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
                             {
                                 if (l.getPlayers().size() > 0) //and there are players remaining
                                 {
-                                    l.setHost(l.getPlayers().get(0), null); //migrate host
+                                    l.setHost(l.getPlayers().get(0)); //migrate host
                                 } else
                                 {
-                                    l.setHost(null, null); //else, set host to null, lobby will be removed by the next tick of the timer
+                                    l.setHost(null); //else, set host to null, lobby will be removed by the next tick of the timer
                                 }
                             }
                             rpd.inform("lobbies", null, lobbies);

@@ -78,11 +78,16 @@ public class Lobby implements Runnable, Serializable
      * Sets the host of this lobby
      * @param host to be set
      */
-    public void setHost(User host, String ipAddress)
+//    public void setHost(User host, String ipAddress)
+//    {
+//
+//        this.host = host;
+//        this.ipAddress = ipAddress;
+//    }
+//
+    public void setHost(User host)
     {
-        
         this.host = host;
-        this.ipAddress = ipAddress;
     }
 
      /**
@@ -164,7 +169,7 @@ public class Lobby implements Runnable, Serializable
             if (host == null)
             {
                 System.out.println("Host set: " + player.toString());
-                setHost(player, null);
+                setHost(player);
             }
             this.players.add(player);
             System.out.println("Player added: " + player.toString());
