@@ -63,6 +63,9 @@ public class Main extends Application {
     ScoreboardController scoreboardController;
     BackgroundController backgroundController;
 
+    //david zn shit
+    PlayerObject thisPlayer = null;
+
     public void start(Stage primaryStage, List<User> userList) throws Exception {
 
         // set primary stage size and name
@@ -70,8 +73,12 @@ public class Main extends Application {
         primaryStage.setWidth(1200);
         primaryStage.setHeight(1000);
 
+        //TODO set right player
+        thisPlayer = new PlayerObject(new Point(960, 900), userList.get(0).getUsername(), Color.BLACK);
+
         // build game
-        game = new Game(new ArrayList<>(), new ArrayList<>());
+        //game = new Game(new ArrayList<>(), pos);
+        game = new Game(new ArrayList<>(), userList);
 
 
         // background scroller scene
@@ -87,7 +94,7 @@ public class Main extends Application {
         scoreboardController = fxmlLoaderScoreBoard.getController();
         scoreboardScene = new Scene(parent2);
 
-        // primaryStage.setScene
+        // countdown scene
         AnchorPane anchorPane = new AnchorPane();
         anchorPane.getChildren().add(label);
         countdownScene = new Scene(anchorPane);
@@ -143,7 +150,7 @@ public class Main extends Application {
             switch (event.getCode()) {
                 case LEFT:
                     if (!leftPressed) {
-                        PO1 = game.moveCharacter("Player1", Direction.LEFT);
+                        PO1 = game.moveCharacter(thisPlayer.getName(), Direction.LEFT);
                         playerImageViews.get(0).setRotate(PO1.getCurrentRotation());
                         playerImageViews.get(0).setX(PO1.getAnchor().getX());
                         playerImageViews.get(0).setY(PO1.getAnchor().getY());
@@ -152,7 +159,7 @@ public class Main extends Application {
                     break;
                 case RIGHT:
                     if (!rightPressed) {
-                        PO1 = game.moveCharacter("Player1", Direction.RIGHT);
+                        PO1 = game.moveCharacter(thisPlayer.getName(), Direction.RIGHT);
                         playerImageViews.get(0).setRotate(PO1.getCurrentRotation());
                         playerImageViews.get(0).setX(PO1.getAnchor().getX());
                         playerImageViews.get(0).setY(PO1.getAnchor().getY());
@@ -163,7 +170,7 @@ public class Main extends Application {
         });
 
         //Initialize first frame
-        PO1 = game.moveCharacter("Player1", Direction.RIGHT);
+        PO1 = game.moveCharacter(thisPlayer.getName(), Direction.RIGHT);
         obstacleObjects.add(new ObstacleObject(70, 48));
         obstacleObjects.add(new ObstacleObject(70, 48));
         obstacleObjects.add(new ObstacleObject(70, 48));

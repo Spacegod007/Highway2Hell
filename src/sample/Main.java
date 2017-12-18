@@ -375,10 +375,11 @@ public class Main extends Application{
             game = new bootstrapper.Main();
             try
             {
+                System.out.println(((List<User>)obj).size());
                 ((bootstrapper.Main)game).start(new Stage(), (List<User>)obj);
             } catch (Exception e)
             {
-                e.printStackTrace(); 
+                e.printStackTrace();
             }
         });
     }
