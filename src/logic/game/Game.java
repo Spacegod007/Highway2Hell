@@ -44,10 +44,12 @@ public class Game implements Runnable, Observer, Serializable
     public Game(List<Gamerule> gameRules, List<User> users)
     {
         List<GameObject> rmiGameObjects = new ArrayList<>();
+        int j = 0;
         for(User u : users)
         {
             System.out.println(u.getUsername());
-            rmiGameObjects.add(new PlayerObject(new Point(600, 900),u.getUsername(),Color.BLACK));
+            rmiGameObjects.add(new PlayerObject(new Point(600 + j, 900),u.getUsername(),Color.BLACK));
+            j = j+50;
         }
         this.gameRules = gameRules;
         gameObjects = rmiGameObjects;
