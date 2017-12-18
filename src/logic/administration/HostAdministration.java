@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Main entry point to start the game server as host
+ * SampleMain entry point to start the game server as host
  */
 public class HostAdministration extends UnicastRemoteObject implements Runnable
 {

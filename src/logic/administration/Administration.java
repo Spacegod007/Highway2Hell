@@ -4,7 +4,7 @@ import javafx.collections.FXCollections;
 import logic.fontyspublisher.IRemotePropertyListener;
 import logic.remote_method_invocation.RMIGameClient;
 import logic.remote_method_invocation.RMILobbyClient;
-import sample.Main;
+import sample.SampleMain;
 
 import java.beans.PropertyChangeEvent;
 import java.rmi.RemoteException;
@@ -32,7 +32,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     /**
      * The view where the effect of the actions in this class will be shown
      */
-    private Main main;
+    private SampleMain sampleMain;
 
     /**
      * The constructor of the administration object
@@ -60,7 +60,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     public void setUsername(String username)
     {
         this.setUser(rmiClient.setUsername(username));
-        main.setListvwLobby(FXCollections.observableList(rmiClient.getLobbies()));
+        sampleMain.setListvwLobby(FXCollections.observableList(rmiClient.getLobbies()));
     }
 
     /**
@@ -184,7 +184,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
      */
     private void setListViewLobby(PropertyChangeEvent evt)
     {
-        main.setListvwLobby(FXCollections.observableList((List<Lobby>) evt.getNewValue()));
+        sampleMain.setListvwLobby(FXCollections.observableList((List<Lobby>) evt.getNewValue()));
         System.out.println("property changed: " + evt.getPropertyName());
     }
 
@@ -197,7 +197,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     {
         System.out.println("playersconnected: " + evt.getNewValue());
         int waitingPlayers = (rmiClient.getActiveLobby().getPlayers().size()) - (int) evt.getNewValue();
-        main.setWaitingPlayers(waitingPlayers);
+        sampleMain.setWaitingPlayers(waitingPlayers);
 
         if (waitingPlayers <= 0)
         {
@@ -220,7 +220,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     private void gameIsStarted(PropertyChangeEvent evt)
     {
         System.out.println("game is started");
-        main.update(evt.getNewValue());
+        sampleMain.update(evt.getNewValue());
     }
 
     private void startConnecting(PropertyChangeEvent evt)
@@ -230,8 +230,8 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
             rmiGameClient = new RMIGameClient(rmiClient.getActiveLobby().getIpAddress(), this);
         }
 
-        main.setWaitingScreen();
-        main.setWaitingPlayers((int)evt.getNewValue());
+        sampleMain.setWaitingScreen();
+        sampleMain.setWaitingPlayers((int)evt.getNewValue());
         System.out.println("lobby started");
     }
 
@@ -264,12 +264,12 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     }
 
     /**
-     * Sets the main
-     * @param main to be set
+     * Sets the sampleMain
+     * @param sampleMain to be set
      */
-    public void setMain(Main main)
+    public void setSampleMain(SampleMain sampleMain)
     {
-        this.main = main;
+        this.sampleMain = sampleMain;
     }
 
     /**

@@ -2,7 +2,7 @@ package bootstrapper;
 
 import logic.remote_method_invocation.RMILobbyClient;
 import logic.administration.Administration;
-import sample.Main;
+import sample.SampleMain;
 
 import java.rmi.RemoteException;
 import java.util.Properties;
@@ -27,7 +27,7 @@ public class Program
             Administration administration = new Administration(rmiClient);
             System.out.println("administration created");
 
-            Main.launchView(args, administration);
+            SampleMain.launchView(args, administration);
         }
         catch(RemoteException ex)
         {

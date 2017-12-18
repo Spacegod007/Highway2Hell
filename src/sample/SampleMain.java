@@ -17,10 +17,10 @@ import logic.administration.InGameAdministration;
 import logic.administration.Lobby;
 import logic.administration.User;
 
-import java.lang.reflect.Array;
 import java.util.List;
 
-public class Main extends Application{
+public class SampleMain extends Application
+{
 
     //region Form controls
     Application game;
@@ -87,7 +87,7 @@ public class Main extends Application{
             primaryStage.setTitle("Highway to Hell");
             primaryStage.setScene(titleScene);
             primaryStage.show();
-            administration.setMain(this);
+            administration.setSampleMain(this);
         }
         catch(Exception e /*IOException*/)
         {
