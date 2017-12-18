@@ -39,9 +39,11 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
      * @param rmiClient which is used to connect to the server
      * @throws RemoteException if there is an error within the rmiClient
      */
-    public Administration(RMILobbyClient rmiClient) throws RemoteException{
+    public Administration(RMILobbyClient rmiClient) throws RemoteException
+    {
         this.rmiClient = rmiClient;
         this.user = rmiClient.getUser();
+
         try
         {
             //subscribe to the server as a listener if there are any updates with lobbies
@@ -174,7 +176,6 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
             if (lobby != null)
             {
                 rmiClient.setActiveLobby(lobby, rmiClient.getUser().getID());
-
             }
 
             return lobby;
@@ -186,9 +187,8 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     }
 
     /**
-     * //todo change to english
-     * houdt in dat de lobbies geupdate worden
-     * @param evt change event
+     * Updates available lobbies
+     * @param evt property which got changed with changes
      */
     private void setListViewLobby(PropertyChangeEvent evt)
     {
@@ -197,9 +197,8 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     }
 
     /**
-     * //todo change to engish
-     * //Deze property wordt elke keer aangeroepen als er een speler verbindt.
-     * @param evt
+     * Is called whenever a player connects
+     * @param evt property which got changed with changes
      */
     private void playerConnected(PropertyChangeEvent evt)
     {
@@ -263,7 +262,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
                 gameIsStarted(evt);
                 return;
             default:
-                //Deze property zorgt dat er begonnen wordt met verbinden naar de Game
+                //This property initiates clients connecting to the game server
                 if(evt.getPropertyName().equals(Integer.toString(rmiClient.getActiveLobby().getId())))
                 {
                     startConnecting(evt);
@@ -288,24 +287,28 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     {
         System.out.println("starting");
         Lobby lobby = rmiClient.getActiveLobby();
+
         if(lobby != null)
         {
             try
             {
                 hostAdministration = new HostAdministration(lobby);
                 gameThread = new Thread(hostAdministration);
+
                 //Starts the hostAdministration on a new thread. The only thing this class does at this point is starting the server
                 gameThread.start();
-            } catch (RemoteException e)
+            }
+            catch (RemoteException e)
             {
                 e.printStackTrace();
             }
+
             //Says to the lobby -through the client- that he can inform all his listeners to start connecting
             rmiClient.startConnectingToGame(lobby);
         }
         else
-            {
-                System.out.println("null lobby");
-            }
+        {
+            System.out.println("null lobby");
+        }
     }
 }

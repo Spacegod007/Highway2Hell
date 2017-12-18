@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * A lobby where users which users will be able to join before the game started
  */
-public class Lobby implements Runnable, Serializable
+public class Lobby implements Serializable
 {
     /**
      * The id of the lobby
@@ -208,18 +208,6 @@ public class Lobby implements Runnable, Serializable
     @Override
     public String toString() {
         return name + ": (" + players.size() + "/" + Lobby.maxSize + ")";
-    }
-
-    @Override
-    // TODO
-    // dit gebruiken we helemaal niet
-    public void run() {
-        try{while(true){
-           if(false){
-               break;
-           }
-        }}
-        catch(Exception ignored){}
     }
 
     public String getIpAddress()
