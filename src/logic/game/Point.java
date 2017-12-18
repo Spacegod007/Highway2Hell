@@ -1,9 +1,11 @@
 package logic.game;
 
+import java.io.Serializable;
+
 /**
  * A 2 dimensional location
  */
-public class Point
+public class Point implements Serializable
 {
     /**
      * The location in the width

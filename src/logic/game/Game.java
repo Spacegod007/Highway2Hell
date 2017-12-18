@@ -4,7 +4,9 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import logic.Gamerule;
+import logic.administration.User;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -13,7 +15,7 @@ import java.util.Observer;
 /**
  * A class which manages the game while the game is being played
  */
-public class Game implements Runnable, Observer
+public class Game implements Runnable, Observer, Serializable
 {
     /**
      * A list of all game objects including players, obstacles, etc.
@@ -39,16 +41,21 @@ public class Game implements Runnable, Observer
      * Constructs the game object
      * @param gameRules the gamerules that are bound to this current game
      */
-    public Game(List<Gamerule> gameRules, List<GameObject> rmiGameObjects)
+    public Game(List<Gamerule> gameRules, List<User> users)
     {
+        List<GameObject> rmiGameObjects = new ArrayList<>();
+        int j = 0;
+        for(User u : users)
+        {
+            System.out.println(u.getUsername());
+            rmiGameObjects.add(new PlayerObject(new Point(600 + j, 900),u.getUsername(),Color.BLACK));
+            j = j+50;
+        }
         this.gameRules = gameRules;
-        gameObjects = new ArrayList<>();
-
-        //Adds remote players
-        this.gameObjects.addAll(rmiGameObjects);
+        gameObjects = rmiGameObjects;
 
         //Add players here
-        gameObjects.add(new PlayerObject(new Point(600, 900),"Player1", Color.BLACK));
+        //gameObjects.add(new PlayerObject(new Point(600, 900),name, Color.BLACK));
         //gameObjects.add(new PlayerObject(new Point(540, 900),"Player2", Color.BLACK));
 
         //Adds obstacles
@@ -202,7 +209,7 @@ public class Game implements Runnable, Observer
             {
                 PlayerObject p = (PlayerObject) g;
 
-                if (playerName == "Player1" && p.getName() == "Player1")
+                if (playerName.equals("Player1") && p.getName().equals("Player1"));
                 {
                     switch (direction) {
                         case LEFT:

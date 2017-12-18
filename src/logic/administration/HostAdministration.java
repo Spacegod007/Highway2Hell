@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Main entry point to start the game server as host
+ * SampleMain entry point to start the game server as host
  */
 public class HostAdministration extends UnicastRemoteObject implements Runnable
 {
@@ -31,16 +31,6 @@ public class HostAdministration extends UnicastRemoteObject implements Runnable
      */
     private RMIGameServer server;
 
-    /**
-     * Runs the host-side of the game in a separate thread
-     */
-    @Override
-    public void run()
-    {
-        server = new RMIGameServer();
-        clientsConnected = new ArrayList<>();
-    }
-
 
     /**
      * Constructs the game administration object
@@ -49,6 +39,16 @@ public class HostAdministration extends UnicastRemoteObject implements Runnable
     HostAdministration(Lobby lobby) throws RemoteException
     {
         this.lobby = lobby;
+    }
+
+    /**
+     * Runs the host-side of the game in a separate thread
+     */
+    @Override
+    public void run()
+    {
+        server = new RMIGameServer();
+        clientsConnected = new ArrayList<>();
     }
 
     /**

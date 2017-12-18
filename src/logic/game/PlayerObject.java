@@ -2,10 +2,12 @@ package logic.game;
 
 import javafx.scene.paint.Color;
 
+import java.io.Serializable;
+
 /**
  * A player in the game
  */
-public class PlayerObject extends GameObject
+public class PlayerObject extends GameObject implements Serializable
 {
     /**
      * The name of the player
@@ -15,7 +17,7 @@ public class PlayerObject extends GameObject
     /**
      * The color of the player
      */
-    private Color color;
+    private String color;
 
     /**
      * The distance the player has traveled
@@ -42,7 +44,7 @@ public class PlayerObject extends GameObject
     {
         super(anchor, new Size(78, 54));
         this.name = name;
-        this.color = color;
+        this.color = color.toString();
     }
 
     /**
@@ -141,7 +143,7 @@ public class PlayerObject extends GameObject
      */
     public Color getColor()
     {
-        return color;
+        return Color.valueOf(color);
     }
 
     /**
@@ -150,7 +152,7 @@ public class PlayerObject extends GameObject
      */
     public void setColor(Color color)
     {
-        this.color = color;
+        this.color = color.toString();
     }
 
     /**

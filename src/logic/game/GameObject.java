@@ -1,9 +1,11 @@
 package logic.game;
 
+import java.io.Serializable;
+
 /**
  * A object located in the game
  */
-public abstract class GameObject
+public abstract class GameObject implements Serializable
 {
     /**
      * the position of the game object

@@ -81,4 +81,17 @@ public class User implements Serializable
     public String toString() {
         return username;
     }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj instanceof User)
+        {
+            User other = (User) obj;
+
+            return ID == other.ID;
+        }
+
+        return false;
+    }
 }

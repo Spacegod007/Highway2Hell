@@ -243,6 +243,14 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
      */
     public User addUser(String username)
     {
+        for (User u : users)
+        {
+            if (u.getUsername().equalsIgnoreCase(username))
+            {
+                return null;
+            }
+        }
+
         User user = new User(username, getNextUserID());
         users.add(user);
         return user;
@@ -295,10 +303,12 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
     public void startGame(Lobby l)
     {
         l.startGame();
+
         try
         {
             rpd.inform(Integer.toString(l.getId()), null, l.getPlayers().size());
-        } catch (RemoteException e)
+        }
+        catch (RemoteException e)
         {
             e.printStackTrace();
         }

@@ -17,10 +17,10 @@ import logic.administration.InGameAdministration;
 import logic.administration.Lobby;
 import logic.administration.User;
 
-import java.lang.reflect.Array;
 import java.util.List;
 
-public class Main extends Application{
+public class SampleMain extends Application
+{
 
     //region Form controls
     Application game;
@@ -40,6 +40,7 @@ public class Main extends Application{
     private Scene lobbyScene;
         private TextField txtEnterName = new TextField();
         private Button btnLaunchlobbyScreen = new Button();
+        private Label lblErrorMessage = new Label();
     private FlowPane inLobbyScreen;
     private Scene waitingScene;
     private Label waitingMessage = new Label();
@@ -74,7 +75,7 @@ public class Main extends Application{
             //root = FXMLLoader.load(getClass().getResource("main.fxml"));
             //deze dingen moeten zoals 'root' allebei uit een fxml komen
 
-            titleScreen.getChildren().addAll(txtEnterName, btnLaunchlobbyScreen);
+            titleScreen.getChildren().addAll(txtEnterName, btnLaunchlobbyScreen, lblErrorMessage);
             lobbyScreen.getChildren().addAll(btnHostLobby, btnJoinLobby, text, listvwLobby, listvwPlayers, btnRefresh);
             inLobbyScreen.getChildren().addAll(btnLeaveLobby, btnKickPlayer,  btnStartGame, listvwPlayersInLobby);
             waitingScreen.getChildren().addAll(waitingMessage);
@@ -87,7 +88,7 @@ public class Main extends Application{
             primaryStage.setTitle("Highway to Hell");
             primaryStage.setScene(titleScene);
             primaryStage.show();
-            administration.setMain(this);
+            administration.setSampleMain(this);
         }
         catch(Exception e /*IOException*/)
         {
@@ -174,9 +175,19 @@ public class Main extends Application{
     {
         if(validUsername(username))
         {
-            administration.setUsername(username);
-            stage.setTitle("Highway to Hell: " + username );
-            stage.setScene(lobbyScene);
+            if (administration.setUsername(username))
+            {
+                stage.setTitle("Highway to Hell: " + username );
+                stage.setScene(lobbyScene);
+            }
+            else
+            {
+                Platform.runLater(() ->
+                {
+                    txtEnterName.setText("");
+                    lblErrorMessage.setText("Error: username was already taken");
+                });
+            }
         }
     }
 
@@ -375,6 +386,7 @@ public class Main extends Application{
             game = new bootstrapper.Main();
             try
             {
+                System.out.println(((List<User>)obj).size());
                 ((bootstrapper.Main)game).start(new Stage(), (List<User>)obj);
             } catch (Exception e)
             {
