@@ -107,20 +107,4 @@ public class RMIGameServer
             System.out.println("Server: UnknownHostException: " + ex.getMessage());
         }
     }
-
-    /**
-     * Starts the RMI server
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-
-        // Welcome message
-        System.out.println("GAMESERVER USING REGISTRY");
-
-        // Print IP addresses and network interfaces
-        printIPAddresses();
-
-        // Create server
-        RMIGameServer server = new RMIGameServer();
-    }
 }

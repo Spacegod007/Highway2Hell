@@ -5,6 +5,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import logic.Gamerule;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -13,7 +14,7 @@ import java.util.Observer;
 /**
  * A class which manages the game while the game is being played
  */
-public class Game implements Runnable, Observer
+public class Game implements Runnable, Observer, Serializable
 {
     /**
      * A list of all game objects including players, obstacles, etc.

@@ -1,11 +1,12 @@
 package logic.game;
 
+import java.io.Serializable;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Marks an object as an obstacle in the game
  */
-public class ObstacleObject extends GameObject
+public class ObstacleObject extends GameObject implements Serializable
 {
     /**
      * Constructs a new obstacle object

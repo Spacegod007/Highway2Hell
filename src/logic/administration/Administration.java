@@ -178,6 +178,64 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     }
 
     /**
+     * //todo change to english
+     * houdt in dat de lobbies geupdate worden
+     * @param evt change event
+     */
+    private void setListViewLobby(PropertyChangeEvent evt)
+    {
+        main.setListvwLobby(FXCollections.observableList((List<Lobby>) evt.getNewValue()));
+        System.out.println("property changed: " + evt.getPropertyName());
+    }
+
+    /**
+     * //todo change to engish
+     * //Deze property wordt elke keer aangeroepen als er een speler verbindt.
+     * @param evt
+     */
+    private void playerConnected(PropertyChangeEvent evt)
+    {
+        System.out.println("playersconnected: " + evt.getNewValue());
+        int waitingPlayers = (rmiClient.getActiveLobby().getPlayers().size()) - (int) evt.getNewValue();
+        main.setWaitingPlayers(waitingPlayers);
+
+        if (waitingPlayers <= 0)
+        {
+            //Dit wordt alleen op de host gedaan nu, want dat is de enige met en hostAdministration
+            if(hostAdministration != null && rmiGameClient != null)
+            {
+                //add parameters
+                //startGame would mean that the game shows up and starts running, everyone was already connected at this point.
+                //TODO this makes actually no sense because only the host would be starting the game
+
+                hostAdministration.startGame(rmiGameClient.getConnectedClients());
+                rmiGameClient.gameIsStarted();
+            }
+        }
+    }
+
+    /**
+     * marks the game has started
+     */
+    private void gameIsStarted(PropertyChangeEvent evt)
+    {
+        System.out.println("game is started");
+        main.update(evt.getNewValue());
+    }
+
+    private void startConnecting(PropertyChangeEvent evt)
+    {
+        if(rmiGameClient == null)
+        {
+            rmiGameClient = new RMIGameClient(rmiClient.getActiveLobby().getIpAddress(), this);
+        }
+
+        main.setWaitingScreen();
+        main.setWaitingPlayers((int)evt.getNewValue());
+        System.out.println("lobby started");
+    }
+
+    /**
      * Triggers when the list of lobbies changed, should not be used manually
      * @param evt PropertyChangeEvent @see java.beans.PropertyChangeEvent
      * @throws RemoteException
@@ -185,48 +243,23 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     @Override
     public void propertyChange(PropertyChangeEvent evt) throws RemoteException
     {
-        //Deze property houdt in dat de lobbies geupdate worden
-        if(evt.getPropertyName().equals("lobbies"))
+        switch (evt.getPropertyName())
         {
-            main.setListvwLobby(FXCollections.observableList((List<Lobby>) evt.getNewValue()));
-            System.out.println("property changed: " + evt.getPropertyName());
-            return;
-        }
-        //Deze property zorgt dat er begonnen wordt met verbinden naar de Game
-        if(evt.getPropertyName().equals(Integer.toString(rmiClient.getActiveLobby().getId())))
-        {
-            if(rmiGameClient == null)
-            {
-                rmiGameClient = new RMIGameClient(rmiClient.getActiveLobby().getIpAddress(), this);
-            }
-
-            main.setWaitingScreen();
-            main.setWaitingPlayers((int)evt.getNewValue());
-            System.out.println("lobby started");
-        }
-        //Deze property wordt elke keer aangeroepen als er een speler verbindt.
-        if(evt.getPropertyName().equals("playersconnected"))
-        {
-                System.out.println("playersconnected: " + evt.getNewValue());
-                int waitingPlayers = (rmiClient.getActiveLobby().getPlayers().size()) - (int) evt.getNewValue();
-                main.setWaitingPlayers(waitingPlayers);
-                if (waitingPlayers <= 0)
+            case "lobbies":
+                setListViewLobby(evt);
+                return;
+            case "playersconnected":
+                playerConnected(evt);
+                return;
+            case "gameIsStarted":
+                gameIsStarted(evt);
+                return;
+            default:
+                //Deze property zorgt dat er begonnen wordt met verbinden naar de Game
+                if(evt.getPropertyName().equals(Integer.toString(rmiClient.getActiveLobby().getId())))
                 {
-                    //Dit wordt alleen op de host gedaan nu, want dat is de enige met en hostAdministration
-                    if(hostAdministration != null && rmiGameClient != null)
-                    {
-                        //add parameters
-                        //startGame would mean that the game shows up and starts running, everyone was already connected at this point.
-                        //TODO this makes actually no sense because only the host would be starting the game
-                        hostAdministration.startGame(rmiGameClient.getConnectedClients());
-                        rmiGameClient.gameIsStarted();
-                    }
+                    startConnecting(evt);
                 }
-        }
-        if(evt.getPropertyName().equals("gameIsStarted"))
-        {
-            System.out.println("game is started");
-            main.update(evt.getNewValue());
         }
     }
 
