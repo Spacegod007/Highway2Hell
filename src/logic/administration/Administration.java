@@ -57,10 +57,18 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
      * Sets the username of the user
      * @param username
      */
-    public void setUsername(String username)
+    public boolean setUsername(String username)
     {
-        this.setUser(rmiClient.setUsername(username));
-        sampleMain.setListvwLobby(FXCollections.observableList(rmiClient.getLobbies()));
+        User preUser = rmiClient.setUsername(username);
+
+        if (preUser != null)
+        {
+            this.setUser(preUser);
+            sampleMain.setListvwLobby(FXCollections.observableList(rmiClient.getLobbies()));
+            return true;
+        }
+
+        return false;
     }
 
     /**

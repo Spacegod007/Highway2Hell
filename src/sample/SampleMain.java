@@ -40,6 +40,7 @@ public class SampleMain extends Application
     private Scene lobbyScene;
         private TextField txtEnterName = new TextField();
         private Button btnLaunchlobbyScreen = new Button();
+        private Label lblErrorMessage = new Label();
     private FlowPane inLobbyScreen;
     private Scene waitingScene;
     private Label waitingMessage = new Label();
@@ -74,7 +75,7 @@ public class SampleMain extends Application
             //root = FXMLLoader.load(getClass().getResource("main.fxml"));
             //deze dingen moeten zoals 'root' allebei uit een fxml komen
 
-            titleScreen.getChildren().addAll(txtEnterName, btnLaunchlobbyScreen);
+            titleScreen.getChildren().addAll(txtEnterName, btnLaunchlobbyScreen, lblErrorMessage);
             lobbyScreen.getChildren().addAll(btnHostLobby, btnJoinLobby, text, listvwLobby, listvwPlayers, btnRefresh);
             inLobbyScreen.getChildren().addAll(btnLeaveLobby, btnKickPlayer,  btnStartGame, listvwPlayersInLobby);
             waitingScreen.getChildren().addAll(waitingMessage);
@@ -174,9 +175,19 @@ public class SampleMain extends Application
     {
         if(validUsername(username))
         {
-            administration.setUsername(username);
-            stage.setTitle("Highway to Hell: " + username );
-            stage.setScene(lobbyScene);
+            if (administration.setUsername(username))
+            {
+                stage.setTitle("Highway to Hell: " + username );
+                stage.setScene(lobbyScene);
+            }
+            else
+            {
+                Platform.runLater(() ->
+                {
+                    txtEnterName.setText("");
+                    lblErrorMessage.setText("Error: username was already taken");
+                });
+            }
         }
     }
 
