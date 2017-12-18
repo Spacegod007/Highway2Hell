@@ -375,6 +375,7 @@ public class SampleMain extends Application
             game = new bootstrapper.Main();
             try
             {
+                System.out.println(((List<User>)obj).size());
                 ((bootstrapper.Main)game).start(new Stage(), (List<User>)obj);
             } catch (Exception e)
             {

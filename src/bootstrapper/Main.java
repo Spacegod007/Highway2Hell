@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Main extends Application {
-    private PlayerObject PO1 = new PlayerObject(new Point(960, 900), "Player1", Color.BLACK);
+    //private PlayerObject thisPlayer = new PlayerObject(new Point(960, 900), "Player1", Color.BLACK);
     private List<ObstacleObject> obstacleObjects = new ArrayList<>();
 
     //Playerimages for creating characters for later versions that use sockets.
@@ -63,6 +63,9 @@ public class Main extends Application {
     ScoreboardController scoreboardController;
     BackgroundController backgroundController;
 
+    //david zn shit
+    PlayerObject thisPlayer = null;
+
     public void start(Stage primaryStage, List<User> userList) throws Exception {
 
         // set primary stage size and name
@@ -70,8 +73,11 @@ public class Main extends Application {
         primaryStage.setWidth(1200);
         primaryStage.setHeight(1000);
 
+        //TODO set right player
+        thisPlayer = new PlayerObject(new Point(960, 900), userList.get(0).getUsername(), Color.BLACK);
+
         // build game
-        game = new Game(new ArrayList<>(), new ArrayList<>());
+        game = new Game(new ArrayList<>(), userList);
 
 
         // background scroller scene
@@ -87,7 +93,7 @@ public class Main extends Application {
         scoreboardController = fxmlLoaderScoreBoard.getController();
         scoreboardScene = new Scene(parent2);
 
-        // primaryStage.setScene
+        // countdown scene
         AnchorPane anchorPane = new AnchorPane();
         anchorPane.getChildren().add(label);
         countdownScene = new Scene(anchorPane);
@@ -143,19 +149,19 @@ public class Main extends Application {
             switch (event.getCode()) {
                 case LEFT:
                     if (!leftPressed) {
-                        PO1 = game.moveCharacter("Player1", Direction.LEFT);
-                        playerImageViews.get(0).setRotate(PO1.getCurrentRotation());
-                        playerImageViews.get(0).setX(PO1.getAnchor().getX());
-                        playerImageViews.get(0).setY(PO1.getAnchor().getY());
+                        thisPlayer = game.moveCharacter(thisPlayer.getName(), Direction.LEFT);
+                        playerImageViews.get(0).setRotate(thisPlayer.getCurrentRotation());
+                        playerImageViews.get(0).setX(thisPlayer.getAnchor().getX());
+                        playerImageViews.get(0).setY(thisPlayer.getAnchor().getY());
                         leftPressed = true;
                     }
                     break;
                 case RIGHT:
                     if (!rightPressed) {
-                        PO1 = game.moveCharacter("Player1", Direction.RIGHT);
-                        playerImageViews.get(0).setRotate(PO1.getCurrentRotation());
-                        playerImageViews.get(0).setX(PO1.getAnchor().getX());
-                        playerImageViews.get(0).setY(PO1.getAnchor().getY());
+                        thisPlayer = game.moveCharacter(thisPlayer.getName(), Direction.RIGHT);
+                        playerImageViews.get(0).setRotate(thisPlayer.getCurrentRotation());
+                        playerImageViews.get(0).setX(thisPlayer.getAnchor().getX());
+                        playerImageViews.get(0).setY(thisPlayer.getAnchor().getY());
                         rightPressed = true;
                     }
                     break;
@@ -163,7 +169,7 @@ public class Main extends Application {
         });
 
         //Initialize first frame
-        PO1 = game.moveCharacter("Player1", Direction.RIGHT);
+        thisPlayer = game.moveCharacter(thisPlayer.getName(), Direction.RIGHT);
         obstacleObjects.add(new ObstacleObject(70, 48));
         obstacleObjects.add(new ObstacleObject(70, 48));
         obstacleObjects.add(new ObstacleObject(70, 48));
@@ -187,14 +193,14 @@ public class Main extends Application {
             @Override
             public void handle(long now) {
                 for (int i = 0; i < playerLabels.size(); i++) {
-                    playerLabels.get(i).setTranslateX(PO1.getAnchor().getX());
-                    playerLabels.get(i).setTranslateY(PO1.getAnchor().getY() - 23);
+                    playerLabels.get(i).setTranslateX(thisPlayer.getAnchor().getX());
+                    playerLabels.get(i).setTranslateY(thisPlayer.getAnchor().getY() - 23);
                 }
 
                 game.update();
                 for (ImageView PI : playerImageViews) {
-                    PI.setX(PO1.getAnchor().getX());
-                    PI.setY(PO1.getAnchor().getY());
+                    PI.setX(thisPlayer.getAnchor().getX());
+                    PI.setY(thisPlayer.getAnchor().getY());
                 }
 
                 for (GameObject GO : game.getGameObjects()) {
@@ -224,7 +230,7 @@ public class Main extends Application {
                     obstacleImageViews.get(i).setX(obstacleObjects.get(i).getAnchor().getX());
                     obstacleImageViews.get(i).setY(obstacleObjects.get(i).getAnchor().getY());
                 }
-                distanceLabel.setText("Distance: " + Long.toString(PO1.getDistance()));
+                distanceLabel.setText("Distance: " + Long.toString(thisPlayer.getDistance()));
 
                 // player name labels
                 ArrayList<Label> tempPlayerLabels = new ArrayList<>();

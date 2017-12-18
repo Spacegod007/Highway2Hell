@@ -208,7 +208,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
                 //startGame would mean that the game shows up and starts running, everyone was already connected at this point.
                 //TODO this makes actually no sense because only the host would be starting the game
 
-                hostAdministration.startGame(rmiGameClient.getConnectedClients());
+                //hostAdministration.startGame(rmiGameClient.getConnectedClients());
                 rmiGameClient.gameIsStarted();
             }
         }
