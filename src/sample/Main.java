@@ -378,7 +378,7 @@ public class Main extends Application{
                 ((bootstrapper.Main)game).start(new Stage(), (List<User>)obj);
             } catch (Exception e)
             {
-                e.printStackTrace();
+                e.printStackTrace(); 
             }
         });
     }
