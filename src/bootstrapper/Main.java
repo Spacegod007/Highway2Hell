@@ -20,14 +20,20 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import logic.Gamerule;
 import logic.Score;
 import logic.administration.User;
 import logic.game.*;
+import views.BackgroundController;
+import views.ScoreboardController;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class Main extends Application {
+/**
+ * //todo add java docs
+ */
+public class Main extends Application
+{
     //private PlayerObject thisPlayer = new PlayerObject(new Point(960, 900), "Player1", Color.BLACK);
     private List<ObstacleObject> obstacleObjects = new ArrayList<>();
 

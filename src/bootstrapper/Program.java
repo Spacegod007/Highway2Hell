@@ -8,16 +8,18 @@ import java.rmi.RemoteException;
 import java.util.Properties;
 
 /**
- * Bootstrap class to initiate the entire application
+ * Bootstrap class to initiate the entire client application
  */
 public class Program
 {
+    /**
+     * Main entry point of client application
+     * @param args
+     */
     public static void main(String[] args)
     {
         try
         {
-            //TODO: initiating the entire application from this point
-
             Properties properties = RMILobbyClient.getConnectionProperties();
             System.out.println("properties made");
 

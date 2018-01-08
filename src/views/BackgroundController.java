@@ -1,4 +1,4 @@
-package bootstrapper;
+package views;
 
 import javafx.animation.Animation;
 import javafx.animation.Interpolator;
