@@ -2,12 +2,10 @@ package logic.game;
 
 import javafx.scene.paint.Color;
 
-import java.io.Serializable;
-
 /**
  * A player in the game
  */
-public class PlayerObject extends GameObject implements Serializable
+public class PlayerObject extends GameObject
 {
     /**
      * The name of the player

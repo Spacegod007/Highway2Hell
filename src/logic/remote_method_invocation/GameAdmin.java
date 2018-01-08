@@ -84,4 +84,7 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
         }
         return ret;
     }
+
+    //todo Add game methods
+    //todo this class becomes a pipe to the Game object which will live on the Host(server), clients will call remote methods using this and from here the Game class methods will be used
 }

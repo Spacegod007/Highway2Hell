@@ -23,6 +23,7 @@ import javafx.util.Duration;
 import logic.Score;
 import logic.administration.User;
 import logic.game.*;
+import logic.remote_method_invocation.IGameAdmin;
 import views.BackgroundController;
 import views.ScoreboardController;
 
@@ -42,7 +43,7 @@ public class Main extends Application
     private Image obstacleImage = new Image("objects/barrel_red_down.png");
     private List<ImageView> playerImageViews = new ArrayList<>();
     private List<ImageView> obstacleImageViews = new ArrayList<>();
-    private Game game;
+    private IGameAdmin game;
     private Label distanceLabel = new Label("0");
     private List<Label> playerLabels = new ArrayList<>();
     private ObservableList<Label> observablePlayerLabels;
@@ -83,7 +84,7 @@ public class Main extends Application
         thisPlayer = new PlayerObject(new Point(960, 900), userList.get(0).getUsername(), Color.BLACK);
 
         // build game
-        game = new Game(new ArrayList<>(), userList);
+//        game = new Game(new ArrayList<>(), userList);
 
 
         // background scroller scene
@@ -223,7 +224,7 @@ public class Main extends Application
                                     }
                                 }
                                 scoreboardController.setScore(scores);
-                                game.endGame(scoreboardScene, primaryStage);
+                                game.endGame(); //(scoreboardScene, primaryStage) todo use returnvalue and show scoreboard scene
                                 scores.clear();
                             }
                         }

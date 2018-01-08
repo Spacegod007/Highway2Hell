@@ -1,12 +1,10 @@
 package logic.game;
 
-import javafx.scene.Scene;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 import logic.Gamerule;
 import logic.administration.User;
 
-import java.io.Serializable;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -15,7 +13,7 @@ import java.util.Observer;
 /**
  * A class which manages the game while the game is being played
  */
-public class Game implements Runnable, Observer, Serializable
+public class Game
 {
     /**
      * A list of all game objects including players, obstacles, etc.
@@ -48,7 +46,7 @@ public class Game implements Runnable, Observer, Serializable
         for(User u : users)
         {
             System.out.println(u.getUsername());
-            rmiGameObjects.add(new PlayerObject(new Point(600 + j, 900),u.getUsername(),Color.BLACK));
+            rmiGameObjects.add(new PlayerObject(new Point(600 + j, 900),u.getUsername(), Color.BLACK));
             j = j+50;
         }
         this.gameRules = gameRules;
@@ -81,7 +79,7 @@ public class Game implements Runnable, Observer, Serializable
      */
     public void setGameObjects(List<GameObject> gameObjects)
     {
-        //todo make this useless statement do something, it is called 3 times and doesn't do anything
+        //todo change to set player objects
         this.gameObjects = gameObjects;
     }
 
@@ -158,6 +156,8 @@ public class Game implements Runnable, Observer, Serializable
             }
             index++;
         }
+
+        //todo inform
     }
 
     /**
@@ -170,29 +170,22 @@ public class Game implements Runnable, Observer, Serializable
 
     /**
      * Ends the game
-     * @param newScene to be shown
-     * @param stage to be used
      */
-    public void endGame(Scene newScene, Stage stage)
+    public List<PlayerObject> endGame()
     {
+        List<PlayerObject> returnable = new ArrayList<>();
+        //Scene newScene, Stage stage todo move to client
         for(GameObject GO : getGameObjects())
         {
             if (GO instanceof PlayerObject)
             {
-                stage.setScene(newScene);
-                PlayerObject PO = (PlayerObject)GO;
-                System.out.println("Player: " + PO.getName() + " = " + PO.getDistance() + " Points");
+                //stage.setScene(newScene); todo move to client
+                returnable.add((PlayerObject) GO);
+                //System.out.println("Player: " + PO.getName() + " = " + PO.getDistance() + " Points"); todo move to client
             }
         }
-    }
 
-    @Override
-    public void run() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void update(Observable o, Object arg) {
+        return returnable;
     }
 
     /**
@@ -223,7 +216,8 @@ public class Game implements Runnable, Observer, Serializable
                 }
             }
         }
-        return null;
+
+        throw new IllegalArgumentException("Should never be thrown");
     }
 
     /**
