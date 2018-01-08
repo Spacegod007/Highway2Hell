@@ -5,12 +5,16 @@ import database.Repositories.Repository;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import logic.administration.Administration;
 import logic.administration.InGameAdministration;
@@ -25,28 +29,37 @@ public class SampleMain extends Application
     //region Form controls
     Application game;
     private Stage stage;
-    private FlowPane titleScreen;
+    private Pane titleScreen;
     private Scene titleScene;
-        private ListView<Lobby> listvwLobby = new ListView<>();
-        private ListView<User> listvwPlayers = new ListView<>();
-        private TextField text = new TextField();
-        private Button btnRefresh = new Button();
-        private Button btnHostLobby = new Button();
-        private Button btnJoinLobby = new Button();
-        private Button btnKickPlayer = new Button();
-        private Button btnStartGame = new Button();
-        private Button btnLeaveLobby = new Button();
-    private FlowPane lobbyScreen;
+    private ListView<Lobby> listvwLobby = new ListView<>();
+    private ListView<User> listvwPlayers = new ListView<>();
+    private Label lblEnterLobbyName = new Label();
+    private Label lblLobbiesList = new Label();
+    private Label lblPlayersList = new Label();
+    private Label lblPlayersInLobby = new Label();
+    private Label lblPlayerChooseGame = new Label();
+    private Label lblLobbyName = new Label();
+    private TextField txtLobbyName = new TextField();
+    private Button btnRefresh = new Button();
+    private Button btnHostLobby = new Button();
+    private Button btnJoinLobby = new Button();
+    private Button btnKickPlayer = new Button();
+    private Button btnStartGame = new Button();
+    private Button btnLeaveLobby = new Button();
+    private Button btnAccCharacter = new Button();
+    private AnchorPane lobbyScreen;
     private Scene lobbyScene;
-        private TextField txtEnterName = new TextField();
-        private Button btnLaunchlobbyScreen = new Button();
-        private Label lblErrorMessage = new Label();
-    private FlowPane inLobbyScreen;
+    private Label lblDoIKnowYou;
+    private TextField txtEnterName = new TextField();
+    private Button btnLaunchlobbyScreen = new Button();
+    private Label lblErrorMessage = new Label();
+    private AnchorPane inLobbyScreen;
     private Scene waitingScene;
     private Label waitingMessage = new Label();
-    private FlowPane waitingScreen;
+    private AnchorPane waitingScreen;
     private Scene inLobbyScene;
-        private ListView<User> listvwPlayersInLobby = new ListView<>();
+    private GridPane gridCharacters = new GridPane();
+    private ListView<User> listvwPlayersInLobby = new ListView<>();
     //endregion
     private static Administration administration;
     private final int minCharsName = 4;
@@ -67,23 +80,24 @@ public class SampleMain extends Application
             Repository repo = new Repository(new LocalContext());
             System.out.println("Connection to database: " + Boolean.toString(repo.testConnection()));
             stage = primaryStage;
-            setUpControls();
-            titleScreen = new FlowPane();
-            lobbyScreen = new FlowPane();
-            inLobbyScreen = new FlowPane();
-            waitingScreen = new FlowPane();
+
+            //Initialize Screens
+            titleScreen = new AnchorPane();
+            lobbyScreen = new AnchorPane();
+            inLobbyScreen = new AnchorPane();
+            waitingScreen = new AnchorPane();
             //root = FXMLLoader.load(getClass().getResource("main.fxml"));
             //deze dingen moeten zoals 'root' allebei uit een fxml komen
 
-            titleScreen.getChildren().addAll(txtEnterName, btnLaunchlobbyScreen, lblErrorMessage);
-            lobbyScreen.getChildren().addAll(btnHostLobby, btnJoinLobby, text, listvwLobby, listvwPlayers, btnRefresh);
-            inLobbyScreen.getChildren().addAll(btnLeaveLobby, btnKickPlayer,  btnStartGame, listvwPlayersInLobby);
+            setUpControls();
+
             waitingScreen.getChildren().addAll(waitingMessage);
 
-            titleScene = new Scene(titleScreen, 700, 600);
-            lobbyScene = new Scene(lobbyScreen, 700, 600);
-            inLobbyScene = new Scene(inLobbyScreen, 700, 600);
-            waitingScene = new Scene(waitingScreen, 700,600);
+
+            titleScene = new Scene(titleScreen, 750, 750);
+            lobbyScene = new Scene(lobbyScreen, 1200, 1000);
+            inLobbyScene = new Scene(inLobbyScreen, 1200, 1000);
+            waitingScene = new Scene(waitingScreen, 1200,1000);
 
             primaryStage.setTitle("Highway to Hell");
             primaryStage.setScene(titleScene);
@@ -98,55 +112,179 @@ public class SampleMain extends Application
 
     private void setUpControls()
     {
+        //region Titlescreen
+        titleScreen.setStyle("-fx-background-color:  #800000");
+
+        txtEnterName = new TextField();
+        txtEnterName.setPrefWidth(285);
+        txtEnterName.setPrefHeight(51);
+        txtEnterName.setLayoutX(315);
+        txtEnterName.setLayoutY(205);
+
+        btnLaunchlobbyScreen = new Button();
+        btnLaunchlobbyScreen.setLayoutY(202);
+        btnLaunchlobbyScreen.setLayoutX(131);
+        btnLaunchlobbyScreen.setPrefHeight(51);
+        btnLaunchlobbyScreen.setPrefWidth(135);
+        btnLaunchlobbyScreen.setOnAction(event -> launchlobbyScreen(txtEnterName.getText()));
+        btnLaunchlobbyScreen.setText("Yeah I'm:");
+
+        lblDoIKnowYou = new Label();
+        lblDoIKnowYou.setLayoutX(176);
+        lblDoIKnowYou.setLayoutY(123);
+        lblDoIKnowYou.setPrefWidth(500);
+        lblDoIKnowYou.setPrefHeight(51);
+        lblDoIKnowYou.setText("Do I Know You?");
+        lblDoIKnowYou.setStyle("-fx-font-family: calibri");
+        lblDoIKnowYou.setStyle("-fx-font-size: 48");
+        lblDoIKnowYou.setTextFill(Color.WHITE);
+
+        titleScreen.getChildren().addAll(txtEnterName, btnLaunchlobbyScreen,lblDoIKnowYou);
+
         //region lobbyScreen
-        btnHostLobby.setLayoutX(150);
-        btnHostLobby.setLayoutY(0);
-        btnHostLobby.setPrefWidth(150);
+        btnHostLobby.setLayoutX(718);
+        btnHostLobby.setLayoutY(272);
+        btnHostLobby.setPrefWidth(167);
+        btnHostLobby.setPrefHeight(63);
         btnHostLobby.setText("Host lobby");
         btnHostLobby.setOnAction(event -> hostLobby());
 
-        btnJoinLobby.setLayoutX(300);
-        btnJoinLobby.setLayoutY(0);
-        btnJoinLobby.setPrefWidth(150);
+        btnJoinLobby.setLayoutX(718);
+        btnJoinLobby.setLayoutY(372);
+        btnJoinLobby.setPrefWidth(163);
+        btnJoinLobby.setPrefHeight(63);
         btnJoinLobby.setText("Join lobby");
         btnJoinLobby.setOnAction(event -> joinLobby());
 
-        btnKickPlayer.setLayoutX(0);
-        btnKickPlayer.setLayoutY(550);
-        btnKickPlayer.setPrefWidth(100);
+        btnKickPlayer.setLayoutX(718);
+        btnKickPlayer.setLayoutY(472);
+        btnKickPlayer.setPrefWidth(163);
+        btnKickPlayer.setPrefHeight(63);
         btnKickPlayer.setText("Kick player");
         btnKickPlayer.setOnAction(event -> kickPlayer());
 
-        btnStartGame.setLayoutX(100);
-        btnStartGame.setLayoutY(550);
+        btnRefresh.setLayoutX(718);
+        btnRefresh.setLayoutY(672);
+        btnRefresh.setPrefHeight(63);
+        btnRefresh.setPrefWidth(163);
+        btnRefresh.setText("Refresh");
+
+        listvwLobby.setLayoutX(19);
+        listvwLobby.setLayoutY(132);
+        listvwLobby.setPrefHeight(851);
+        listvwLobby.setPrefWidth(306);
+        listvwLobby.getSelectionModel().selectedItemProperty().addListener(event -> viewLobby(null));
+
+        listvwPlayers.setLayoutX(332);
+        listvwPlayers.setLayoutY(132);
+        listvwPlayers.setPrefWidth(306);
+        listvwPlayers.setPrefHeight(851);
+
+        txtLobbyName.setLayoutX(718);
+        txtLobbyName.setLayoutY(205);
+        txtLobbyName.setPrefHeight(51);
+        txtLobbyName.setPrefWidth(412);
+
+        lblEnterLobbyName.setLayoutY(150);
+        lblEnterLobbyName.setLayoutX(718);
+        lblEnterLobbyName.setPrefHeight(31);
+        lblEnterLobbyName.setPrefWidth(187);
+        lblEnterLobbyName.setText("Enter lobby name: ");
+
+        lblLobbiesList.setLayoutX(19);
+        lblLobbiesList.setLayoutY(80);
+        lblLobbiesList.setPrefWidth(306);
+        lblLobbiesList.setPrefHeight(40);
+        lblLobbiesList.setTextAlignment(TextAlignment.CENTER);
+        lblLobbiesList.setText("Lobbies:");
+        lblLobbiesList.setStyle("-fx-font-size: 18");
+
+        lblPlayersList.setLayoutY(80);
+        lblPlayersList.setLayoutX(332);
+        lblPlayersList.setPrefHeight(40);
+        lblPlayersList.setPrefWidth(306);
+        lblPlayersList.setTextAlignment(TextAlignment.CENTER);
+        lblPlayersList.setText("Players: ");
+        lblPlayersList.setStyle("-fx-font-size: 18");
+
+        lblPlayerChooseGame.setLayoutX(77);
+        lblPlayerChooseGame.setLayoutY(20);
+        lblPlayerChooseGame.setPrefWidth(1000);
+        lblPlayerChooseGame.setPrefHeight(51);
+        lblPlayerChooseGame.setTextAlignment(TextAlignment.CENTER);
+        lblPlayerChooseGame.setStyle("-fx-font-size: 36");
+
+        lobbyScreen.getChildren().addAll(btnHostLobby, btnJoinLobby, txtLobbyName, listvwLobby, listvwPlayers, btnRefresh, lblLobbiesList, lblLobbyName, lblPlayerChooseGame, lblPlayersList);
+        //endregion
+
+        //region InLobbyScreen
+        lblPlayersInLobby.setLayoutX(7);
+        lblPlayersInLobby.setLayoutY(70);
+        lblPlayersInLobby.setPrefHeight(45);
+        lblPlayersInLobby.setPrefWidth(341);
+        lblPlayersInLobby.setTextAlignment(TextAlignment.CENTER);
+        lblPlayersInLobby.setText("Players:");
+        lblPlayersInLobby.setStyle("-fx-font-size: 28");
+
+        listvwPlayersInLobby.setLayoutX(14);
+        listvwPlayersInLobby.setLayoutY(140);
+        listvwPlayersInLobby.setPrefHeight(889);
+        listvwPlayersInLobby.setPrefWidth(327);
+
+        lblLobbyName.setLayoutX(600);
+        lblLobbyName.setLayoutY(17);
+        lblLobbyName.setPrefWidth(246);
+        lblLobbyName.setPrefHeight(58);
+        lblLobbyName.setStyle("-fx-font-size: 36");
+
+        btnKickPlayer.setLayoutX(501);
+        btnKickPlayer.setLayoutY(560);
+        btnKickPlayer.setPrefWidth(100);
+        btnKickPlayer.setPrefHeight(30);
+        btnKickPlayer.setText("Kick player");
+
+        btnStartGame.setLayoutY(525);
+        btnStartGame.setLayoutX(501);
+        btnStartGame.setPrefHeight(30);
         btnStartGame.setPrefWidth(100);
         btnStartGame.setText("Start game");
         btnStartGame.setOnAction(event -> startGame());
 
-        btnRefresh.setLayoutX(0);
-        btnRefresh.setLayoutY(50);
-        btnRefresh.setText("Refresh");
-        btnRefresh.setPrefWidth(100);
+        btnAccCharacter.setLayoutX(501);
+        btnAccCharacter.setLayoutY(475);
+        btnAccCharacter.setPrefWidth(132);
+        btnAccCharacter.setPrefHeight(30);
+        btnAccCharacter.setText("Accep character");
 
-        listvwLobby.setLayoutX(50);
-        listvwLobby.setLayoutY(150);
-        listvwLobby.getSelectionModel().selectedItemProperty().addListener(event -> viewLobby(null));
-
-        listvwPlayers.setLayoutX(300);
-        listvwPlayers.setLayoutY(150);
-
-        text.setLayoutX(0);
-        text.setLayoutY(0);
-        //endregion
-        //region TitleScreen
-        btnLaunchlobbyScreen.setOnAction(event -> launchlobbyScreen(txtEnterName.getText()));
-        //endregion
-        //region InLobbyScreen
-        btnLeaveLobby.setLayoutX(450);
-        btnLeaveLobby.setLayoutY(0);
+        btnLeaveLobby.setLayoutX(7);
+        btnLeaveLobby.setLayoutY(10);
         btnLeaveLobby.setPrefWidth(150);
+        btnLeaveLobby.setPrefHeight(30);
         btnLeaveLobby.setText("Leave lobby");
         btnLeaveLobby.setOnAction(event -> leaveLobby());
+
+        gridCharacters.setLayoutX(501);
+        gridCharacters.setLayoutY(140);
+        gridCharacters.setPrefHeight(296);
+        gridCharacters.setPrefWidth(497);
+        gridCharacters.setGridLinesVisible(true);
+
+        int nrCol = 6;
+        int nrRow = 3;
+
+        for(int i =  0; i < nrCol; i++){
+            ColumnConstraints colum = new ColumnConstraints();
+            colum.setPercentWidth(100.0 / nrCol);
+            gridCharacters.getColumnConstraints().add(colum);
+        }
+
+        for(int x = 0; x < nrRow; x++){
+            RowConstraints row = new RowConstraints();
+            row.setPercentHeight(100.0 / nrRow);
+            gridCharacters.getRowConstraints().add(row);
+        }
+
+        inLobbyScreen.getChildren().addAll(lblLobbyName, gridCharacters, btnAccCharacter, lblPlayersInLobby, btnLeaveLobby, btnKickPlayer,  btnStartGame, listvwPlayersInLobby);
         //endregion
     }
 
@@ -188,6 +326,7 @@ public class SampleMain extends Application
                     lblErrorMessage.setText("Error: username was already taken");
                 });
             }
+            lblPlayerChooseGame.setText(administration.getUser().getUsername() + " Choose a lobby!");
         }
     }
 
@@ -223,10 +362,12 @@ public class SampleMain extends Application
     private void hostLobby(){
         if(!administration.inLobby())
         {
-            if((text.getText()).trim().length()>=minCharsLobbyName)
+            if((txtLobbyName.getText()).trim().length()>=minCharsLobbyName)
             {
-                listvwLobby.getSelectionModel().select(administration.hostLobby(text.getText()));
-                text.clear();
+                listvwLobby.getSelectionModel().select(administration.hostLobby(txtLobbyName.getText()));
+                lblLobbyName.setText(txtLobbyName.getText());
+
+                txtLobbyName.clear();
                 stage.setScene(inLobbyScene);
             }
             else
@@ -255,6 +396,7 @@ public class SampleMain extends Application
                 {
                     stage.setScene(inLobbyScene);
                     btnStartGame.setDisable(true);
+                    lblLobbyName.setText(txtLobbyName.getText());
                 }
                 else
                 {
