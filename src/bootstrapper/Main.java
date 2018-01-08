@@ -280,6 +280,37 @@ public class Main extends Application
         return imageView;
     }
 
+    public Image ChangePlayerImage(Image image, CharacterColor cc)
+    {
+        switch (cc){
+            case black_blue:
+                return new Image("characters/character_black_blue.png");
+            case black_green:
+                return new Image("characters/character_black_green.png");
+            case black_red:
+                return new Image("characters/character_black_red.png");
+            case black_white:
+                return new Image("characters/character_black_white.png");
+            case blonde_blue:
+                return new Image("characters/character_blonde_blue.png");
+            case blonde_green:
+                return new Image("characters/character_blonde_green.png");
+            case blonde_red:
+                return new Image("characters/character_blonde_red.png");
+            case blonde_white:
+                return new Image("characters/character_blonde_white.png");
+            case brown_blue:
+                return new Image("characters/character_brown_blue.png");
+            case brown_green:
+                return new Image("characters/character_brown_green.png");
+            case brown_red:
+                return new Image("characters/character_brown_red.png");
+            case brown_white:
+                return new Image("characters/character_brown_white.png");
+        }
+        return image;
+    }
+
     public static void main(String[] args) {
         //Repository repo = new Repository(new DatabaseContext());
         //System.out.println(Boolean.toString(repo.testConnection()));
