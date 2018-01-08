@@ -28,6 +28,7 @@ import views.ScoreboardController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * //todo add java docs
@@ -39,7 +40,9 @@ public class Main extends Application
 
     //Playerimages for creating characters for later versions that use sockets.
     private Image playerImage = new Image("characters/character_black_blue.png");
-    private Image obstacleImage = new Image("objects/barrel_red_down.png");
+    private Image redBarrelImage = new Image("objects/barrel_red_down.png");
+    private Image blueBarrelImage = new Image("objects/barrel_blue_down.png");
+    private Image rockImage = new Image("objects/rock1.png");
     private List<ImageView> playerImageViews = new ArrayList<>();
     private List<ImageView> obstacleImageViews = new ArrayList<>();
     private Game game;
@@ -71,6 +74,9 @@ public class Main extends Application
 
     //david zn shit
     PlayerObject thisPlayer = null;
+
+    // amount of objects
+    int amountOfObjects = 12;
 
     public void start(Stage primaryStage, List<User> userList) throws Exception {
 
@@ -117,14 +123,13 @@ public class Main extends Application
         // player movement
         playerImageViews.add(addPlayerImageView());
 
-        obstacleImageViews.add(addObstacleImageView());
-        obstacleImageViews.add(addObstacleImageView());
-        obstacleImageViews.add(addObstacleImageView());
-        obstacleImageViews.add(addObstacleImageView());
-        obstacleImageViews.add(addObstacleImageView());
-        obstacleImageViews.add(addObstacleImageView());
-        obstacleImageViews.add(addObstacleImageView());
-        obstacleImageViews.add(addObstacleImageView());
+        for (int i = 0; i < amountOfObjects; i++) {
+            ImageView tempImageView = createObstacleImageView();
+            obstacleImageViews.add(tempImageView);
+            obstacleObjects.add(new ObstacleObject((int)tempImageView.getFitWidth(), (int)tempImageView.getFitHeight()));
+        }
+
+        game.addObstaclesToGame(obstacleObjects);
 
         for (ImageView player : playerImageViews) {
             gamePane.getChildren().add(player);
@@ -176,14 +181,6 @@ public class Main extends Application
 
         //Initialize first frame
         thisPlayer = game.moveCharacter(thisPlayer.getName(), Direction.RIGHT);
-        obstacleObjects.add(new ObstacleObject(70, 48));
-        obstacleObjects.add(new ObstacleObject(70, 48));
-        obstacleObjects.add(new ObstacleObject(70, 48));
-        obstacleObjects.add(new ObstacleObject(70, 48));
-        obstacleObjects.add(new ObstacleObject(70, 48));
-        obstacleObjects.add(new ObstacleObject(70, 48));
-        obstacleObjects.add(new ObstacleObject(70, 48));
-        obstacleObjects.add(new ObstacleObject(70, 48));
 
         // distance labelfor player score
         distanceLabel.setFont(new Font("Calibri", 22));
@@ -232,7 +229,7 @@ public class Main extends Application
 
                 obstacleObjects = game.returnObstacleObjects();
 
-                for (int i = 0; i < obstacleObjects.size(); i++) {
+                for (int i = 0; i < obstacleObjects.size() && i < obstacleImageViews.size(); i++) {
                     obstacleImageViews.get(i).setX(obstacleObjects.get(i).getAnchor().getX());
                     obstacleImageViews.get(i).setY(obstacleObjects.get(i).getAnchor().getY());
                 }
@@ -269,14 +266,42 @@ public class Main extends Application
         return imageView;
     }
 
-    private ImageView addObstacleImageView() {
-        ImageView imageView = new ImageView();
-        imageView.setImage(obstacleImage);
-        imageView.setFitWidth(70);
-        imageView.setFitHeight(48);
+    private ImageView createObstacleImageView() {
+        ImageView imageView = getRandomObjectSprite();
         imageView.setPreserveRatio(true);
         imageView.setSmooth(true);
         imageView.setCache(true);
+        return imageView;
+    }
+
+    private ImageView getRandomObjectSprite()
+    {
+        ImageView imageView = new ImageView();
+
+        Random random = new Random();
+        int randomNumber = random.nextInt(3) + 1;
+        switch (randomNumber) {
+            case 1:
+                //Orange Barrel
+                imageView.setImage(redBarrelImage);
+                imageView.setFitWidth(70);
+                imageView.setFitHeight(48);
+                break;
+            case 2:
+                //Blue Barrel
+                imageView.setImage(blueBarrelImage);
+                imageView.setFitWidth(70);
+                imageView.setFitHeight(48);
+                break;
+            case 3:
+                //Rock
+                imageView.setImage(rockImage);
+                imageView.setFitWidth(89);
+                imageView.setFitHeight(72);
+                break;
+            default:
+                break;
+        }
         return imageView;
     }
 

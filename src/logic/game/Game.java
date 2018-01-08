@@ -20,7 +20,7 @@ public class Game implements Runnable, Observer, Serializable
     /**
      * A list of all game objects including players, obstacles, etc.
      */
-    private List<GameObject> gameObjects;
+    private List<GameObject> gameObjects = new ArrayList<GameObject>();
 
     /**
      * A list of the currently bound gamerules
@@ -31,11 +31,6 @@ public class Game implements Runnable, Observer, Serializable
      * Determines the speed at which the game scrolls
      */
     private double scrollSpeed = 1.5;
-
-    /**
-     * The amount of obstacles in the game
-     */
-    private int obstacleCount = 8;
 
     /**
      * Constructs the game object
@@ -52,18 +47,11 @@ public class Game implements Runnable, Observer, Serializable
             j = j+50;
         }
         this.gameRules = gameRules;
-        gameObjects = rmiGameObjects;
+        gameObjects.addAll(rmiGameObjects);
 
         //Add players here
         //gameObjects.add(new PlayerObject(new Point(600, 900),name, Color.BLACK));
         //gameObjects.add(new PlayerObject(new Point(540, 900),"Player2", Color.BLACK));
-
-        //Adds obstacles
-        for (int i=0; i<obstacleCount; i++)
-        {
-            gameObjects.add(new ObstacleObject(70, 48));
-            System.out.println("item " + i + " added");
-        }
     }
 
     /**
@@ -82,7 +70,7 @@ public class Game implements Runnable, Observer, Serializable
     public void setGameObjects(List<GameObject> gameObjects)
     {
         //todo make this useless statement do something, it is called 3 times and doesn't do anything
-        this.gameObjects = gameObjects;
+        //this.gameObjects = gameObjects;
     }
 
     /**
@@ -153,7 +141,7 @@ public class Game implements Runnable, Observer, Serializable
                 ObstacleObject OO = (ObstacleObject) GO;
                 if(OO.getAnchor().getY() + (OO.getHeight()) > 1000)
                 {
-                    gameObjects.set(index, new ObstacleObject(70, 48));
+                    gameObjects.set(index, new ObstacleObject(OO.getWidth(), OO.getHeight()));
                 }
             }
             index++;
@@ -261,5 +249,9 @@ public class Game implements Runnable, Observer, Serializable
         }
 
         return listToReturn;
+    }
+
+    public void addObstaclesToGame(List<ObstacleObject> obstacleObjects) {
+        gameObjects.addAll(obstacleObjects);
     }
 }
