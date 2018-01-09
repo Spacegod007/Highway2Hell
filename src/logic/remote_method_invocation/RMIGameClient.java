@@ -23,6 +23,8 @@ import java.util.Properties;
 public class RMIGameClient extends Observable implements Serializable
 {
     private User user;
+    private long sessionId;
+
     public User getUser(){return user;}
 
     /**
@@ -168,7 +170,7 @@ public class RMIGameClient extends Observable implements Serializable
         try
         {
             System.out.println("CONNECTED!");
-            gameAdmin.connect(this);
+            sessionId = gameAdmin.connect(user);
         } catch (RemoteException e)
         {
             e.printStackTrace();
@@ -187,11 +189,11 @@ public class RMIGameClient extends Observable implements Serializable
         }
     }
 
-    public List<RMIGameClient> getConnectedClients()
+    public List<User> getConnectedClients()
     {
         try
         {
-            return gameAdmin.getConnectedClients();
+            return gameAdmin.getPlayerlist();
         } catch (RemoteException e)
         {
             e.printStackTrace();

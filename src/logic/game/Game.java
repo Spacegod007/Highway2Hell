@@ -4,10 +4,7 @@ import javafx.scene.paint.Color;
 import logic.Gamerule;
 import logic.administration.User;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 /**
  * A class which manages the game while the game is being played
@@ -17,7 +14,7 @@ public class Game
     /**
      * A list of all game objects including players, obstacles, etc.
      */
-    private List<GameObject> gameObjects;
+    private List<GameObject> gameObjects = new ArrayList<GameObject>();
 
     /**
      * A list of the currently bound gamerules
@@ -32,11 +29,14 @@ public class Game
     /**
      * The amount of obstacles in the game
      */
-    private int obstacleCount = 8;
+    private int obstacleCount = 1;
 
     private Timer timer;
+    private boolean timerRunning = false;
 
     private final Object synchronizer;
+
+    private int amountOfObstacleObjects = 8;
 
     /**
      * Constructs the game object
@@ -51,11 +51,12 @@ public class Game
         for(User u : users)
         {
             System.out.println(u.getUsername());
-            rmiGameObjects.add(new PlayerObject(new Point(600 + j, 900),u.getUsername(), Color.BLACK));
+            rmiGameObjects.add(new PlayerObject(new Point(600 + j, 900),new Size(78, 54),u.getUsername(), Color.BLACK));
             j = j+50;
         }
         this.gameRules = gameRules;
         gameObjects = rmiGameObjects;
+        addObstacles();
 
         //Add players here
         //gameObjects.add(new PlayerObject(new Point(600, 900),name, Color.BLACK));
@@ -64,24 +65,38 @@ public class Game
         //Adds obstacles
         for (int i=0; i<obstacleCount; i++)
         {
-            gameObjects.add(new ObstacleObject(70, 48));
+            gameObjects.add(new ObstacleObject());
             System.out.println("item " + i + " added");
         }
 
         timer = new Timer();
     }
 
+    private void addObstacles()
+    {
+        for (int i = 0; i < amountOfObstacleObjects; i++)
+        {
+            gameObjects.add(new ObstacleObject());
+        }
+    }
+
     public void startGame()
     {
-        timer.cancel();
-        timer.scheduleAtFixedRate(new TimerTask()
+        synchronized (synchronizer)
         {
-            @Override
-            public void run()
+            if (!timerRunning)
             {
-                update();
+                timerRunning = true;
+                timer.scheduleAtFixedRate(new TimerTask()
+                {
+                    @Override
+                    public void run()
+                    {
+                        update();
+                    }
+                }, 250, 30);
             }
-        }, 0, 30);
+        }
     }
 
     /**
@@ -182,7 +197,7 @@ public class Game
                     ObstacleObject OO = (ObstacleObject) GO;
                     if (OO.getAnchor().getY() + (OO.getHeight()) > 1000)
                     {
-                        gameObjects.set(index, new ObstacleObject(70, 48));
+                        gameObjects.set(index, new ObstacleObject());
                     }
                 }
                 index++;

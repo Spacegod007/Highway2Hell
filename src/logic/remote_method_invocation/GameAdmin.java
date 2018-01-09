@@ -9,15 +9,24 @@ import logic.game.*;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * the server-side (host) of the game administration
  */
 public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
 {
-    private List<RMIGameClient> clientsConnected;
+    private AtomicLong nextSessionId = new AtomicLong(0);
+
+    private Map<Long, User> sessionMap;
+
+    private List<User> playerlist;
     private Lobby lobby = null;
+
+    private Object connectSynchronizer;
 
     public void setLobby(Lobby lobby)
     {
@@ -26,11 +35,11 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
 
     public int getPlayersConnected()
     {
-        return clientsConnected.size();
+        return playerlist.size();
     }
-    public List<RMIGameClient> getConnectedClients()
+    public List<User> getPlayerlist()
     {
-        return clientsConnected;
+        return playerlist;
     }
 
     /**
@@ -48,22 +57,29 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
      */
     public GameAdmin(IRemotePublisherForDomain publisher, Game game) throws RemoteException
     {
-        clientsConnected = new ArrayList<>();
+        connectSynchronizer = new Object();
+        playerlist = new ArrayList<>();
+        sessionMap = new HashMap<>();
         this.rpd = publisher;
         rpd.registerProperty("playersconnected");
         rpd.registerProperty("gameIsStarted");
         this.game = game;
     }
 
-    public void connect(RMIGameClient client)
+    public long connect(User client)
     {
-        clientsConnected.add(client);
-        try
+        synchronized (connectSynchronizer)
         {
-            rpd.inform("playersconnected", null, clientsConnected.size());
-        } catch (RemoteException e)
-        {
-            e.printStackTrace();
+            sessionMap.put(nextSessionId.incrementAndGet(), client);
+            playerlist.add(client);
+            try
+            {
+                rpd.inform("playersconnected", null, playerlist.size());
+            } catch (RemoteException e)
+            {
+                e.printStackTrace();
+            }
+            return nextSessionId.get();
         }
     }
 
@@ -71,7 +87,7 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
     {
         try
         {
-            rpd.inform("gameIsStarted", null, toUserList(clientsConnected));
+            rpd.inform("gameIsStarted", null, playerlist);
             rpd.registerProperty("gameState");
         } catch (RemoteException e)
         {
@@ -119,16 +135,6 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
     public void startGame()
     {
         game.startGame();
-    }
-
-    private List<User> toUserList(List<RMIGameClient> list)
-    {
-        List<User> ret = new ArrayList<>();
-        for(RMIGameClient c : list)
-        {
-            ret.add(c.getUser());
-        }
-        return ret;
     }
 
     //todo Add game methods

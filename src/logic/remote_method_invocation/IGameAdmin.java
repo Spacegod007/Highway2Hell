@@ -2,6 +2,7 @@ package logic.remote_method_invocation;
 
 import logic.Gamerule;
 import logic.administration.Lobby;
+import logic.administration.User;
 import logic.game.Direction;
 import logic.game.GameObject;
 import logic.game.ObstacleObject;
@@ -16,10 +17,10 @@ import java.util.List;
  */
 public interface IGameAdmin extends Remote
 {
-    void connect(RMIGameClient client) throws RemoteException;
+    long connect(User client) throws RemoteException;
     int getPlayersConnected() throws RemoteException;
     void setLobby(Lobby lobby) throws RemoteException;
-    List<RMIGameClient> getConnectedClients() throws RemoteException;
+    List<User> getPlayerlist() throws RemoteException;
     void gameIsStarted() throws RemoteException;
 
     //todo add Game methods

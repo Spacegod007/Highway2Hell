@@ -41,7 +41,9 @@ public class Main extends Application
 
     //Playerimages for creating characters for later versions that use sockets.
     private Image playerImage = new Image("characters/character_black_blue.png");
-    private Image obstacleImage = new Image("objects/barrel_red_down.png");
+    private Image redBarrelImage = new Image("objects/barrel_red_down.png");
+    private Image blueBarrelImage = new Image("objects/barrel_blue_down.png");
+    private Image rockImage = new Image("objects/rock1.png");
     private List<ImageView> playerImageViews = new ArrayList<>();
     private List<ImageView> obstacleImageViews = new ArrayList<>();
     private IGameAdmin game;
@@ -87,7 +89,7 @@ public class Main extends Application
         primaryStage.setHeight(1000);
 
         //TODO set right player
-        thisPlayer = new PlayerObject(new Point(960, 900), userList.get(0).getUsername(), Color.BLACK);
+        thisPlayer = new PlayerObject(new Point(960, 900),new Size(78, 54), userList.get(0).getUsername(), Color.BLACK);
 
         // build game
 //        game = new Game(new ArrayList<>(), userList);
@@ -125,14 +127,11 @@ public class Main extends Application
         // player movement
         playerImageViews.add(addPlayerImageView());
 
-        obstacleImageViews.add(addObstacleImageView());
-        obstacleImageViews.add(addObstacleImageView());
-        obstacleImageViews.add(addObstacleImageView());
-        obstacleImageViews.add(addObstacleImageView());
-        obstacleImageViews.add(addObstacleImageView());
-        obstacleImageViews.add(addObstacleImageView());
-        obstacleImageViews.add(addObstacleImageView());
-        obstacleImageViews.add(addObstacleImageView());
+        for (ObstacleObject OO : game.returnObstacleObjects())
+        {
+            obstacleObjects.add(OO);
+            obstacleImageViews.add(addObstacleImageView(OO));
+        }
 
         for (ImageView player : playerImageViews) {
             gamePane.getChildren().add(player);
@@ -199,14 +198,6 @@ public class Main extends Application
 
         //Initialize first frame
         thisPlayer = game.moveCharacter(thisPlayer.getName(), Direction.RIGHT);
-        obstacleObjects.add(new ObstacleObject(70, 48));
-        obstacleObjects.add(new ObstacleObject(70, 48));
-        obstacleObjects.add(new ObstacleObject(70, 48));
-        obstacleObjects.add(new ObstacleObject(70, 48));
-        obstacleObjects.add(new ObstacleObject(70, 48));
-        obstacleObjects.add(new ObstacleObject(70, 48));
-        obstacleObjects.add(new ObstacleObject(70, 48));
-        obstacleObjects.add(new ObstacleObject(70, 48));
 
         // distance labelfor player score
         distanceLabel.setFont(new Font("Calibri", 22));
@@ -322,11 +313,26 @@ public class Main extends Application
         return imageView;
     }
 
-    private ImageView addObstacleImageView() {
+    private ImageView addObstacleImageView(ObstacleObject OO) {
         ImageView imageView = new ImageView();
-        imageView.setImage(obstacleImage);
-        imageView.setFitWidth(70);
-        imageView.setFitHeight(48);
+        System.out.println("Obstacle Added: " + OO.getType() + " " + OO.getWidth() + " " + OO.getHeight());
+        imageView.setFitWidth(OO.getWidth());
+        imageView.setFitHeight(OO.getHeight());
+        switch(OO.getType())
+        {
+            case RED_BARREL:
+                imageView.setImage(redBarrelImage);
+                break;
+            case BLUE_BARREL:
+                imageView.setImage(blueBarrelImage);
+                break;
+            case ROCK:
+                imageView.setImage(rockImage);
+                break;
+            default:
+                break;
+        }
+
         imageView.setPreserveRatio(true);
         imageView.setSmooth(true);
         imageView.setCache(true);

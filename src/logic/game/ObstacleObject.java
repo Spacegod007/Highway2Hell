@@ -1,5 +1,6 @@
 package logic.game;
 
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -7,23 +8,25 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class ObstacleObject extends GameObject
 {
+    private ObstacleType type;
+
     /**
      * Constructs a new obstacle object
-     * @param width of the object
-     * @param height of the object
+     *
      */
-    public ObstacleObject(int width, int height)
+    public ObstacleObject()
     {
-        super(new Point(ThreadLocalRandom.current().nextInt(0, 1150  + 1), ThreadLocalRandom.current().nextInt(-500, 1)), new Size(width, height));
+        super(new Point(ThreadLocalRandom.current().nextInt(0, 1150  + 1), ThreadLocalRandom.current().nextInt(-500, 1)), new Size(1, 1));
+        generateRandomObjectType();
     }
 
     /**
      * Gets the width of the object
      * @return the width of the object
      */
-    public int getWidth()
+    public double getWidth()
     {
-        return (int) getSize().getWidth();
+        return getSize().getWidth();
     }
 
     /**
@@ -39,9 +42,9 @@ public class ObstacleObject extends GameObject
      * Gets the height of the object
      * @return the height of the object
      */
-    public int getHeight()
+    public double getHeight()
     {
-        return (int) getSize().getHeight();
+        return getSize().getHeight();
     }
 
     /**
@@ -51,5 +54,43 @@ public class ObstacleObject extends GameObject
     public void setHeight(int height)
     {
         getSize().setHeight(height);
+    }
+
+    public ObstacleType getType()
+    {
+        return type;
+    }
+
+    private void generateRandomObjectType()
+    {
+        Random random = new Random(System.currentTimeMillis());
+        int randomNumber = random.nextInt(3);
+        switch (randomNumber)
+        {
+            case 0:
+                type = ObstacleType.RED_BARREL;
+                setWidth(70);
+                setHeight(48);
+                break;
+            case 1:
+                type = ObstacleType.BLUE_BARREL;
+                setWidth(70);
+                setHeight(48);
+                break;
+            case 2:
+                type = ObstacleType.ROCK;
+                setWidth(89);
+                setHeight(72);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public enum ObstacleType
+    {
+        RED_BARREL,
+        BLUE_BARREL,
+        ROCK
     }
 }

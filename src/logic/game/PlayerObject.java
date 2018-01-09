@@ -38,9 +38,9 @@ public class PlayerObject extends GameObject
      * @param name of the player
      * @param color of the player
      */
-    public PlayerObject(Point anchor, String name, Color color)
+    public PlayerObject(Point anchor, Size size, String name, Color color)
     {
-        super(anchor, new Size(78, 54));
+        super(anchor, size);
         this.name = name;
         this.color = color.toString();
     }
