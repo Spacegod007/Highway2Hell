@@ -27,6 +27,7 @@ import logic.remote_method_invocation.IGameAdmin;
 import views.BackgroundController;
 import views.ScoreboardController;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,6 +74,11 @@ public class Main extends Application
     //david zn shit
     PlayerObject thisPlayer = null;
 
+    public Main(IGameAdmin game)
+    {
+        this.game = game;
+    }
+
     public void start(Stage primaryStage, List<User> userList) throws Exception {
 
         // set primary stage size and name
@@ -114,7 +120,8 @@ public class Main extends Application
         doTime(primaryStage);
     }
 
-    private void InitializeGame(Stage primaryStage) {
+    private void InitializeGame(Stage primaryStage) throws RemoteException
+    {
         // player movement
         playerImageViews.add(addPlayerImageView());
 
@@ -156,20 +163,35 @@ public class Main extends Application
             switch (event.getCode()) {
                 case LEFT:
                     if (!leftPressed) {
-                        thisPlayer = game.moveCharacter(thisPlayer.getName(), Direction.LEFT);
-                        playerImageViews.get(0).setRotate(thisPlayer.getCurrentRotation());
-                        playerImageViews.get(0).setX(thisPlayer.getAnchor().getX());
-                        playerImageViews.get(0).setY(thisPlayer.getAnchor().getY());
-                        leftPressed = true;
+                        try
+                        {
+                            thisPlayer = game.moveCharacter(thisPlayer.getName(), Direction.LEFT);
+                            playerImageViews.get(0).setRotate(thisPlayer.getCurrentRotation());
+                            playerImageViews.get(0).setX(thisPlayer.getAnchor().getX());
+                            playerImageViews.get(0).setY(thisPlayer.getAnchor().getY());
+                            leftPressed = true;
+                        }
+                        catch (RemoteException e)
+                        {
+                            e.printStackTrace();
+                        }
+
                     }
                     break;
                 case RIGHT:
                     if (!rightPressed) {
-                        thisPlayer = game.moveCharacter(thisPlayer.getName(), Direction.RIGHT);
-                        playerImageViews.get(0).setRotate(thisPlayer.getCurrentRotation());
-                        playerImageViews.get(0).setX(thisPlayer.getAnchor().getX());
-                        playerImageViews.get(0).setY(thisPlayer.getAnchor().getY());
-                        rightPressed = true;
+                        try
+                        {
+                            thisPlayer = game.moveCharacter(thisPlayer.getName(), Direction.RIGHT);
+                            playerImageViews.get(0).setRotate(thisPlayer.getCurrentRotation());
+                            playerImageViews.get(0).setX(thisPlayer.getAnchor().getX());
+                            playerImageViews.get(0).setY(thisPlayer.getAnchor().getY());
+                            rightPressed = true;
+                        }
+                        catch (RemoteException e)
+                        {
+                            e.printStackTrace();
+                        }
                     }
                     break;
             }
@@ -204,34 +226,58 @@ public class Main extends Application
                     playerLabels.get(i).setTranslateY(thisPlayer.getAnchor().getY() - 23);
                 }
 
-                game.update();
+//                game.update(); todo move to server-side
                 for (ImageView PI : playerImageViews) {
                     PI.setX(thisPlayer.getAnchor().getX());
                     PI.setY(thisPlayer.getAnchor().getY());
                 }
 
-                for (GameObject GO : game.getGameObjects()) {
-                    //Check if the game is allowed to end.
-                    if (GO.getClass() == PlayerObject.class) {
-                        if (((PlayerObject) GO).getisDead()) {
-                            playersDead++;
-                            if (playersDead == players) {
-                                ArrayList<Score> scores = new ArrayList<>();
-                                for (GameObject tempGO : game.getGameObjects()) {
-                                    if (tempGO.getClass() == PlayerObject.class) {
-                                        PlayerObject PO = (PlayerObject) GO;
-                                        scores.add(new Score(PO.getName(), (double) PO.getDistance()));
+                try
+                {
+                    for (GameObject GO : game.getGameObjects()) {
+                        //Check if the game is allowed to end.
+                        if (GO.getClass() == PlayerObject.class) {
+                            if (((PlayerObject) GO).getisDead()) {
+                                playersDead++;
+                                if (playersDead == players) {
+                                    ArrayList<Score> scores = new ArrayList<>();
+                                    try
+                                    {
+                                        for (GameObject tempGO : game.getGameObjects()) {
+                                            if (tempGO.getClass() == PlayerObject.class) {
+                                                PlayerObject PO = (PlayerObject) GO;
+                                                scores.add(new Score(PO.getName(), (double) PO.getDistance()));
+                                            }
+                                        }
+                                    } catch (RemoteException e)
+                                    {
+                                        e.printStackTrace();
                                     }
+                                    scoreboardController.setScore(scores);
+                                    try
+                                    {
+                                        game.endGame(); //(scoreboardScene, primaryStage) todo use returnvalue and show scoreboard scene
+                                    } catch (RemoteException e)
+                                    {
+                                        e.printStackTrace();
+                                    }
+                                    scores.clear();
                                 }
-                                scoreboardController.setScore(scores);
-                                game.endGame(); //(scoreboardScene, primaryStage) todo use returnvalue and show scoreboard scene
-                                scores.clear();
                             }
                         }
                     }
+                } catch (RemoteException e)
+                {
+                    e.printStackTrace();
                 }
 
-                obstacleObjects = game.returnObstacleObjects();
+                try
+                {
+                    obstacleObjects = game.returnObstacleObjects();
+                } catch (RemoteException e)
+                {
+                    e.printStackTrace();
+                }
 
                 for (int i = 0; i < obstacleObjects.size(); i++) {
                     obstacleImageViews.get(i).setX(obstacleObjects.get(i).getAnchor().getX());
@@ -242,12 +288,18 @@ public class Main extends Application
                 // player name labels
                 ArrayList<Label> tempPlayerLabels = new ArrayList<>();
                 int index = 0;
-                for (PlayerObject player : game.returnPlayerObjects()) {
-                    Label tempPlayerLabel = new Label(player.getName());
-                    tempPlayerLabel.setTranslateX(player.getAnchor().getX());
-                    tempPlayerLabel.setTranslateY(player.getAnchor().getY());
-                    tempPlayerLabels.add(index, tempPlayerLabel);
-                    index++;
+                try
+                {
+                    for (PlayerObject player : game.returnPlayerObjects()) {
+                        Label tempPlayerLabel = new Label(player.getName());
+                        tempPlayerLabel.setTranslateX(player.getAnchor().getX());
+                        tempPlayerLabel.setTranslateY(player.getAnchor().getY());
+                        tempPlayerLabels.add(index, tempPlayerLabel);
+                        index++;
+                    }
+                } catch (RemoteException e)
+                {
+                    e.printStackTrace();
                 }
                 observablePlayerLabels = FXCollections.observableArrayList(tempPlayerLabels);
             }
@@ -319,7 +371,8 @@ public class Main extends Application
         //repo.closeConnection();
     }
 
-    private void getPlayerLabels() {
+    private void getPlayerLabels() throws RemoteException
+    {
         int index = 0;
         for (PlayerObject player : game.returnPlayerObjects()) {
             Label tempPlayerLabel = new Label(player.getName());
@@ -345,7 +398,15 @@ public class Main extends Application
                 label.setText(" " + seconds.toString());
                 if(seconds <= 0){
                     primaryStage.setScene(scene);
-                    InitializeGame(primaryStage);
+                    try
+                    {
+                        InitializeGame(primaryStage);
+                        game.startGame();
+                    }
+                    catch (RemoteException e)
+                    {
+                        e.printStackTrace();
+                    }
                     time.stop();
                 }
             }

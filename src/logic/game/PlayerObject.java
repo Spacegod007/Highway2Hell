@@ -197,6 +197,9 @@ public class PlayerObject extends GameObject
      */
     public boolean checkForObstacleCollision(ObstacleObject obstacleObject)
     {
+        //PO = PlayerObject
+        //OO = ObstacleObject
+
         double POX = this.getAnchor().getX();
         double POY = this.getAnchor().getY();
         double POXWithWidth = POX + getSize().getWidth();

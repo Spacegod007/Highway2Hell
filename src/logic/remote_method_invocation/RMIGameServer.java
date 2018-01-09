@@ -1,12 +1,14 @@
 package logic.remote_method_invocation;
 
 import logic.fontyspublisher.RemotePublisher;
+import logic.game.Game;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
 
 public class RMIGameServer
 {
@@ -25,8 +27,9 @@ public class RMIGameServer
 
     /**
      * Constructs the RMI server
+     * @param game
      */
-    public RMIGameServer()
+    public RMIGameServer(Game game)
     {
 
         // Print port number for registry
@@ -36,7 +39,7 @@ public class RMIGameServer
         try
         {
             publisher = new RemotePublisher();
-            gameAdmin = new GameAdmin(publisher);
+            gameAdmin = new GameAdmin(publisher, game);
             System.out.println("Server: game created");
         }
         catch (RemoteException ex)

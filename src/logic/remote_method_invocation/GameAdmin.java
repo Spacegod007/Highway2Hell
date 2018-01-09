@@ -1,8 +1,10 @@
 package logic.remote_method_invocation;
 
+import logic.Gamerule;
 import logic.administration.Lobby;
 import logic.administration.User;
 import logic.fontyspublisher.IRemotePublisherForDomain;
+import logic.game.*;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -14,7 +16,6 @@ import java.util.List;
  */
 public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
 {
-
     private List<RMIGameClient> clientsConnected;
     private Lobby lobby = null;
 
@@ -37,18 +38,21 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
      */
     private IRemotePublisherForDomain rpd;
 
+    private Game game;
+
 
     /**
      * Constructs a GameAdmin object
      * @param publisher to publish the host's data to the clients
      * @throws RemoteException on errors in the connection
      */
-    public GameAdmin(IRemotePublisherForDomain publisher) throws RemoteException
+    public GameAdmin(IRemotePublisherForDomain publisher, Game game) throws RemoteException
     {
         clientsConnected = new ArrayList<>();
         this.rpd = publisher;
         rpd.registerProperty("playersconnected");
         rpd.registerProperty("gameIsStarted");
+        this.game = game;
     }
 
     public void connect(RMIGameClient client)
@@ -73,6 +77,48 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
         {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public List<GameObject> getGameObjects()
+    {
+        return game.getGameObjects();
+    }
+
+    @Override
+    public List<Gamerule> getGameRules()
+    {
+        return game.getGamerules();
+    }
+
+    @Override
+    public List<PlayerObject> endGame()
+    {
+        return game.endGame();
+    }
+
+    @Override
+    public PlayerObject moveCharacter(String playername, Direction direction)
+    {
+        return game.moveCharacter(playername, direction);
+    }
+
+    @Override
+    public List<PlayerObject> returnPlayerObjects()
+    {
+        return game.returnPlayerObjects();
+    }
+
+    @Override
+    public List<ObstacleObject> returnObstacleObjects()
+    {
+        return game.returnObstacleObjects();
+    }
+
+    @Override
+    public void startGame()
+    {
+        game.startGame();
     }
 
     private List<User> toUserList(List<RMIGameClient> list)

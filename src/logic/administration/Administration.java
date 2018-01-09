@@ -2,6 +2,7 @@ package logic.administration;
 
 import javafx.collections.FXCollections;
 import logic.fontyspublisher.IRemotePropertyListener;
+import logic.remote_method_invocation.IGameAdmin;
 import logic.remote_method_invocation.RMIGameClient;
 import logic.remote_method_invocation.RMILobbyClient;
 import sample.SampleMain;
@@ -53,6 +54,11 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
         {
             ex.printStackTrace();
         }
+    }
+
+    public IGameAdmin getGameAdmin()
+    {
+        return rmiGameClient.getGameAdmin();
     }
 
     /**

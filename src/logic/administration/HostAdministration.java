@@ -1,6 +1,7 @@
 package logic.administration;
 
 import bootstrapper.Main;
+import logic.game.Game;
 import logic.remote_method_invocation.RMIGameClient;
 import logic.remote_method_invocation.RMIGameServer;
 
@@ -12,7 +13,7 @@ import java.util.List;
 /**
  * SampleMain entry point to start the game server as host
  */
-public class HostAdministration extends UnicastRemoteObject implements Runnable
+public class HostAdministration implements Runnable
 {
 
     /**
@@ -47,7 +48,7 @@ public class HostAdministration extends UnicastRemoteObject implements Runnable
     @Override
     public void run()
     {
-        server = new RMIGameServer();
+        server = new RMIGameServer(new Game(new ArrayList<>(), lobby.getPlayers()));
         clientsConnected = new ArrayList<>();
     }
 
@@ -58,7 +59,7 @@ public class HostAdministration extends UnicastRemoteObject implements Runnable
     {
         this.clientsConnected = clientsConnected;
         System.out.println("Start game");
-        gameApplication = new Main();
+        //gameApplication = new Main();
         for(RMIGameClient client : clientsConnected)
         {
             System.out.println(client.toString());

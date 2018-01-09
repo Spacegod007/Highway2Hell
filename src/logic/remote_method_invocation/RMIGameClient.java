@@ -271,4 +271,9 @@ public class RMIGameClient extends Observable implements Serializable
             e.printStackTrace();
         }
     }
+
+    public IGameAdmin getGameAdmin()
+    {
+        return gameAdmin;
+    }
 }

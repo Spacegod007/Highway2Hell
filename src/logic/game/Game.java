@@ -4,11 +4,10 @@ import javafx.scene.paint.Color;
 import logic.Gamerule;
 import logic.administration.User;
 
-import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * A class which manages the game while the game is being played
@@ -35,12 +34,18 @@ public class Game
      */
     private int obstacleCount = 8;
 
+    private Timer timer;
+
+    private final Object synchronizer;
+
     /**
      * Constructs the game object
      * @param gameRules the gamerules that are bound to this current game
      */
     public Game(List<Gamerule> gameRules, List<User> users)
     {
+        synchronizer = new Object();
+
         List<GameObject> rmiGameObjects = new ArrayList<>();
         int j = 0;
         for(User u : users)
@@ -62,6 +67,21 @@ public class Game
             gameObjects.add(new ObstacleObject(70, 48));
             System.out.println("item " + i + " added");
         }
+
+        timer = new Timer();
+    }
+
+    public void startGame()
+    {
+        timer.cancel();
+        timer.scheduleAtFixedRate(new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                update();
+            }
+        }, 0, 30);
     }
 
     /**
@@ -80,7 +100,11 @@ public class Game
     public void setGameObjects(List<GameObject> gameObjects)
     {
         //todo change to set player objects
-        this.gameObjects = gameObjects;
+
+        synchronized (synchronizer)
+        {
+            this.gameObjects = gameObjects;
+        }
     }
 
     /**
@@ -89,7 +113,10 @@ public class Game
      */
     public List<Gamerule> getGamerules()
     {
-        return gameRules;
+        synchronized (synchronizer)
+        {
+            return gameRules;
+        }
     }
 
     /**
@@ -98,7 +125,10 @@ public class Game
      */
     public void setGamerules(List<Gamerule> gameRules)
     {
-        this.gameRules = gameRules;
+        synchronized (synchronizer)
+        {
+            this.gameRules = gameRules;
+        }
     }
 
     /**
@@ -106,58 +136,58 @@ public class Game
      */
     public void update()
     {
-        int index = 0;
-        //Method for scrolling the screen.
-        for(GameObject GO : getGameObjects())
+        synchronized (synchronizer)
         {
-            //GO scroll.
-            if (GO instanceof ObstacleObject)
+            int index = 0;
+            //Method for scrolling the screen.
+            for (GameObject GO : getGameObjects())
             {
-                GO.setAnchor(new Point(GO.getAnchor().getX(), GO.getAnchor().getY() + scrollSpeed * 3));
-            }
-            else
-            {
-                GO.setAnchor(new Point(GO.getAnchor().getX(), GO.getAnchor().getY() + scrollSpeed));
-            }
-
-            //Check if GO is dead.
-            //Game window: 1200x1000
-            //Character size 52x36
-            if (GO instanceof PlayerObject)
-            {
-                //Setting the borders of the map for player death.
-                //Might need some tweaking, leave to the tester.
-                PlayerObject PO = (PlayerObject)GO;
-                Point anchor = PO.getAnchor();
-                Size size = PO.getPlayerSize();
-
-                if (anchor.getX() + size.getHeight() < 0 || anchor.getX() > 1200 || anchor.getY() + (size.getHeight()/2) > 1000 || anchor.getY() + (size.getHeight()/2) < 0)
+                //GO scroll.
+                if (GO instanceof ObstacleObject)
                 {
-                    PO.setIsDead(true);
+                    GO.setAnchor(new Point(GO.getAnchor().getX(), GO.getAnchor().getY() + scrollSpeed * 3));
+                } else
+                {
+                    GO.setAnchor(new Point(GO.getAnchor().getX(), GO.getAnchor().getY() + scrollSpeed));
                 }
 
-                for (GameObject GO2: gameObjects)
+                //Check if GO is dead.
+                //Game window: 1200x1000
+                //Character size 52x36
+                if (GO instanceof PlayerObject)
                 {
-                    if (GO2 instanceof ObstacleObject && PO.checkForObstacleCollision((ObstacleObject) GO2))
+                    //Setting the borders of the map for player death.
+                    //Might need some tweaking, leave to the tester.
+                    PlayerObject PO = (PlayerObject) GO;
+                    Point anchor = PO.getAnchor();
+                    Size size = PO.getPlayerSize();
+
+                    if (anchor.getX() + size.getHeight() < 0 || anchor.getX() > 1200 || anchor.getY() + (size.getHeight() / 2) > 1000 || anchor.getY() + (size.getHeight() / 2) < 0)
                     {
                         PO.setIsDead(true);
-                        //System.out.println("RIP");
+                    }
+
+                    for (GameObject GO2 : gameObjects)
+                    {
+                        if (GO2 instanceof ObstacleObject && PO.checkForObstacleCollision((ObstacleObject) GO2))
+                        {
+                            PO.setIsDead(true);
+                            //System.out.println("RIP");
+                        }
                     }
                 }
-            }
 
-            if (GO instanceof ObstacleObject)
-            {
-                ObstacleObject OO = (ObstacleObject) GO;
-                if(OO.getAnchor().getY() + (OO.getHeight()) > 1000)
+                if (GO instanceof ObstacleObject)
                 {
-                    gameObjects.set(index, new ObstacleObject(70, 48));
+                    ObstacleObject OO = (ObstacleObject) GO;
+                    if (OO.getAnchor().getY() + (OO.getHeight()) > 1000)
+                    {
+                        gameObjects.set(index, new ObstacleObject(70, 48));
+                    }
                 }
+                index++;
             }
-            index++;
         }
-
-        //todo inform
     }
 
     /**
@@ -173,18 +203,21 @@ public class Game
      */
     public List<PlayerObject> endGame()
     {
+        timer.cancel();
         List<PlayerObject> returnable = new ArrayList<>();
         //Scene newScene, Stage stage todo move to client
-        for(GameObject GO : getGameObjects())
+        synchronized (synchronizer)
         {
-            if (GO instanceof PlayerObject)
+            for (GameObject GO : getGameObjects())
             {
-                //stage.setScene(newScene); todo move to client
-                returnable.add((PlayerObject) GO);
-                //System.out.println("Player: " + PO.getName() + " = " + PO.getDistance() + " Points"); todo move to client
+                if (GO instanceof PlayerObject)
+                {
+                    //stage.setScene(newScene); todo move to client
+                    returnable.add((PlayerObject) GO);
+                    //System.out.println("Player: " + PO.getName() + " = " + PO.getDistance() + " Points"); todo move to client
+                }
             }
         }
-
         return returnable;
     }
 
@@ -196,27 +229,30 @@ public class Game
      */
     public PlayerObject moveCharacter(String playerName, Direction direction)
     {
-        for (GameObject g : gameObjects)
+        synchronized (synchronizer)
         {
-            if (g instanceof PlayerObject)
+            for (GameObject g : gameObjects)
             {
-                PlayerObject p = (PlayerObject) g;
-
-                if (playerName.equals("Player1") && p.getName().equals("Player1"));
+                if (g instanceof PlayerObject)
                 {
-                    switch (direction) {
-                        case LEFT:
-                            p.move(Direction.LEFT);
-                            break;
-                        case RIGHT:
-                            p.move(Direction.RIGHT);
-                            break;
+                    PlayerObject p = (PlayerObject) g;
+
+                    if (playerName.equals("Player1") && p.getName().equals("Player1")) ;
+                    {
+                        switch (direction)
+                        {
+                            case LEFT:
+                                p.move(Direction.LEFT);
+                                break;
+                            case RIGHT:
+                                p.move(Direction.RIGHT);
+                                break;
+                        }
+                        return p;
                     }
-                    return p;
                 }
             }
         }
-
         throw new IllegalArgumentException("Should never be thrown");
     }
 
@@ -228,13 +264,17 @@ public class Game
     {
         List<PlayerObject> listToReturn = new ArrayList<>();
 
-        for (GameObject GO : gameObjects)
+        synchronized (synchronizer)
         {
-            if (GO instanceof PlayerObject)
+            for (GameObject GO : gameObjects)
             {
-                listToReturn.add((PlayerObject) GO);
+                if (GO instanceof PlayerObject)
+                {
+                    listToReturn.add((PlayerObject) GO);
+                }
             }
         }
+
         return listToReturn;
     }
 
@@ -246,11 +286,14 @@ public class Game
     {
         List<ObstacleObject> listToReturn = new ArrayList<>();
 
-        for (GameObject GO : gameObjects)
+        synchronized (synchronizer)
         {
-            if (GO instanceof ObstacleObject)
+            for (GameObject GO : gameObjects)
             {
-                listToReturn.add((ObstacleObject) GO);
+                if (GO instanceof ObstacleObject)
+                {
+                    listToReturn.add((ObstacleObject) GO);
+                }
             }
         }
 
