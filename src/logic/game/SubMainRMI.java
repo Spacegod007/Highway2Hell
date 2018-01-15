@@ -33,6 +33,7 @@ public class SubMainRMI extends UnicastRemoteObject implements Serializable, IRe
     @Override
     public void propertyChange(PropertyChangeEvent evt) throws RemoteException
     {
+        System.out.println("informed");
         switch (evt.getPropertyName())
         {
             case "gameObjects": application.update((List<GameObject>)evt.getNewValue()); break;

@@ -4,6 +4,7 @@ import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -30,6 +31,7 @@ import logic.remote_method_invocation.IGameAdmin;
 import views.BackgroundController;
 import views.ScoreboardController;
 
+import javax.sound.midi.Soundbank;
 import java.beans.PropertyChangeEvent;
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -50,10 +52,15 @@ public class Main extends Application
     private final List<ImageView> obstacleImageViews = new ArrayList<>();
     private final IGameAdmin game;
     private final Label distanceLabel = new Label("0");
-    private final List<Label> playerLabels = new ArrayList<>();
+    private List<Label> playerLabels = new ArrayList<>();
     private ObservableList<Label> observablePlayerLabels;
-    private Map<PlayerObject, ImageView> mappedPlayerObject = new HashMap<>();
-    private Map<ObstacleObject, ImageView> mappedObstacleObject = new HashMap<>();
+    private Map<String, ImageView> mappedPlayerImage = new HashMap<>();
+    private Map<String, PlayerObject> mappedPlayerObject = new HashMap<>();
+    private Map<String, Label> mappedPlayerLabel = new HashMap<>();
+    private Map<Integer, ObstacleObject> mappedObstacleObject = new HashMap<>();
+    private Map<Integer, ImageView> mappedObstacleImage = new HashMap<>();
+
+    private Stage stage;
 
     //Fail safe for if someone decides to hold in one of the buttons.
     private boolean leftPressed = false;
@@ -122,37 +129,30 @@ public class Main extends Application
 
         primaryStage.setScene(countdownScene);
         primaryStage.show();
+        this.stage = primaryStage;
         doTime(primaryStage);
     }
 
     private void InitializeGame(Stage primaryStage) throws RemoteException
     {
-        for (GameObject GO : game.getGameObjects())
-        {
-            if (GO instanceof PlayerObject)
-            {
-                players++;
-            }
-        }
-        //Add imageview for each player
+        List<GameObject> gameObjects = game.getGameObjects();
+        players = getPlayerObjects(gameObjects).size();
 
-        for(int i = 0; i < players; i++)
+        for(PlayerObject player : getPlayerObjects(gameObjects))
         {
-            // player movement
-            playerImageViews.add(addPlayerImageView());
-
+            ImageView img = addPlayerImageView();
+            playerImageViews.add(img);
+            mappedPlayerImage.put(player.getName(), img);
+            mappedPlayerObject.put(player.getName(), player);
         }
 
-        //add obstacleobject for each obstacle
-        //TODO map
-        for (ObstacleObject OO : game.returnObstacleObjects())
+        for (ObstacleObject OO : getObstacleObjects(gameObjects))
         {
-            obstacleObjects.add(OO);
             obstacleImageViews.add(addObstacleImageView(OO));
-            mappedObstacleObject.put(OO, addObstacleImageView(OO));
+            mappedObstacleObject.put(OO.getId(), OO);
+            mappedObstacleImage.put(OO.getId(), addObstacleImageView(OO));
         }
 
-        //check if adding the whole list works
         gamePane.getChildren().addAll(playerImageViews);
         gamePane.getChildren().addAll(obstacleImageViews);
 
@@ -188,149 +188,13 @@ public class Main extends Application
         distanceLabel.setTranslateX(6);
         distanceLabel.setTranslateY(3);
         gamePane.getChildren().add(distanceLabel);
-        getPlayerLabels();
-        observablePlayerLabels = FXCollections.observableArrayList(playerLabels);
-        gamePane.getChildren().addAll(observablePlayerLabels);
+        playerLabels = getPlayerLabels(gameObjects);
+        gamePane.getChildren().addAll(FXCollections.observableArrayList(playerLabels));
         //endregion
-
-        //Initiate timer for map scroll.
-        //region animationtimer
-        AnimationTimer aTimer = new AnimationTimer()
-        {
-            @Override
-            public void handle(long now)
-            {
-                List<GameObject> tempGameObjects = game.getGameObjects();
-                for (int i = 0; i < playerLabels.size(); i++)
-                {
-                    playerLabels.get(i).setTranslateX(thisPlayer.getAnchor().getX());
-                    playerLabels.get(i).setTranslateY(thisPlayer.getAnchor().getY() - 23);
-                }
-
-                //TODO use map
-                for (ImageView PI : playerImageViews)
-                {
-                    PI.setX(thisPlayer.getAnchor().getX());
-                    PI.setY(thisPlayer.getAnchor().getY());
-                }
-
-                try
-                {
-                    for (GameObject GO : game.getGameObjects())
-                    {
-                        //Check if the game is allowed to end.
-                        if (GO.getClass() == PlayerObject.class)
-                        {
-                            if (((PlayerObject) GO).getIsDead())
-                            {
-                                playersDead++;
-                                if (playersDead == players)
-                                {
-                                    ArrayList<Score> scores = new ArrayList<>();
-                                    try
-                                    {
-                                        for (GameObject tempGO : game.getGameObjects())
-                                        {
-                                            if (tempGO.getClass() == PlayerObject.class)
-                                            {
-                                                PlayerObject PO = (PlayerObject) GO;
-                                                scores.add(new Score(PO.getName(), (double) PO.getDistance()));
-                                            }
-                                        }
-                                    } catch (RemoteException e)
-                                    {
-                                        e.printStackTrace();
-                                    }
-                                    scoreboardController.setScore(scores);
-                                    try
-                                    {
-                                        game.endGame(); //(scoreboardScene, primaryStage) todo use return value and show scoreboard scene
-                                    } catch (RemoteException e)
-                                    {
-                                        e.printStackTrace();
-                                    }
-                                    scores.clear();
-                                }
-                            }
-                        }
-                    }
-                } catch (RemoteException e)
-                {
-                    e.printStackTrace();
-                }
-
-                try
-                {
-                    obstacleObjects = game.returnObstacleObjects();
-                } catch (RemoteException e)
-                {
-                    e.printStackTrace();
-                }
-
-                for (int i = 0; i < obstacleObjects.size(); i++)
-                {
-                    obstacleImageViews.get(i).setX(obstacleObjects.get(i).getAnchor().getX());
-                    obstacleImageViews.get(i).setY(obstacleObjects.get(i).getAnchor().getY());
-                }
-                distanceLabel.setText("Distance: " + Long.toString(thisPlayer.getDistance()));
-
-                // player name labels
-                ArrayList<Label> tempPlayerLabels = new ArrayList<>();
-                int index = 0;
-                try
-                {
-                    for (PlayerObject player : game.returnPlayerObjects())
-                    {
-                        Label tempPlayerLabel = new Label(player.getName());
-                        tempPlayerLabel.setTranslateX(player.getAnchor().getX());
-                        tempPlayerLabel.setTranslateY(player.getAnchor().getY());
-                        tempPlayerLabels.add(index, tempPlayerLabel);
-                        index++;
-                    }
-                } catch (RemoteException e)
-                {
-                    e.printStackTrace();
-                }
-                observablePlayerLabels = FXCollections.observableArrayList(tempPlayerLabels);
-            }
-        };
-        //endregiondAnima
 
         // start animation for background
         backgroundController.startAnimation();
-        aTimer.start();
-
-        List<GameObject> thisGameObjects = null;
-        try
-        {
-            thisGameObjects = game.getGameObjects();
-        } catch (RemoteException e)
-        {
-            e.printStackTrace();
-        }
-        if (thisGameObjects != null)
-        {
-            for (int iterator = 0; iterator < thisGameObjects.size(); iterator++)
-            {
-                if (thisGameObjects.get(iterator) instanceof PlayerObject)
-                {
-                    mappedPlayerObject.put((PlayerObject) thisGameObjects.get(iterator), playerImageViews.get(iterator));
-                }
-            }
-        }
-
-        //Initialize first frame
-        //todo now just first player is returned
-        for(GameObject go : game.getGameObjects())
-        {
-            if(go instanceof PlayerObject)
-            {
-                thisPlayer = (PlayerObject)go;
-                break;
-            }
-            System.out.println("No playerobjects in game");
-        }
-        thisPlayer = movePlayer(thisPlayer, false, Direction.RIGHT);
+        obstacleObjects = getObstacleObjects(gameObjects);
     }
 
     private PlayerObject getPlayer(PlayerObject po)
@@ -358,19 +222,21 @@ public class Main extends Application
 
     private PlayerObject movePlayer(PlayerObject player, Boolean pressed, Direction dir)
     {
-        player = getPlayer(player);
+        PlayerObject tempplayer = mappedPlayerObject.get(player.getName());
         if(!pressed)
         {
             try
             {
-                ImageView playerView = mappedPlayerObject.get(player);
+                ImageView playerView = mappedPlayerImage.get(player.getName());
                 System.out.println("pv" + playerView);
-                System.out.println("p" + player);
-                System.out.println("rot" + player.getCurrentRotation());
-                player = game.moveCharacter(player.getName(), dir);
-                playerView.setRotate(player.getCurrentRotation());
-                playerView.setX(player.getAnchor().getX());
-                playerView.setY(player.getAnchor().getY());
+                System.out.println("p" + tempplayer);
+                System.out.println("rot" + tempplayer.getCurrentRotation());
+                tempplayer = game.moveCharacter(tempplayer.getName(), dir);
+                playerView.setRotate(tempplayer.getCurrentRotation());
+                playerView.setX(tempplayer.getAnchor().getX());
+                playerView.setY(tempplayer.getAnchor().getY());
+                mappedPlayerImage.replace(player.getName(), playerView);
+                mappedPlayerObject.replace(player.getName(), tempplayer);
                 leftPressed = true;
             }
             catch (RemoteException e)
@@ -421,54 +287,26 @@ public class Main extends Application
 
     public Image ChangePlayerImage(Image image, CharacterColor cc)
     {
-        switch (cc){
-            case black_blue:
-                return new Image("characters/character_black_blue.png");
-            case black_green:
-                return new Image("characters/character_black_green.png");
-            case black_red:
-                return new Image("characters/character_black_red.png");
-            case black_white:
-                return new Image("characters/character_black_white.png");
-            case blonde_blue:
-                return new Image("characters/character_blonde_blue.png");
-            case blonde_green:
-                return new Image("characters/character_blonde_green.png");
-            case blonde_red:
-                return new Image("characters/character_blonde_red.png");
-            case blonde_white:
-                return new Image("characters/character_blonde_white.png");
-            case brown_blue:
-                return new Image("characters/character_brown_blue.png");
-            case brown_green:
-                return new Image("characters/character_brown_green.png");
-            case brown_red:
-                return new Image("characters/character_brown_red.png");
-            case brown_white:
-                return new Image("characters/character_brown_white.png");
-        }
-        return image;
+        return new Image("characters/character_" + cc.name() + ".png");
     }
 
     public static void main(String[] args) {
-        //Repository repo = new Repository(new DatabaseContext());
-        //System.out.println(Boolean.toString(repo.testConnection()));
         launch(args);
-        //repo.closeConnection();
     }
 
-    private void getPlayerLabels() throws RemoteException
+    private List<Label> getPlayerLabels(List<GameObject> gameObjects) throws RemoteException
     {
-        int index = 0;
-        for (PlayerObject player : game.returnPlayerObjects()) {
+        List<Label> list = new ArrayList<>();
+        for (PlayerObject player : getPlayerObjects(gameObjects)) {
             Label tempPlayerLabel = new Label(player.getName());
             tempPlayerLabel.setFont(new Font("Calibri", 22));
             tempPlayerLabel.setTextFill(Color.WHITE);
             tempPlayerLabel.setTranslateX(player.getAnchor().getX());
             tempPlayerLabel.setTranslateY(player.getAnchor().getY());
-            playerLabels.add(index, tempPlayerLabel);
-            index++;
+            list.add(tempPlayerLabel);
+            mappedPlayerLabel.put(player.getName(), tempPlayerLabel);
         }
+        return list;
     }
 
     private void doTime(Stage primaryStage) {
@@ -508,6 +346,32 @@ public class Main extends Application
 
     }
 
+    private List<PlayerObject> getPlayerObjects(List<GameObject> gameObjects)
+    {
+        List<PlayerObject> playerObjects = new ArrayList<>();
+        for(GameObject go : gameObjects)
+        {
+            if(go instanceof PlayerObject)
+            {
+                playerObjects.add((PlayerObject)go);
+            }
+        }
+        return playerObjects;
+    }
+
+    private List<ObstacleObject> getObstacleObjects(List<GameObject> gameObjects)
+    {
+        List<ObstacleObject> obstacleObjects = new ArrayList<>();
+        for(GameObject go : gameObjects)
+        {
+            if(go instanceof ObstacleObject)
+            {
+                obstacleObjects.add((ObstacleObject)go);
+            }
+        }
+        return obstacleObjects;
+    }
+
     /**
      * This is called by the propertychange, and executes the update code
      * @param gameObjects are the new gameobjects, according to the server
@@ -515,5 +379,102 @@ public class Main extends Application
     public void update(List<GameObject> gameObjects)
     {
 
+        System.out.println("updating");
+        List<GameObject> tempGameObjects;
+        try
+        {
+            tempGameObjects = game.getGameObjects();
+        } catch (RemoteException e)
+        {
+            e.printStackTrace();
+            return;
+        }
+        List<PlayerObject> playerObjects = getPlayerObjects(tempGameObjects);
+        List<ObstacleObject> obstacleObjects = getObstacleObjects(tempGameObjects);
+
+        System.out.println(playerObjects.size());
+        for(PlayerObject po : playerObjects)
+        {
+            mappedPlayerObject.replace(po.getName(), po);
+            System.out.println(po.getAnchor().getX());
+            System.out.println(po.getAnchor().getY());
+            PlayerObject tempPlayer = mappedPlayerObject.get(po.getName());
+            System.out.println(tempPlayer.getAnchor().getX());
+            System.out.println(tempPlayer.getAnchor().getY());
+            Label tempLabel = mappedPlayerLabel.get(po.getName());
+            tempLabel.setTranslateX(tempPlayer.getAnchor().getX());
+            tempLabel.setTranslateY(tempPlayer.getAnchor().getX()-23);
+            mappedPlayerLabel.replace(po.getName(), tempLabel);
+
+            ImageView img = mappedPlayerImage.get(po.getName());
+            img.setX(tempPlayer.getAnchor().getX());
+            img.setY(tempPlayer.getAnchor().getY());
+
+            if(tempPlayer.getIsDead())
+            {
+                playersDead++;
+                if(playersDead == playerObjects.size())
+                {
+                    setScores();
+                }
+            }
+            playersDead = 0;
+        }
+        for (ObstacleObject obstacleObject : obstacleObjects)
+        {
+            ObstacleObject tempObstacle = mappedObstacleObject.get(obstacleObject.getId());
+            ImageView img = mappedObstacleImage.get(obstacleObject.getId());
+            img.setX(tempObstacle.getAnchor().getX());
+            img.setY(tempObstacle.getAnchor().getY());
+        }
+       // distanceLabel.setText("Distance: " + Long.toString(thisPlayer.getDistance()));
+
+        // player name labels
+        observablePlayerLabels = FXCollections.observableArrayList(setTempPlayerLabels());
+    }
+
+    private List<Label> setTempPlayerLabels()
+    {
+        ArrayList<Label> tempPlayerLabels = new ArrayList<>();
+        try
+        {
+            for (PlayerObject player : game.returnPlayerObjects())
+            {
+                Label tempPlayerLabel = new Label(player.getName());
+                tempPlayerLabel.setTranslateX(player.getAnchor().getX());
+                tempPlayerLabel.setTranslateY(player.getAnchor().getY());
+                tempPlayerLabels.add(tempPlayerLabel);
+            }
+        } catch (RemoteException e)
+        {
+            e.printStackTrace();
+        }
+        return tempPlayerLabels;
+    }
+    private void setScores()
+    {
+        ArrayList<Score> scores = new ArrayList<>();
+        try
+        {
+            for (GameObject tempGO : game.getGameObjects()) {
+                if (tempGO.getClass() == PlayerObject.class) {
+                    PlayerObject PO = (PlayerObject) tempGO;
+                    scores.add(new Score(PO.getName(), (double) PO.getDistance()));
+                }
+            }
+        } catch (RemoteException e)
+        {
+            e.printStackTrace();
+        }
+        scoreboardController.setScore(scores);
+        try
+        {
+            Platform.runLater(() -> stage.setScene(scoreboardScene));
+            List<PlayerObject> players = game.endGame(); //(scoreboardScene, primaryStage) todo use returnvalue and show scoreboard scene
+        } catch (RemoteException e)
+        {
+            e.printStackTrace();
+        }
+        scores.clear();
     }
 }

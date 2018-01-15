@@ -2,12 +2,16 @@ package logic.game;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Marks an object as an obstacle in the game
  */
 public class ObstacleObject extends GameObject
 {
+    private static AtomicInteger nextId = new AtomicInteger(0);
+    private int id;
+    public int getId(){return id;}
     private ObstacleType type;
 
     /**
@@ -18,6 +22,7 @@ public class ObstacleObject extends GameObject
     {
         super(new Point(ThreadLocalRandom.current().nextInt(0, 1150  + 1), ThreadLocalRandom.current().nextInt(-500, 1)), new Size(1, 1));
         generateRandomObjectType();
+        this.id = nextId.getAndIncrement();
     }
 
     /**

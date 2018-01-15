@@ -113,8 +113,12 @@ public class Game
                                 e.printStackTrace();
                             }
                         }
+                        else
+                            {
+                                System.out.println("empty");
+                            }
                     }
-                }, 250, 1000);
+                }, 250, 30);
             }
         }
     }
