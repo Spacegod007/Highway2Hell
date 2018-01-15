@@ -200,7 +200,7 @@ public class Main extends Application
             @Override
             public void handle(long now)
             {
-                List<GameObject> tempGameObjects = game.getGameObjects();
+//                List<GameObject> tempGameObjects = game.getGameObjects();
                 for (int i = 0; i < playerLabels.size(); i++)
                 {
                     playerLabels.get(i).setTranslateX(thisPlayer.getAnchor().getX());
