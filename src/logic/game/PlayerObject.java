@@ -43,6 +43,7 @@ public class PlayerObject extends GameObject
         super(anchor, size);
         this.name = name;
         this.color = color.toString();
+        this.currentRotation = 180d;
     }
 
     /**
@@ -172,6 +173,7 @@ public class PlayerObject extends GameObject
 
                     //Sets the current rotation
                     setCurrentRotation(170d);
+                    System.out.println("rotation set");
 
                     this.setAnchor(new Point(leftPoint[0], leftPoint[1]));
                     return;
@@ -183,6 +185,7 @@ public class PlayerObject extends GameObject
 
                     //Sets the current rotation
                     setCurrentRotation(190d);
+                    System.out.println("rotation set");
 
                     this.setAnchor(new Point(rightPoint[0], rightPoint[1]));
                     break;

@@ -3,7 +3,9 @@ package logic.game;
 import javafx.scene.paint.Color;
 import logic.Gamerule;
 import logic.administration.User;
+import logic.fontyspublisher.IRemotePublisherForDomain;
 
+import java.rmi.RemoteException;
 import java.util.*;
 
 /**
@@ -11,6 +13,11 @@ import java.util.*;
  */
 public class Game
 {
+    /**
+     *
+     */
+    private IRemotePublisherForDomain publisher = null;
+
     /**
      * A list of all game objects including players, obstacles, etc.
      */
@@ -48,6 +55,7 @@ public class Game
 
         List<GameObject> rmiGameObjects = new ArrayList<>();
         int j = 0;
+        System.out.println("Users in game: " + users);
         for(User u : users)
         {
             System.out.println(u.getUsername());
@@ -84,6 +92,7 @@ public class Game
     {
         synchronized (synchronizer)
         {
+            System.out.println("Starting game");
             if (!timerRunning)
             {
                 timerRunning = true;
@@ -92,9 +101,20 @@ public class Game
                     @Override
                     public void run()
                     {
+
                         update();
+                        if(gameObjects != null && !gameObjects.isEmpty())
+                        {
+                            try
+                            {
+                                publisher.inform("gameObjects", null, gameObjects);
+                            } catch (RemoteException e)
+                            {
+                                e.printStackTrace();
+                            }
+                        }
                     }
-                }, 250, 30);
+                }, 250, 1000);
             }
         }
     }
@@ -313,5 +333,10 @@ public class Game
         }
 
         return listToReturn;
+    }
+
+    public void setRpd(IRemotePublisherForDomain rpd)
+    {
+        this.publisher = rpd;
     }
 }

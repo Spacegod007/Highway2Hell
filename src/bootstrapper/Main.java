@@ -22,23 +22,25 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import logic.Score;
 import logic.administration.User;
+import logic.fontyspublisher.IRemotePropertyListener;
+import logic.fontyspublisher.IRemotePublisherForDomain;
+import logic.fontyspublisher.IRemotePublisherForListener;
 import logic.game.*;
 import logic.remote_method_invocation.IGameAdmin;
 import views.BackgroundController;
 import views.ScoreboardController;
 
+import java.beans.PropertyChangeEvent;
+import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * //todo add java docs
  */
 public class Main extends Application
 {
-    //private PlayerObject thisPlayer = new PlayerObject(new Point(960, 900), "Player1", Color.BLACK);
     private List<ObstacleObject> obstacleObjects = new ArrayList<>();
-
     //Playerimages for creating characters for later versions that use sockets.
     private Image playerImage = new Image("characters/character_black_blue.png");
     private Image redBarrelImage = new Image("objects/barrel_red_down.png");
@@ -50,6 +52,8 @@ public class Main extends Application
     private Label distanceLabel = new Label("0");
     private List<Label> playerLabels = new ArrayList<>();
     private ObservableList<Label> observablePlayerLabels;
+    private Map<PlayerObject, ImageView> mappedPlayerObject = new HashMap<>();
+    private Map<ObstacleObject, ImageView> mappedObstacleObject = new HashMap<>();
 
     //Failsafe for if someone decides to hold in one of the buttons.
     private boolean leftPressed = false;
@@ -76,24 +80,23 @@ public class Main extends Application
     //david zn shit
     PlayerObject thisPlayer = null;
 
-    public Main(IGameAdmin game)
+    public Main(IGameAdmin game, IRemotePublisherForListener rpl)
     {
         this.game = game;
+        try
+        {
+            SubMainRMI sub = new SubMainRMI(this, rpl);
+        } catch (RemoteException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public void start(Stage primaryStage, List<User> userList) throws Exception {
-
         // set primary stage size and name
         primaryStage.setTitle("Game");
         primaryStage.setWidth(1200);
         primaryStage.setHeight(1000);
-
-        //TODO set right player
-        thisPlayer = new PlayerObject(new Point(960, 900),new Size(78, 54), userList.get(0).getUsername(), Color.BLACK);
-
-        // build game
-//        game = new Game(new ArrayList<>(), userList);
-
 
         // background scroller scene
         FXMLLoader fxmlLoaderBackground = new FXMLLoader(getClass().getResource("/Background.fxml"));
@@ -124,31 +127,39 @@ public class Main extends Application
 
     private void InitializeGame(Stage primaryStage) throws RemoteException
     {
-        // player movement
-        playerImageViews.add(addPlayerImageView());
+        for (GameObject GO : game.getGameObjects())
+        {
+            if (GO instanceof PlayerObject)
+            {
+                players++;
+            }
+        }
+        //Add imageview for each player
 
+        for(int i = 0; i < players; i++)
+        {
+            // player movement
+            playerImageViews.add(addPlayerImageView());
+
+        }
+
+        //add obstacleobject for each obstacle
+        //TODO map
         for (ObstacleObject OO : game.returnObstacleObjects())
         {
             obstacleObjects.add(OO);
             obstacleImageViews.add(addObstacleImageView(OO));
+            mappedObstacleObject.put(OO, addObstacleImageView(OO));
         }
 
-        for (ImageView player : playerImageViews) {
-            gamePane.getChildren().add(player);
-        }
+        //check if adding the whole list works
+        gamePane.getChildren().addAll(playerImageViews);
+        gamePane.getChildren().addAll(obstacleImageViews);
 
-        for (ImageView obstacle : obstacleImageViews) {
-            gamePane.getChildren().add(obstacle);
-        }
-
-        for (GameObject GO : game.getGameObjects()) {
-            if (GO.getClass() == PlayerObject.class) {
-                players++;
-            }
-        }
-
-        scene.setOnKeyReleased(event -> {
-            switch (event.getCode()) {
+        scene.setOnKeyReleased(event ->
+        {
+            switch (event.getCode())
+            {
                 case LEFT:
                     leftPressed = false;
                     break;
@@ -158,48 +169,21 @@ public class Main extends Application
             }
         });
 
-        scene.setOnKeyPressed(event -> {
-            switch (event.getCode()) {
+        scene.setOnKeyPressed(event ->
+        {
+            switch (event.getCode())
+            {
                 case LEFT:
-                    if (!leftPressed) {
-                        try
-                        {
-                            thisPlayer = game.moveCharacter(thisPlayer.getName(), Direction.LEFT);
-                            playerImageViews.get(0).setRotate(thisPlayer.getCurrentRotation());
-                            playerImageViews.get(0).setX(thisPlayer.getAnchor().getX());
-                            playerImageViews.get(0).setY(thisPlayer.getAnchor().getY());
-                            leftPressed = true;
-                        }
-                        catch (RemoteException e)
-                        {
-                            e.printStackTrace();
-                        }
-
-                    }
+                    movePlayer(thisPlayer, leftPressed, Direction.LEFT);
                     break;
                 case RIGHT:
-                    if (!rightPressed) {
-                        try
-                        {
-                            thisPlayer = game.moveCharacter(thisPlayer.getName(), Direction.RIGHT);
-                            playerImageViews.get(0).setRotate(thisPlayer.getCurrentRotation());
-                            playerImageViews.get(0).setX(thisPlayer.getAnchor().getX());
-                            playerImageViews.get(0).setY(thisPlayer.getAnchor().getY());
-                            rightPressed = true;
-                        }
-                        catch (RemoteException e)
-                        {
-                            e.printStackTrace();
-                        }
-                    }
+                    movePlayer(thisPlayer, rightPressed, Direction.RIGHT);
                     break;
             }
         });
 
-        //Initialize first frame
-        thisPlayer = game.moveCharacter(thisPlayer.getName(), Direction.RIGHT);
-
-        // distance labelfor player score
+        //region add labels
+        // distance label for player score
         distanceLabel.setFont(new Font("Calibri", 22));
         distanceLabel.setTranslateX(6);
         distanceLabel.setTranslateY(3);
@@ -207,35 +191,48 @@ public class Main extends Application
         getPlayerLabels();
         observablePlayerLabels = FXCollections.observableArrayList(playerLabels);
         gamePane.getChildren().addAll(observablePlayerLabels);
+        //endregion
 
         //Initiate timer for map scroll.
-        AnimationTimer aTimer = new AnimationTimer() {
+        //region animationtimer
+        AnimationTimer aTimer = new AnimationTimer()
+        {
             @Override
-            public void handle(long now) {
-                for (int i = 0; i < playerLabels.size(); i++) {
+            public void handle(long now)
+            {
+                List<GameObject> tempGameObjects = game.getGameObjects();
+                for (int i = 0; i < playerLabels.size(); i++)
+                {
                     playerLabels.get(i).setTranslateX(thisPlayer.getAnchor().getX());
                     playerLabels.get(i).setTranslateY(thisPlayer.getAnchor().getY() - 23);
                 }
 
-//                game.update(); todo move to server-side
-                for (ImageView PI : playerImageViews) {
+                //TODO use map
+                for (ImageView PI : playerImageViews)
+                {
                     PI.setX(thisPlayer.getAnchor().getX());
                     PI.setY(thisPlayer.getAnchor().getY());
                 }
 
                 try
                 {
-                    for (GameObject GO : game.getGameObjects()) {
+                    for (GameObject GO : game.getGameObjects())
+                    {
                         //Check if the game is allowed to end.
-                        if (GO.getClass() == PlayerObject.class) {
-                            if (((PlayerObject) GO).getisDead()) {
+                        if (GO.getClass() == PlayerObject.class)
+                        {
+                            if (((PlayerObject) GO).getisDead())
+                            {
                                 playersDead++;
-                                if (playersDead == players) {
+                                if (playersDead == players)
+                                {
                                     ArrayList<Score> scores = new ArrayList<>();
                                     try
                                     {
-                                        for (GameObject tempGO : game.getGameObjects()) {
-                                            if (tempGO.getClass() == PlayerObject.class) {
+                                        for (GameObject tempGO : game.getGameObjects())
+                                        {
+                                            if (tempGO.getClass() == PlayerObject.class)
+                                            {
                                                 PlayerObject PO = (PlayerObject) GO;
                                                 scores.add(new Score(PO.getName(), (double) PO.getDistance()));
                                             }
@@ -270,7 +267,8 @@ public class Main extends Application
                     e.printStackTrace();
                 }
 
-                for (int i = 0; i < obstacleObjects.size(); i++) {
+                for (int i = 0; i < obstacleObjects.size(); i++)
+                {
                     obstacleImageViews.get(i).setX(obstacleObjects.get(i).getAnchor().getX());
                     obstacleImageViews.get(i).setY(obstacleObjects.get(i).getAnchor().getY());
                 }
@@ -281,7 +279,8 @@ public class Main extends Application
                 int index = 0;
                 try
                 {
-                    for (PlayerObject player : game.returnPlayerObjects()) {
+                    for (PlayerObject player : game.returnPlayerObjects())
+                    {
                         Label tempPlayerLabel = new Label(player.getName());
                         tempPlayerLabel.setTranslateX(player.getAnchor().getX());
                         tempPlayerLabel.setTranslateY(player.getAnchor().getY());
@@ -295,10 +294,91 @@ public class Main extends Application
                 observablePlayerLabels = FXCollections.observableArrayList(tempPlayerLabels);
             }
         };
+        //endregiondAnima
 
         // start animation for background
         backgroundController.startAmination();
         aTimer.start();
+
+        List<GameObject> thisGameObjects = null;
+        try
+        {
+            thisGameObjects = game.getGameObjects();
+        } catch (RemoteException e)
+        {
+            e.printStackTrace();
+        }
+        if (thisGameObjects != null)
+        {
+            for (int iterator = 0; iterator < thisGameObjects.size(); iterator++)
+            {
+                if (thisGameObjects.get(iterator) instanceof PlayerObject)
+                {
+                    mappedPlayerObject.put((PlayerObject) thisGameObjects.get(iterator), playerImageViews.get(iterator));
+                }
+            }
+        }
+
+        //Initialize first frame
+        //todo now just first player is returned
+        for(GameObject go : game.getGameObjects())
+        {
+            if(go instanceof PlayerObject)
+            {
+                thisPlayer = (PlayerObject)go;
+                break;
+            }
+            System.out.println("No playerobjects in game");
+        }
+        thisPlayer = movePlayer(thisPlayer, false, Direction.RIGHT);
+    }
+
+    private PlayerObject getPlayer(PlayerObject po)
+    {
+        try
+        {
+            for(GameObject go : game.getGameObjects())
+            {
+                if(go instanceof PlayerObject)
+                {
+                    if(po.getName() == ((PlayerObject) go).getName())
+                    {
+                        return (PlayerObject) go;
+                    }
+                }
+            }
+            System.out.println("Player not found");
+            return null;
+        } catch (RemoteException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private PlayerObject movePlayer(PlayerObject player, Boolean pressed, Direction dir)
+    {
+        player = getPlayer(player);
+        if(!pressed)
+        {
+            try
+            {
+                ImageView playerView = mappedPlayerObject.get(player);
+                System.out.println("pv" + playerView);
+                System.out.println("p" + player);
+                System.out.println("rot" + player.getCurrentRotation());
+                player = game.moveCharacter(player.getName(), dir);
+                playerView.setRotate(player.getCurrentRotation());
+                playerView.setX(player.getAnchor().getX());
+                playerView.setY(player.getAnchor().getY());
+                leftPressed = true;
+            }
+            catch (RemoteException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        return player;
     }
 
     private ImageView addPlayerImageView() {
@@ -406,6 +486,8 @@ public class Main extends Application
                     primaryStage.setScene(scene);
                     try
                     {
+                        System.out.println("Initialize game");
+                        time.stop();
                         InitializeGame(primaryStage);
                         game.startGame();
                     }
@@ -413,7 +495,6 @@ public class Main extends Application
                     {
                         e.printStackTrace();
                     }
-                    time.stop();
                 }
             }
         });
@@ -423,6 +504,15 @@ public class Main extends Application
 
     @Override
     public void start(Stage primaryStage) throws Exception
+    {
+
+    }
+
+    /**
+     * This is called by the propertychange, and executes the update code
+     * @param gameObjects are the new gameobjects, according to the server
+     */
+    public void update(List<GameObject> gameObjects)
     {
 
     }

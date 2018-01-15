@@ -63,7 +63,10 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
         this.rpd = publisher;
         rpd.registerProperty("playersconnected");
         rpd.registerProperty("gameIsStarted");
+        rpd.registerProperty("gameObjects");
+        rpd.registerProperty("gameRules");
         this.game = game;
+        game.setRpd(publisher);
     }
 
     public long connect(User client)

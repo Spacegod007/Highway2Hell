@@ -2,6 +2,7 @@ package logic.administration;
 
 import javafx.collections.FXCollections;
 import logic.fontyspublisher.IRemotePropertyListener;
+import logic.fontyspublisher.IRemotePublisherForListener;
 import logic.remote_method_invocation.IGameAdmin;
 import logic.remote_method_invocation.RMIGameClient;
 import logic.remote_method_invocation.RMILobbyClient;
@@ -316,5 +317,10 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
         {
             System.out.println("null lobby");
         }
+    }
+
+    public IRemotePublisherForListener getRpl()
+    {
+        return rmiGameClient.getRpl();
     }
 }

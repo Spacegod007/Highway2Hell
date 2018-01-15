@@ -392,7 +392,7 @@ public class SampleMain extends Application {
                 int id = listvwPlayers.getSelectionModel().getSelectedItem().getID();
                 if (id != administration.getUser().getID()) {
                     administration.leaveLobby(id);
-                    viewLobby(null); //hier nog naar kijken
+                    viewLobby(null);
                 } else {
                     System.out.println("Can't kick self");
                 }
@@ -464,7 +464,7 @@ public class SampleMain extends Application {
         System.out.println("updated");
         Platform.runLater(() ->
         {
-            game = new bootstrapper.Main(administration.getGameAdmin());
+            game = new bootstrapper.Main(administration.getGameAdmin(), administration.getRpl());
             try {
                 System.out.println(((List<User>) obj).size());
                 ((bootstrapper.Main) game).start(new Stage(), (List<User>) obj);
