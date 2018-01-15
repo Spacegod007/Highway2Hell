@@ -13,7 +13,7 @@ public class DatabaseContext implements IContext {
     public boolean testConnection(Properties props){
         return init(props);
     }
-    public boolean init(Properties props) {
+    private boolean init(Properties props) {
         try{
             String connectionURL = props.getProperty("jdbc.url");
             String username = props.getProperty("jdbc.username");

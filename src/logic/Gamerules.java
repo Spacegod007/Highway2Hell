@@ -1,7 +1,7 @@
 package logic;
 
 /**
- * The available gamerules
+ * The available game rules
  */
 public enum Gamerules
 {

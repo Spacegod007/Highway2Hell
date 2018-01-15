@@ -12,7 +12,7 @@ import javafx.util.Duration;
 
 public class BackgroundController {
 	
-	private int backgroundHeight = 2000;
+	private final int backgroundHeight = 2000;
 	
 	@FXML
 	ImageView background1;
@@ -41,7 +41,7 @@ public class BackgroundController {
 		parallelTransition.setCycleCount(Animation.INDEFINITE);
 	}
 	
-	public void startAmination() {
+	public void startAnimation() {
 		parallelTransition.play();
 	}
 }

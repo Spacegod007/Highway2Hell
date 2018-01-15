@@ -6,8 +6,8 @@ import java.io.*;
 import java.util.Properties;
 
 public class Repository {
-    private IContext context;
-    private Properties properties;
+    private final IContext context;
+    private final Properties properties;
 
     public Repository(IContext context)
     {

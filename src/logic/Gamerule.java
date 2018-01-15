@@ -1,18 +1,18 @@
 package logic;
 
 /**
- * A gamerule in the game
+ * A game rule in the game
  */
 public class Gamerule
 {
     /**
-     * The selected gamerule in the enumeration
+     * The selected game rule in the enumeration
      */
-    private Gamerules gamerules;
+    private final Gamerules gamerules;
 
     /**
-     * Gets the selected gamerule
-     * @return the selected gamerule
+     * Gets the selected game rule
+     * @return the selected game rule
      */
     public Gamerules getGamerules()
     {
@@ -20,8 +20,8 @@ public class Gamerule
     }
 
     /**
-     * Gets the value of the gamerule
-     * @return the value of the gamerule
+     * Gets the value of the game rule
+     * @return the value of the game rule
      */
     public int getValue()
     {
@@ -29,12 +29,12 @@ public class Gamerule
     }
 
     /**
-     * Contains the value of the gamerule
+     * Contains the value of the game rule
      */
     private int value;
 
     /**
-     * Constructs a gamerule object
+     * Constructs a game rule object
      * @param gamerule to be selected
      */
     public Gamerule(Gamerules gamerule)
@@ -44,7 +44,7 @@ public class Gamerule
     }
 
     /**
-     * Sets the value of the gamerule
+     * Sets the value of the game rule
      * @param value to be set
      */
     public void setValue(int value)

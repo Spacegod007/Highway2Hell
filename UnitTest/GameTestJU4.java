@@ -60,28 +60,28 @@ public class GameTestJU4 {
 
         //Assert isDead is false
         PlayerObject isNotDead = (PlayerObject)game.getGameObjects().get(0);
-        assertEquals(false, isNotDead.getisDead());
+        assertEquals(false, isNotDead.getIsDead());
 
         //Assert Player Death per border.
         game.getGameObjects().get(0).setAnchor(new Point(-100, 100));
         PlayerObject po = (PlayerObject)game.getGameObjects().get(0);
         game.update();
-        assertEquals(true, po.getisDead());
+        assertEquals(true, po.getIsDead());
 
         game.getGameObjects().get(1).setAnchor(new Point(1980, 100));
         PlayerObject po2 = (PlayerObject)game.getGameObjects().get(1);
         game.update();
-        assertEquals(true, po2.getisDead());
+        assertEquals(true, po2.getIsDead());
 
         game.getGameObjects().get(2).setAnchor(new Point(100, 1100));
         PlayerObject po3 = (PlayerObject)game.getGameObjects().get(2);
         game.update();
-        assertEquals(true, po3.getisDead());
+        assertEquals(true, po3.getIsDead());
 
         game.getGameObjects().get(3).setAnchor(new Point(100, -100));
         PlayerObject po4 = (PlayerObject)game.getGameObjects().get(3);
         game.update();
-        assertEquals(true, po4.getisDead());
+        assertEquals(true, po4.getIsDead());
     }
 
     @Test
@@ -92,18 +92,10 @@ public class GameTestJU4 {
             Assert.fail();
         }
         catch(UnsupportedOperationException e){
+            System.out.println(e.getMessage());
         }
     }
 
-    @Test
-    public void endGame() throws Exception {
-        //Nothing to be tested
-    }
-
-    @Test
-    public void run() throws Exception {
-        //Nothing to be tested
-    }
 
     @Test
     public void ReturnPlayerObjects() throws Exception {
@@ -173,16 +165,6 @@ public class GameTestJU4 {
 
         PO = game.moveCharacter("Player1", Direction.RIGHT);
         assertEquals(190d, PO.getCurrentRotation(), 0.0001);
-    }
-
-    @Test
-    public void setGameRules() throws Exception {
-        //Gamerules are not present yet, nothing to test.
-    }
-
-    @Test
-    public void getGameRules() throws Exception {
-        //Gamerules are not present yet, nothing to test.
     }
 
 }

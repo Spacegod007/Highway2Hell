@@ -41,21 +41,21 @@ import java.util.*;
 public class Main extends Application
 {
     private List<ObstacleObject> obstacleObjects = new ArrayList<>();
-    //Playerimages for creating characters for later versions that use sockets.
-    private Image playerImage = new Image("characters/character_black_blue.png");
-    private Image redBarrelImage = new Image("objects/barrel_red_down.png");
-    private Image blueBarrelImage = new Image("objects/barrel_blue_down.png");
-    private Image rockImage = new Image("objects/rock1.png");
-    private List<ImageView> playerImageViews = new ArrayList<>();
-    private List<ImageView> obstacleImageViews = new ArrayList<>();
-    private IGameAdmin game;
-    private Label distanceLabel = new Label("0");
-    private List<Label> playerLabels = new ArrayList<>();
+    //Player images for creating characters for later versions that use sockets.
+    private final Image playerImage = new Image("characters/character_black_blue.png");
+    private final Image redBarrelImage = new Image("objects/barrel_red_down.png");
+    private final Image blueBarrelImage = new Image("objects/barrel_blue_down.png");
+    private final Image rockImage = new Image("objects/rock1.png");
+    private final List<ImageView> playerImageViews = new ArrayList<>();
+    private final List<ImageView> obstacleImageViews = new ArrayList<>();
+    private final IGameAdmin game;
+    private final Label distanceLabel = new Label("0");
+    private final List<Label> playerLabels = new ArrayList<>();
     private ObservableList<Label> observablePlayerLabels;
     private Map<PlayerObject, ImageView> mappedPlayerObject = new HashMap<>();
     private Map<ObstacleObject, ImageView> mappedObstacleObject = new HashMap<>();
 
-    //Failsafe for if someone decides to hold in one of the buttons.
+    //Fail safe for if someone decides to hold in one of the buttons.
     private boolean leftPressed = false;
     private boolean rightPressed = false;
 
@@ -67,18 +67,18 @@ public class Main extends Application
     private Scene scoreboardScene;
     private Scene countdownScene;
 
-    Pane gamePane;
+    private Pane gamePane;
 
     // for countdown
     private Integer seconds = 4;
-    private Label label = new Label();
+    private final Label label = new Label();
 
     // controllers
-    ScoreboardController scoreboardController;
-    BackgroundController backgroundController;
+    private ScoreboardController scoreboardController;
+    private BackgroundController backgroundController;
 
     //david zn shit
-    PlayerObject thisPlayer = null;
+    private PlayerObject thisPlayer = null;
 
     public Main(IGameAdmin game, IRemotePublisherForListener rpl)
     {
@@ -221,7 +221,7 @@ public class Main extends Application
                         //Check if the game is allowed to end.
                         if (GO.getClass() == PlayerObject.class)
                         {
-                            if (((PlayerObject) GO).getisDead())
+                            if (((PlayerObject) GO).getIsDead())
                             {
                                 playersDead++;
                                 if (playersDead == players)
@@ -244,7 +244,7 @@ public class Main extends Application
                                     scoreboardController.setScore(scores);
                                     try
                                     {
-                                        game.endGame(); //(scoreboardScene, primaryStage) todo use returnvalue and show scoreboard scene
+                                        game.endGame(); //(scoreboardScene, primaryStage) todo use return value and show scoreboard scene
                                     } catch (RemoteException e)
                                     {
                                         e.printStackTrace();
@@ -297,7 +297,7 @@ public class Main extends Application
         //endregiondAnima
 
         // start animation for background
-        backgroundController.startAmination();
+        backgroundController.startAnimation();
         aTimer.start();
 
         List<GameObject> thisGameObjects = null;

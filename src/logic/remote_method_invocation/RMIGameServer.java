@@ -8,7 +8,6 @@ import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.ArrayList;
 
 public class RMIGameServer
 {
@@ -27,7 +26,7 @@ public class RMIGameServer
 
     /**
      * Constructs the RMI server
-     * @param game
+     * @param game the game
      */
     public RMIGameServer(Game game)
     {
@@ -70,6 +69,10 @@ public class RMIGameServer
         {
             System.out.println("Server: Cannot bind publisher");
             System.out.println("Server: RemoteException: " + ex.getMessage());
+        }
+        catch (NullPointerException e){
+            System.out.println("Server: Cannot bind publisher");
+            System.out.println("Server: NullpointerException: " + e.getMessage());
         }
         // Bind student administration using registry
         try

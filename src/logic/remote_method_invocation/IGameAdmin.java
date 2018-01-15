@@ -27,7 +27,7 @@ public interface IGameAdmin extends Remote
     List<GameObject> getGameObjects() throws RemoteException;
     List<Gamerule> getGameRules() throws RemoteException;
     List<PlayerObject> endGame() throws RemoteException;
-    PlayerObject moveCharacter(String playername, Direction direction) throws RemoteException;
+    PlayerObject moveCharacter(String playerName, Direction direction) throws RemoteException;
     List<PlayerObject> returnPlayerObjects() throws RemoteException;
     List<ObstacleObject> returnObstacleObjects() throws RemoteException;
     void startGame() throws RemoteException;

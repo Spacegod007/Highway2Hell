@@ -5,8 +5,6 @@
         import javafx.application.Application;
         import javafx.application.Platform;
         import javafx.collections.ObservableList;
-        import javafx.fxml.FXMLLoader;
-        import javafx.geometry.Insets;
         import javafx.scene.Scene;
         import javafx.scene.control.Button;
         import javafx.scene.control.Label;
@@ -26,39 +24,39 @@
 public class SampleMain extends Application {
 
     //region Form controls
-    Application game;
+    private Application game;
     private Stage stage;
     private Pane titleScreen;
     private Scene titleScene;
-    private ListView<Lobby> listvwLobby = new ListView<>();
-    private ListView<User> listvwPlayers = new ListView<>();
-    private Label lblEnterLobbyName = new Label();
-    private Label lblLobbiesList = new Label();
-    private Label lblPlayersList = new Label();
-    private Label lblPlayersInLobby = new Label();
-    private Label lblPlayerChooseGame = new Label();
-    private Label lblLobbyName = new Label();
-    private TextField txtLobbyName = new TextField();
-    private Button btnRefresh = new Button();
-    private Button btnHostLobby = new Button();
-    private Button btnJoinLobby = new Button();
-    private Button btnKickPlayer = new Button();
-    private Button btnStartGame = new Button();
-    private Button btnLeaveLobby = new Button();
-    private Button btnAccCharacter = new Button();
+    private final ListView<Lobby> listvwLobby = new ListView<>();
+    private final ListView<User> listvwPlayers = new ListView<>();
+    private final Label lblEnterLobbyName = new Label();
+    private final Label lblLobbiesList = new Label();
+    private final Label lblPlayersList = new Label();
+    private final Label lblPlayersInLobby = new Label();
+    private final Label lblPlayerChooseGame = new Label();
+    private final Label lblLobbyName = new Label();
+    private final TextField txtLobbyName = new TextField();
+    private final Button btnRefresh = new Button();
+    private final Button btnHostLobby = new Button();
+    private final Button btnJoinLobby = new Button();
+    private final Button btnKickPlayer = new Button();
+    private final Button btnStartGame = new Button();
+    private final Button btnLeaveLobby = new Button();
+    private final Button btnAccCharacter = new Button();
     private AnchorPane lobbyScreen;
     private Scene lobbyScene;
     private Label lblDoIKnowYou;
     private TextField txtEnterName = new TextField();
     private Button btnLaunchlobbyScreen = new Button();
-    private Label lblErrorMessage = new Label();
+    private final Label lblErrorMessage = new Label();
     private AnchorPane inLobbyScreen;
     private Scene waitingScene;
-    private Label waitingMessage = new Label();
+    private final Label waitingMessage = new Label();
     private AnchorPane waitingScreen;
     private Scene inLobbyScene;
-    private GridPane gridCharacters = new GridPane();
-    private ListView<User> listvwPlayersInLobby = new ListView<>();
+    private final GridPane gridCharacters = new GridPane();
+    private final ListView<User> listvwPlayersInLobby = new ListView<>();
     //endregion
     private static Administration administration;
     private final int minCharsName = 4;
@@ -84,7 +82,7 @@ public class SampleMain extends Application {
             inLobbyScreen = new AnchorPane();
             waitingScreen = new AnchorPane();
             //root = FXMLLoader.load(getClass().getResource("main.fxml"));
-            //deze dingen moeten zoals 'root' allebei uit een fxml komen
+            //these things like 'root' must be come from a fxml file
 
             setUpControls();
 
@@ -248,7 +246,7 @@ public class SampleMain extends Application {
         btnAccCharacter.setLayoutY(475);
         btnAccCharacter.setPrefWidth(132);
         btnAccCharacter.setPrefHeight(30);
-        btnAccCharacter.setText("Accep character");
+        btnAccCharacter.setText("Accept character");
 
         btnLeaveLobby.setLayoutX(7);
         btnLeaveLobby.setLayoutY(10);
@@ -267,9 +265,9 @@ public class SampleMain extends Application {
         int nrRow = 3;
 
         for (int i = 0; i < nrCol; i++) {
-            ColumnConstraints colum = new ColumnConstraints();
-            colum.setPercentWidth(100.0 / nrCol);
-            gridCharacters.getColumnConstraints().add(colum);
+            ColumnConstraints column = new ColumnConstraints();
+            column.setPercentWidth(100.0 / nrCol);
+            gridCharacters.getColumnConstraints().add(column);
         }
 
         for (int x = 0; x < nrRow; x++) {
@@ -411,10 +409,7 @@ public class SampleMain extends Application {
 
     public void setWaitingScreen() {
         if (stage.getScene() != waitingScene) {
-            Platform.runLater(() ->
-            {
-                stage.setScene(waitingScene);
-            });
+            Platform.runLater(() -> stage.setScene(waitingScene));
         }
     }
 
@@ -422,10 +417,7 @@ public class SampleMain extends Application {
      * @param x is the amount of players not yet connected
      */
     public void setWaitingPlayers(int x) {
-        Platform.runLater(() ->
-        {
-            waitingMessage.setText("Waiting for " + x + " players");
-        });
+        Platform.runLater(() -> waitingMessage.setText("Waiting for " + x + " players"));
     }
 
     public void setListvwLobby(ObservableList<Lobby> lobbies) {

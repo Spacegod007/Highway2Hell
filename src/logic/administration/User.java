@@ -15,7 +15,7 @@ public class User implements Serializable
     /**
      * The id of the user
      */
-    private int ID;
+    private final int ID;
 
     /**
      * The lobby the user is currently located in

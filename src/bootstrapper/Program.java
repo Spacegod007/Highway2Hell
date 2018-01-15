@@ -14,7 +14,7 @@ public class Program
 {
     /**
      * Main entry point of client application
-     * @param args
+     * @param args array of arguments
      */
     public static void main(String[] args)
     {

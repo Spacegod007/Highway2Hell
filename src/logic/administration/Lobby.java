@@ -17,7 +17,7 @@ public class Lobby implements Serializable
     /**
      * The id of the lobby
      */
-    private int id;
+    private final int id;
 
     private boolean started = false;
 
@@ -29,22 +29,22 @@ public class Lobby implements Serializable
     /**
      * The name of the lobby
      */
-    private String name;
+    private final String name;
 
     /**
      * The players that are currently in the lobby
      */
-    private List<User> players;
+    private final List<User> players;
 
     /**
-     * The gamerules bound to this lobby by the host
+     * The game rules bound to this lobby by the host
      */
-    private List<Gamerule> gamerules;
+    private final List<Gamerule> gameRules;
 
     /**
      * The ipAddress used to connect to the server when the game starts
      */
-    private String ipAddress;
+    private final String ipAddress;
 
     /**
      * The port the server will be run on
@@ -54,7 +54,7 @@ public class Lobby implements Serializable
     /**
      * The maximum amount of players allowed
      */
-    private static int maxSize = 64; // static?
+    private final static int maxSize = 64; // static?
 
     /**
      * Gets the host of this lobby
@@ -100,17 +100,17 @@ public class Lobby implements Serializable
     }
 
     /**
-     * Gets a list of all the gamerules bound to this lobby
-     * @return a list of all gamerules bound to this lobby
+     * Gets a list of all the game rules bound to this lobby
+     * @return a list of all game rules bound to this lobby
      */
     public List<Gamerule> getGamerules()
     {
-        return Collections.unmodifiableList(gamerules);
+        return Collections.unmodifiableList(gameRules);
     }
 
     /**
      * Gets the name of this lobby
-     * @return
+     * @return the name of the lobby
      */
     public String getName()
     {
@@ -126,7 +126,7 @@ public class Lobby implements Serializable
     public Lobby(String name, int id, String ipAddress)
     {
         players = new ArrayList<>();
-        gamerules = new ArrayList<>();
+        gameRules = new ArrayList<>();
         this.name = name;
         this.id = id;
         this.ipAddress = ipAddress;
@@ -182,7 +182,7 @@ public class Lobby implements Serializable
     }
 
     /**
-     * Changes the gamerules
+     * Changes the game rules
      */
     public void editGameRules()
     {

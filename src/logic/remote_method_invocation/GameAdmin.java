@@ -19,14 +19,14 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
 {
-    private AtomicLong nextSessionId = new AtomicLong(0);
+    private final AtomicLong nextSessionId = new AtomicLong(0);
 
-    private Map<Long, User> sessionMap;
+    private final Map<Long, User> sessionMap;
 
-    private List<User> playerlist;
+    private final List<User> playerList;
     private Lobby lobby = null;
 
-    private Object connectSynchronizer;
+    private final Object connectSynchronizer;
 
     public void setLobby(Lobby lobby)
     {
@@ -35,17 +35,17 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
 
     public int getPlayersConnected()
     {
-        return playerlist.size();
+        return playerList.size();
     }
     public List<User> getPlayerlist()
     {
-        return playerlist;
+        return playerList;
     }
 
     /**
      * Remote publisher to publish the host's data to the clients
      */
-    private IRemotePublisherForDomain rpd;
+    private final IRemotePublisherForDomain rpd;
 
     private Game game;
 
@@ -58,7 +58,7 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
     public GameAdmin(IRemotePublisherForDomain publisher, Game game) throws RemoteException
     {
         connectSynchronizer = new Object();
-        playerlist = new ArrayList<>();
+        playerList = new ArrayList<>();
         sessionMap = new HashMap<>();
         this.rpd = publisher;
         rpd.registerProperty("playersconnected");
@@ -74,10 +74,10 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
         synchronized (connectSynchronizer)
         {
             sessionMap.put(nextSessionId.incrementAndGet(), client);
-            playerlist.add(client);
+            playerList.add(client);
             try
             {
-                rpd.inform("playersconnected", null, playerlist.size());
+                rpd.inform("playersconnected", null, playerList.size());
             } catch (RemoteException e)
             {
                 e.printStackTrace();
@@ -90,7 +90,7 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
     {
         try
         {
-            rpd.inform("gameIsStarted", null, playerlist);
+            rpd.inform("gameIsStarted", null, playerList);
             rpd.registerProperty("gameState");
         } catch (RemoteException e)
         {
@@ -117,9 +117,9 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
     }
 
     @Override
-    public PlayerObject moveCharacter(String playername, Direction direction)
+    public PlayerObject moveCharacter(String playerName, Direction direction)
     {
-        return game.moveCharacter(playername, direction);
+        return game.moveCharacter(playerName, direction);
     }
 
     @Override

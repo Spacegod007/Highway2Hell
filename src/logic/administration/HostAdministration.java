@@ -6,7 +6,6 @@ import logic.remote_method_invocation.RMIGameClient;
 import logic.remote_method_invocation.RMIGameServer;
 
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,11 +14,6 @@ import java.util.List;
  */
 public class HostAdministration implements Runnable
 {
-
-    /**
-     * The game application which runs when the game starts
-     */
-    Main gameApplication;
 
     /**
      * The lobby from which the host starts the game

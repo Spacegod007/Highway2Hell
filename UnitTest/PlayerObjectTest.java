@@ -1,6 +1,5 @@
 import javafx.scene.paint.Color;
 import logic.game.Direction;
-import logic.game.ObstacleObject;
 import logic.game.PlayerObject;
 import logic.game.Point;
 import logic.game.Size;
@@ -33,17 +32,17 @@ public class PlayerObjectTest {
     }
 
     @Test
-    public void getisDead() throws Exception {
-        assertEquals(false, PO.getisDead());
+    public void getIsDead() throws Exception {
+        assertEquals(false, PO.getIsDead());
         PO.setIsDead(true);
-        assertEquals(true, PO.getisDead());
+        assertEquals(true, PO.getIsDead());
     }
 
     @Test
     public void setIsDead() throws Exception {
-        assertEquals(false, PO.getisDead());
+        assertEquals(false, PO.getIsDead());
         PO.setIsDead(true);
-        assertEquals(true, PO.getisDead());
+        assertEquals(true, PO.getIsDead());
     }
 
     @Test
@@ -106,7 +105,7 @@ public class PlayerObjectTest {
     }
 
     /*
-    TODO: FIX TEST WITH NEW RANDOM OBSTACLEOBJECT MECHANISM, SIZE (WIDTH/HEIGHT) IS NO LONGER GIVEN THROUGH THE CONSTRUCTOR
+    TODO: FIX TEST WITH NEW RANDOM OBSTACLE OBJECT MECHANISM, SIZE (WIDTH/HEIGHT) IS NO LONGER GIVEN THROUGH THE CONSTRUCTOR
     @Test
     public void CheckForObstacleCollision() throws Exception {
         ObstacleObject OO = new ObstacleObject();
