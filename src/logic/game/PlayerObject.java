@@ -33,7 +33,7 @@ public class PlayerObject extends GameObject
     private double currentRotation;
 
     /**
-     * Constructs a playerobject
+     * Constructs a player object
      * @param anchor marks the location of the player
      * @param name of the player
      * @param color of the player
@@ -67,7 +67,7 @@ public class PlayerObject extends GameObject
      * Gets if the player is dead
      * @return true if the player is dead, false if the player is alive
      */
-    public boolean getisDead()
+    public boolean getIsDead()
     {
         return isDead;
     }
@@ -191,7 +191,7 @@ public class PlayerObject extends GameObject
     }
 
     /**
-     * Checks if there is a collision between a playerobject and an obstacle object
+     * Checks if there is a collision between a player object and an obstacle object
      * @param obstacleObject to check
      * @return true if there is a collision with the player object, false if there is no collision with the player object
      */

@@ -1,5 +1,4 @@
 import logic.game.Size;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -8,10 +7,6 @@ public class SizeTest {
 
     private final Size s = new Size(1, 1);
 
-    @Before
-    public void setUp() throws Exception {
-        //Nothing for now.
-    }
 
     @Test
     public void getWidth() throws Exception {

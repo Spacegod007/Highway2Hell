@@ -22,8 +22,8 @@ public class RemotePublisher extends UnicastRemoteObject
     
     /**
      * Default no-arg constructor for RemotePublisher.
-     * 
-     * @throws java.rmi.RemoteException
+     *
+     * @throws RemoteException if there's a problem with the connection
      */
     public RemotePublisher() throws RemoteException {
         publisher = new Publisher();
@@ -32,8 +32,8 @@ public class RemotePublisher extends UnicastRemoteObject
     /**
      * Constructor for RemotePublisher. Property listeners may subscribe to given properties.
      * 
-     * @param properties
-     * @throws java.rmi.RemoteException
+     * @param properties array of properties
+     * @throws RemoteException if there's a problem with the connection
      */
     public RemotePublisher(String[] properties) throws RemoteException {
         publisher = new Publisher(properties);

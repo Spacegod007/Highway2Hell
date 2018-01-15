@@ -22,7 +22,6 @@ import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Scanner;
 
 /**
  * The client for RMI
@@ -35,7 +34,7 @@ public class RMILobbyClient
     private static final String bindingName = "LobbyAdmin";
 
     /**
-     * The bindingname for the publisher
+     * The binding name for the publisher
      */
     private static final String bindingNamePublisher = "publisher";
 
@@ -59,7 +58,7 @@ public class RMILobbyClient
     private Registry registry = null;
 
     /**
-     * The lobbyadmin which acts as the local lobbyadmin
+     * The lobby admin which acts as the local lobby admin
      */
     private ILobbyAdmin lobbyAdmin = null;
 

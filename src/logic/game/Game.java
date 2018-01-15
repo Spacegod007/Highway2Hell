@@ -14,33 +14,33 @@ public class Game
     /**
      * A list of all game objects including players, obstacles, etc.
      */
-    private List<GameObject> gameObjects = new ArrayList<GameObject>();
+    private List<GameObject> gameObjects = new ArrayList<>();
 
     /**
-     * A list of the currently bound gamerules
+     * A list of the currently bound game rules
      */
     private List<Gamerule> gameRules;
 
     /**
      * Determines the speed at which the game scrolls
      */
-    private double scrollSpeed = 1.5;
+    private final double scrollSpeed = 1.5;
 
     /**
      * The amount of obstacles in the game
      */
-    private int obstacleCount = 1;
+    private final int obstacleCount = 1;
 
-    private Timer timer;
+    private final Timer timer;
     private boolean timerRunning = false;
 
     private final Object synchronizer;
 
-    private int amountOfObstacleObjects = 8;
+    private final int amountOfObstacleObjects = 8;
 
     /**
      * Constructs the game object
-     * @param gameRules the gamerules that are bound to this current game
+     * @param gameRules the game rules that are bound to this current game
      */
     public Game(List<Gamerule> gameRules, List<User> users)
     {
@@ -123,8 +123,8 @@ public class Game
     }
 
     /**
-     * Gets a list of all gamerules
-     * @return the list of gamerules
+     * Gets a list of all game rules
+     * @return the list of game rules
      */
     public List<Gamerule> getGamerules()
     {
@@ -135,7 +135,7 @@ public class Game
     }
 
     /**
-     * Sets the list of gameruels
+     * Sets the list of game rules
      * @param gameRules to be set
      */
     public void setGamerules(List<Gamerule> gameRules)
@@ -252,7 +252,7 @@ public class Game
                 {
                     PlayerObject p = (PlayerObject) g;
 
-                    if (playerName.equals("Player1") && p.getName().equals("Player1")) ;
+                    if (playerName.equals("Player1") && p.getName().equals("Player1"))
                     {
                         switch (direction)
                         {
@@ -295,7 +295,7 @@ public class Game
 
     /**
      * Gets a list of the current obstacle objects
-     * @return a list of all obtacle objects
+     * @return a list of all obstacle objects
      */
     public List<ObstacleObject> returnObstacleObjects()
     {

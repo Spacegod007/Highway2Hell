@@ -1,5 +1,4 @@
 import logic.game.Point;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -7,10 +6,6 @@ import static org.junit.Assert.*;
 public class PointTest {
     private final Point p = new Point(10,10);
 
-    @Before
-    public void setUp() throws Exception {
-        //Nothing for now.
-    }
 
     @Test
     public void getX() throws Exception {

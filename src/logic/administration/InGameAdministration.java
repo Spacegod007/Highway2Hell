@@ -15,12 +15,12 @@ public class InGameAdministration  extends UnicastRemoteObject implements IRemot
     /**
      * Connection to RMI server
      */
-    private RMIGameClient rmiGameClient;
+    private final RMIGameClient rmiGameClient;
 
     /**
      * Constructs the client-side of the game administration
      * @param rmiclient connection to the RMI server
-     * @throws RemoteException
+     * @throws RemoteException if there's a problem with the connection
      */
     public InGameAdministration(RMIGameClient rmiclient) throws RemoteException
     {

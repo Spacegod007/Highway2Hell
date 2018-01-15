@@ -29,7 +29,7 @@ public class RMILobbyServer
     /**
      * Constructs the RMI server
      */
-    public RMILobbyServer()
+    private RMILobbyServer()
     {
 
         // Print port number for registry
@@ -73,6 +73,10 @@ public class RMILobbyServer
         {
             System.out.println("Server: Cannot bind publisher");
             System.out.println("Server: RemoteException: " + ex.getMessage());
+        }
+        catch (NullPointerException e){
+            System.out.println("Server: Cannot bind publisher");
+            System.out.println("Server: NullpointerException: " + e.getMessage());
         }
         // Bind student administration using registry
         try

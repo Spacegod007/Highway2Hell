@@ -33,7 +33,7 @@ public class RMIGameClient extends Observable implements Serializable
     private static final String bindingName = "gameAdmin";
 
     /**
-     * The bindingname for the publisher
+     * The binding name for the publisher
      */
     private static final String bindingNamePublisher = "publisher";
 
@@ -43,7 +43,7 @@ public class RMIGameClient extends Observable implements Serializable
     private Registry registry = null;
 
     /**
-     * The lobbyadmin which acts as the local lobbyadmin
+     * The lobby admin which acts as the local lobby admin
      */
     private IGameAdmin gameAdmin = null;
 
@@ -235,7 +235,7 @@ public class RMIGameClient extends Observable implements Serializable
      * Test RMI connection
      * !Should implement working test
      */
-    // TODO: 4-12-2017 : implement RMItest
+    // TODO: 4-12-2017 : implement RMI test
     private void testConnection()
     {
 

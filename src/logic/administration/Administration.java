@@ -20,7 +20,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     /**
      * The client which interacts with the server
      */
-    private RMILobbyClient rmiClient;
+    private final RMILobbyClient rmiClient;
     private RMIGameClient rmiGameClient;
     private Thread gameThread;
     private HostAdministration hostAdministration;
@@ -63,7 +63,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
 
     /**
      * Sets the username of the user
-     * @param username
+     * @param username the new username of the user
      */
     public boolean setUsername(String username)
     {
@@ -208,13 +208,13 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
      */
     private void playerConnected(PropertyChangeEvent evt)
     {
-        System.out.println("playersconnected: " + evt.getNewValue());
+        System.out.println("players connected: " + evt.getNewValue());
         int waitingPlayers = (rmiClient.getActiveLobby().getPlayers().size()) - (int) evt.getNewValue();
         sampleMain.setWaitingPlayers(waitingPlayers);
 
         if (waitingPlayers <= 0)
         {
-            //Dit wordt alleen op de host gedaan nu, want dat is de enige met en hostAdministration
+            //This only done one the host now, because host is the only one with hostAdministration
             if(hostAdministration != null && rmiGameClient != null)
             {
                 //add parameters
@@ -251,7 +251,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     /**
      * Triggers when the list of lobbies changed, should not be used manually
      * @param evt PropertyChangeEvent @see java.beans.PropertyChangeEvent
-     * @throws RemoteException
+     * @throws RemoteException if there's a problem with the connection
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) throws RemoteException

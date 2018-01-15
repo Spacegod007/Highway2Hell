@@ -39,12 +39,4 @@ public class ScoreTest {
         assertEquals("Test2", s.getName());
     }
 
-    @Test
-    public void getScore() throws Exception {
-    }
-
-    @Test
-    public void setScore() throws Exception {
-    }
-
 }
