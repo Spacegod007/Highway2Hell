@@ -53,7 +53,6 @@ public class Main extends Application
     private final IGameAdmin game;
     private final Label distanceLabel = new Label("0");
     private List<Label> playerLabels = new ArrayList<>();
-    private ObservableList<Label> observablePlayerLabels;
     private Map<String, ImageView> mappedPlayerImage = new HashMap<>();
     private Map<String, PlayerObject> mappedPlayerObject = new HashMap<>();
     private Map<String, Label> mappedPlayerLabel = new HashMap<>();
@@ -403,7 +402,7 @@ public class Main extends Application
             System.out.println(tempPlayer.getAnchor().getY());
             Label tempLabel = mappedPlayerLabel.get(po.getName());
             tempLabel.setTranslateX(tempPlayer.getAnchor().getX());
-            tempLabel.setTranslateY(tempPlayer.getAnchor().getX()-23);
+            tempLabel.setTranslateY(tempPlayer.getAnchor().getY()-23);
             mappedPlayerLabel.replace(po.getName(), tempLabel);
 
             ImageView img = mappedPlayerImage.get(po.getName());
@@ -428,28 +427,6 @@ public class Main extends Application
             img.setY(tempObstacle.getAnchor().getY());
         }
        // distanceLabel.setText("Distance: " + Long.toString(thisPlayer.getDistance()));
-
-        // player name labels
-        observablePlayerLabels = FXCollections.observableArrayList(setTempPlayerLabels());
-    }
-
-    private List<Label> setTempPlayerLabels()
-    {
-        ArrayList<Label> tempPlayerLabels = new ArrayList<>();
-        try
-        {
-            for (PlayerObject player : game.returnPlayerObjects())
-            {
-                Label tempPlayerLabel = new Label(player.getName());
-                tempPlayerLabel.setTranslateX(player.getAnchor().getX());
-                tempPlayerLabel.setTranslateY(player.getAnchor().getY());
-                tempPlayerLabels.add(tempPlayerLabel);
-            }
-        } catch (RemoteException e)
-        {
-            e.printStackTrace();
-        }
-        return tempPlayerLabels;
     }
     private void setScores()
     {

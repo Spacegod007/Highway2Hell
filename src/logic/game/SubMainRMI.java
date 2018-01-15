@@ -1,6 +1,7 @@
 package logic.game;
 
 import bootstrapper.Main;
+import javafx.application.Platform;
 import logic.fontyspublisher.IPropertyListener;
 import logic.fontyspublisher.IRemotePropertyListener;
 import logic.fontyspublisher.IRemotePublisherForListener;
@@ -36,7 +37,8 @@ public class SubMainRMI extends UnicastRemoteObject implements Serializable, IRe
         System.out.println("informed");
         switch (evt.getPropertyName())
         {
-            case "gameObjects": application.update((List<GameObject>)evt.getNewValue()); break;
+            case "gameObjects":
+                Platform.runLater(() -> application.update((List<GameObject>)evt.getNewValue())); break;
         }
     }
 }
