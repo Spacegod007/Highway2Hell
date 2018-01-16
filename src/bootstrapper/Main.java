@@ -438,6 +438,9 @@ public class Main extends Application
         scores.clear();
     }
 
+    public void setScaling()
+    {
+    }
     public void backToLobby()
     {
 

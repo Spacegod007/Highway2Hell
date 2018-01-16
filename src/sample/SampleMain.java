@@ -343,13 +343,6 @@ public class SampleMain extends Application {
         Lobby lobby = listvwLobby.getSelectionModel().getSelectedItem();
         if (lobby != null) {
             listvwPlayers.setItems(lobby.getPlayers());
-//            if (player != null) { //todo check for usage, never used due to player always being null
-//                for (User p : listvwPlayers.getItems()) {
-//                    if (p.getID() == player.getID()) {
-//                        listvwPlayers.getSelectionModel().select(p);
-//                    }
-//                }
-//            }
         }
     }
 
@@ -402,9 +395,9 @@ public class SampleMain extends Application {
 
     private void kickPlayer() {
         try {
-            User player = listvwPlayers.getSelectionModel().getSelectedItem();
+            User player = listvwPlayersInLobby.getSelectionModel().getSelectedItem();
             if (player != null) {
-                int id = listvwPlayers.getSelectionModel().getSelectedItem().getID();
+                int id = player.getID();
                 if (id != administration.getUser().getID()) {
                     administration.leaveLobby(id);
                     viewLobby(null);

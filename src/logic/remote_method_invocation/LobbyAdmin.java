@@ -73,6 +73,7 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
      * @throws RemoteException if there is a problem in the connection
      */
     public LobbyAdmin(IRemotePublisherForDomain rpd) throws RemoteException {
+        super();
         this.rpd = rpd;
         rpd.registerProperty("lobbies");
         lobbies = new ArrayList<>();
