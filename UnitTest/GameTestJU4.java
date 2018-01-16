@@ -18,10 +18,10 @@ public class GameTestJU4 {
 
     @Before
     public void setUp() throws Exception {
-        gameObject.add(new PlayerObject(new Point(960, 900),new Size(78, 54),"Player1", Color.BLACK));
-        gameObject.add(new PlayerObject(new Point(860, 890),new Size(78, 54),"Player2", Color.RED));
-        gameObject.add(new PlayerObject(new Point(960, 700),new Size(78, 54),"Player1", Color.GREEN));
-        gameObject.add(new PlayerObject(new Point(860, 690),new Size(78, 54),"Player2", Color.BLUE));
+        gameObject.add(new PlayerObject(new Point(960, 900),new Size(78, 54),"Player1", CharacterColor.black_blue));
+        gameObject.add(new PlayerObject(new Point(860, 890),new Size(78, 54),"Player2", CharacterColor.black_green));
+        gameObject.add(new PlayerObject(new Point(960, 700),new Size(78, 54),"Player1", CharacterColor.black_red));
+        gameObject.add(new PlayerObject(new Point(860, 690),new Size(78, 54),"Player2", CharacterColor.black_white));
         gameObject.add(new ObstacleObject());
         game.setGameObjects(gameObject);
     }
@@ -29,8 +29,8 @@ public class GameTestJU4 {
     @Test
     public void getGameObjects() throws Exception {
         ArrayList<GameObject> testGameObject = new ArrayList<>();
-        testGameObject.add(new PlayerObject(new Point(960, 900),new Size(78, 54),"Player1", Color.BLACK));
-        testGameObject.add(new PlayerObject(new Point(860, 890),new Size(78, 54),"Player2", Color.RED));
+        testGameObject.add(new PlayerObject(new Point(960, 900),new Size(78, 54),"Player1", CharacterColor.black_blue));
+        testGameObject.add(new PlayerObject(new Point(860, 890),new Size(78, 54),"Player2", CharacterColor.black_red));
         game.setGameObjects(testGameObject);
 
         assertEquals(2, game.getGameObjects().size());
@@ -39,9 +39,9 @@ public class GameTestJU4 {
     @Test
     public void setGameObjects() throws Exception {
         ArrayList<GameObject> testGameObject = new ArrayList<>();
-        testGameObject.add(new PlayerObject(new Point(960, 900),new Size(78, 54),"Player1", Color.BLACK));
-        testGameObject.add(new PlayerObject(new Point(860, 890),new Size(78, 54),"Player2", Color.RED));
-        testGameObject.add(new PlayerObject(new Point(860, 790),new Size(78, 54),"Player2", Color.GREEN));
+        testGameObject.add(new PlayerObject(new Point(960, 900),new Size(78, 54),"Player1", CharacterColor.black_blue));
+        testGameObject.add(new PlayerObject(new Point(860, 890),new Size(78, 54),"Player2", CharacterColor.black_red));
+        testGameObject.add(new PlayerObject(new Point(860, 790),new Size(78, 54),"Player2", CharacterColor.black_white));
         game.setGameObjects(testGameObject);
 
         assertEquals(3, game.getGameObjects().size());
@@ -104,7 +104,7 @@ public class GameTestJU4 {
 
         //Change the value
         List<GameObject> GO = new ArrayList<>();
-        GO.add(new PlayerObject(new Point(0,0),new Size(78, 54), "lol", Color.RED));
+        GO.add(new PlayerObject(new Point(0,0),new Size(78, 54), "lol", CharacterColor.black_red));
         game.setGameObjects(GO);
 
         //Assert the new value
