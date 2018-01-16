@@ -12,6 +12,7 @@
         import javafx.scene.control.Label;
         import javafx.scene.control.ListView;
         import javafx.scene.control.TextField;
+        import javafx.scene.image.Image;
         import javafx.scene.input.KeyCode;
         import javafx.scene.input.KeyEvent;
         import javafx.scene.layout.*;
@@ -22,7 +23,9 @@
         import logic.administration.InGameAdministration;
         import logic.administration.Lobby;
         import logic.administration.User;
+        import logic.game.CharacterColor;
 
+        import javax.swing.text.html.ImageView;
         import java.util.List;
 
 public class SampleMain extends Application {
@@ -59,7 +62,6 @@ public class SampleMain extends Application {
     private final Label waitingMessage = new Label();
     private AnchorPane waitingScreen;
     private Scene inLobbyScene;
-    private final GridPane gridCharacters = new GridPane();
     private final ListView<User> listvwPlayersInLobby = new ListView<>();
     //endregion
     private static Administration administration;
@@ -272,28 +274,45 @@ public class SampleMain extends Application {
         btnLeaveLobby.setText("Leave lobby");
         btnLeaveLobby.setOnAction(event -> leaveLobby());
 
-        gridCharacters.setLayoutX(501);
-        gridCharacters.setLayoutY(140);
-        gridCharacters.setPrefHeight(296);
-        gridCharacters.setPrefWidth(497);
-        gridCharacters.setGridLinesVisible(true);
+        javafx.scene.image.ImageView imageViewSelectedPlayer = new javafx.scene.image.ImageView();
+        imageViewSelectedPlayer.setLayoutX(740);
+        imageViewSelectedPlayer.setLayoutY(200);
+        imageViewSelectedPlayer.setFitHeight(36);
+        imageViewSelectedPlayer.setFitWidth(53);
 
-        int nrCol = 6;
-        int nrRow = 3;
 
-        for (int i = 0; i < nrCol; i++) {
-            ColumnConstraints column = new ColumnConstraints();
-            column.setPercentWidth(100.0 / nrCol);
-            gridCharacters.getColumnConstraints().add(column);
+        int x = 500;
+        int y = 200;
+        int counter = 0;
+
+        for (CharacterColor color:CharacterColor.values())
+        {
+            counter++;
+            javafx.scene.image.ImageView imageView = new javafx.scene.image.ImageView();
+            imageView.setImage(new Image(color.getPath()));
+            imageView.setLayoutY(y);
+            imageView.setLayoutX(x);
+            imageView.setFitWidth(53);
+            imageView.setFitHeight(36);
+            imageView.setStyle("-fx-background-color: black");
+            imageView.setStyle("-fx-padding: 1px");
+            imageView.setId(color.toString());
+            imageView.setOnMouseClicked(event -> imageViewSelectedPlayer.setImage(new Image(color.getPath())));
+            inLobbyScreen.getChildren().add(imageView);
+
+            x = x + 53;
+
+            if(counter >= 4){
+                System.out.println(x);
+                x = 500;
+                y = y + 36;
+                counter = 0;
+            }
+
+            System.out.println(imageView.getLayoutX() + ";" + imageView.getLayoutY());
         }
 
-        for (int x = 0; x < nrRow; x++) {
-            RowConstraints row = new RowConstraints();
-            row.setPercentHeight(100.0 / nrRow);
-            gridCharacters.getRowConstraints().add(row);
-        }
-
-        inLobbyScreen.getChildren().addAll(lblLobbyName, gridCharacters, btnAccCharacter, lblPlayersInLobby, btnLeaveLobby, btnKickPlayer, btnStartGame, listvwPlayersInLobby);
+        inLobbyScreen.getChildren().addAll(imageViewSelectedPlayer, lblLobbyName, btnAccCharacter, lblPlayersInLobby, btnLeaveLobby, btnKickPlayer, btnStartGame, listvwPlayersInLobby);
         //endregion
     }
 
