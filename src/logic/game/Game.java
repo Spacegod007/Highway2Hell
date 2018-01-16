@@ -179,7 +179,7 @@ public class Game
         {
             int index = 0;
             //Method for scrolling the screen.
-            for (GameObject GO : getGameObjects())
+            for (GameObject GO : gameObjects)
             {
                 //GO scroll.
                 if (GO instanceof ObstacleObject)
@@ -221,7 +221,9 @@ public class Game
                     ObstacleObject OO = (ObstacleObject) GO;
                     if (OO.getAnchor().getY() + (OO.getHeight()) > 1000)
                     {
-                        gameObjects.set(index, new ObstacleObject());
+                        ObstacleObject temp = new ObstacleObject();
+                        OO.setAnchor(temp.getAnchor());
+                        gameObjects.set(index, OO);
                     }
                 }
                 index++;

@@ -421,10 +421,24 @@ public class Main extends Application
         }
         for (ObstacleObject obstacleObject : obstacleObjects)
         {
-            ObstacleObject tempObstacle = mappedObstacleObject.get(obstacleObject.getId());
-            ImageView img = mappedObstacleImage.get(obstacleObject.getId());
-            img.setX(tempObstacle.getAnchor().getX());
-            img.setY(tempObstacle.getAnchor().getY());
+            if(mappedObstacleObject.containsKey(obstacleObject.getId()))
+            {
+                ObstacleObject tempObstacle = mappedObstacleObject.get(obstacleObject.getId());
+                if(mappedObstacleImage.containsKey(obstacleObject.getId()))
+                {
+                    ImageView img = mappedObstacleImage.get(obstacleObject.getId());
+                    img.setX(tempObstacle.getAnchor().getX());
+                    img.setY(tempObstacle.getAnchor().getY());
+                }
+                else
+                    {
+                        System.out.println("obstacleimage not found");
+                    }
+            }
+            else
+                {
+                    System.out.println("obstacle not found");
+                }
         }
        // distanceLabel.setText("Distance: " + Long.toString(thisPlayer.getDistance()));
     }
