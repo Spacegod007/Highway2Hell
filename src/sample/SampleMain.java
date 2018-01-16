@@ -4,6 +4,7 @@
         import database.Repositories.Repository;
         import javafx.application.Application;
         import javafx.application.Platform;
+        import javafx.beans.value.ObservableValue;
         import javafx.collections.ObservableList;
         import javafx.event.ActionEvent;
         import javafx.event.EventHandler;
@@ -15,6 +16,8 @@
         import javafx.scene.image.Image;
         import javafx.scene.input.KeyCode;
         import javafx.scene.input.KeyEvent;
+        import javafx.scene.input.MouseButton;
+        import javafx.scene.input.MouseEvent;
         import javafx.scene.layout.*;
         import javafx.scene.paint.Color;
         import javafx.scene.text.TextAlignment;
@@ -178,7 +181,7 @@ public class SampleMain extends Application {
         listvwLobby.setLayoutY(132);
         listvwLobby.setPrefHeight(851);
         listvwLobby.setPrefWidth(306);
-        listvwLobby.getSelectionModel().selectedItemProperty().addListener(event -> viewLobby(null));
+        listvwLobby.setOnMouseClicked(this::listvwLobbyClicked);
 
         listvwPlayers.setLayoutX(332);
         listvwPlayers.setLayoutY(132);
@@ -314,6 +317,26 @@ public class SampleMain extends Application {
 
         inLobbyScreen.getChildren().addAll(imageViewSelectedPlayer, lblLobbyName, btnAccCharacter, lblPlayersInLobby, btnLeaveLobby, btnKickPlayer, btnStartGame, listvwPlayersInLobby);
         //endregion
+    }
+
+    private void listvwLobbyClicked(MouseEvent event)
+    {
+        if (event.getButton() == MouseButton.PRIMARY)
+        {
+            Lobby selectedItem = listvwLobby.getSelectionModel().getSelectedItem();
+
+            if (selectedItem != null)
+            {
+                if (event.getClickCount() == 2)
+                {
+                    joinLobby();
+                }
+                else
+                {
+                    viewLobby(null);
+                }
+            }
+        }
     }
 
     private boolean contains() {
