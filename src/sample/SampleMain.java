@@ -309,7 +309,6 @@ public class SampleMain extends Application {
     private void checkForKicked() {
         if (stage.getScene() == inLobbyScene && !contains()) {
             stage.setScene(lobbyScene);
-            System.out.println("left like this");
         }
 
     }
