@@ -1,8 +1,5 @@
 import javafx.scene.paint.Color;
-import logic.game.Direction;
-import logic.game.PlayerObject;
-import logic.game.Point;
-import logic.game.Size;
+import logic.game.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -10,7 +7,7 @@ import static junit.framework.TestCase.assertEquals;
 
 public class PlayerObjectTest {
 
-    private final PlayerObject PO = new PlayerObject(new Point(0,0),new Size(78, 54), "Player1", Color.BLACK);
+    private final PlayerObject PO = new PlayerObject(new Point(0,0),new Size(78, 54), "Player1", CharacterColor.black_blue);
 
     @Before
     public void setUp() throws Exception {
@@ -85,14 +82,14 @@ public class PlayerObjectTest {
 
     @Test
     public void getColor() throws Exception {
-        assertEquals(Color.BLACK, PO.getColor());
+        assertEquals(CharacterColor.black_blue, PO.getColor());
     }
 
     @Test
     public void setColor() throws Exception {
-        assertEquals(Color.BLACK, PO.getColor());
-        PO.setColor(Color.WHITE);
-        assertEquals(Color.WHITE, PO.getColor());
+        assertEquals(CharacterColor.black_blue, PO.getColor());
+        PO.setColor(CharacterColor.black_green);
+        assertEquals(CharacterColor.black_green, PO.getColor());
     }
 
     @Test

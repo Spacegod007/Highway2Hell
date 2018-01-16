@@ -15,7 +15,7 @@ public class PlayerObject extends GameObject
     /**
      * The color of the player
      */
-    private String color;
+    private CharacterColor color;
 
     /**
      * The distance the player has traveled
@@ -38,11 +38,11 @@ public class PlayerObject extends GameObject
      * @param name of the player
      * @param color of the player
      */
-    public PlayerObject(Point anchor, Size size, String name, Color color)
+    public PlayerObject(Point anchor, Size size, String name, CharacterColor color)
     {
         super(anchor, size);
         this.name = name;
-        this.color = color.toString();
+        this.color = color;
         this.currentRotation = 180d;
     }
 
@@ -140,18 +140,18 @@ public class PlayerObject extends GameObject
      * Gets the color of the player
      * @return the color of the player
      */
-    public Color getColor()
+    public CharacterColor getColor()
     {
-        return Color.valueOf(color);
+        return color;
     }
 
     /**
      * Sets the color of the player
      * @param color to be set
      */
-    public void setColor(Color color)
+    public void setColor(CharacterColor color)
     {
-        this.color = color.toString();
+        this.color = color;
     }
 
     /**
