@@ -185,7 +185,7 @@ public class Game
                 if (GO instanceof ObstacleObject)
                 {
                     GO.setAnchor(new Point(GO.getAnchor().getX(), GO.getAnchor().getY() + scrollSpeed * 3));
-                } else
+                } else //GO = PlayerObject
                 {
                     GO.setAnchor(new Point(GO.getAnchor().getX(), GO.getAnchor().getY() + scrollSpeed));
                 }
@@ -278,7 +278,7 @@ public class Game
                 {
                     PlayerObject p = (PlayerObject) g;
 
-                    if (playerName.equals("Player1") && p.getName().equals("Player1"))
+                    if (p.getName().equals(playerName))
                     {
                         switch (direction)
                         {

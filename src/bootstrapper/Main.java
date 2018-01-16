@@ -86,11 +86,13 @@ public class Main extends Application
     private BackgroundController backgroundController;
 
     //david zn shit
-    private PlayerObject thisPlayer = null;
+    private String playerKey = null;
 
     public Main(IGameAdmin game, IRemotePublisherForListener rpl, User user)
     {
         this.user = user;
+        this.playerKey = user.getUsername();
+        System.out.println(playerKey);
         this.game = game;
         try
         {
@@ -176,10 +178,10 @@ public class Main extends Application
             switch (event.getCode())
             {
                 case LEFT:
-                    movePlayer(thisPlayer, leftPressed, Direction.LEFT);
+                    movePlayer(leftPressed, Direction.LEFT);
                     break;
                 case RIGHT:
-                    movePlayer(thisPlayer, rightPressed, Direction.RIGHT);
+                    movePlayer(rightPressed, Direction.RIGHT);
                     break;
             }
         });
@@ -222,23 +224,19 @@ public class Main extends Application
         }
     }
 
-    private PlayerObject movePlayer(PlayerObject player, Boolean pressed, Direction dir)
+    private void movePlayer(Boolean pressed, Direction dir)
     {
-        PlayerObject tempplayer = mappedPlayerObject.get(player.getName());
         if(!pressed)
         {
             try
             {
-                ImageView playerView = mappedPlayerImage.get(player.getName());
-                System.out.println("pv" + playerView);
-                System.out.println("p" + tempplayer);
-                System.out.println("rot" + tempplayer.getCurrentRotation());
-                tempplayer = game.moveCharacter(tempplayer.getName(), dir);
-                playerView.setRotate(tempplayer.getCurrentRotation());
-                playerView.setX(tempplayer.getAnchor().getX());
-                playerView.setY(tempplayer.getAnchor().getY());
-                mappedPlayerImage.replace(player.getName(), playerView);
-                mappedPlayerObject.replace(player.getName(), tempplayer);
+                mappedPlayerObject.replace(playerKey, game.moveCharacter(playerKey, dir));
+                PlayerObject tempPlayer = mappedPlayerObject.get(playerKey);
+                ImageView playerView = mappedPlayerImage.get(playerKey);
+                playerView.setRotate(tempPlayer.getCurrentRotation());
+                playerView.setX(tempPlayer.getAnchor().getX());
+                playerView.setY(tempPlayer.getAnchor().getY());
+                mappedPlayerImage.replace(playerKey, playerView);
                 leftPressed = true;
             }
             catch (RemoteException e)
@@ -246,7 +244,6 @@ public class Main extends Application
                 e.printStackTrace();
             }
         }
-        return player;
     }
 
     private ImageView addPlayerImageView() {
