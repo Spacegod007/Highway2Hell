@@ -1,5 +1,6 @@
         package sample;
 
+        import com.sun.deploy.util.SessionState;
         import database.Contexts.LocalContext;
         import database.Repositories.Repository;
         import javafx.application.Application;
@@ -15,6 +16,8 @@
         import javafx.scene.input.KeyCode;
         import javafx.scene.input.KeyEvent;
         import javafx.scene.layout.*;
+        import javafx.scene.media.Media;
+        import javafx.scene.media.MediaPlayer;
         import javafx.scene.paint.Color;
         import javafx.scene.text.TextAlignment;
         import javafx.stage.Stage;
@@ -23,6 +26,10 @@
         import logic.administration.Lobby;
         import logic.administration.User;
 
+        import javax.sound.sampled.AudioInputStream;
+        import javax.sound.sampled.AudioSystem;
+        import javax.sound.sampled.Clip;
+        import java.io.File;
         import java.util.List;
 
 public class SampleMain extends Application {
@@ -101,6 +108,20 @@ public class SampleMain extends Application {
             primaryStage.setTitle("Highway to Hell");
             primaryStage.setScene(titleScene);
             primaryStage.show();
+
+            //sound stuff
+            String sSound = "asset\\sound\\Main_Theme.wav";
+//            Media sound = new Media(new File(sSound).toURI().toString());
+//            MediaPlayer mediaPlayer = new MediaPlayer(sound);
+//            mediaPlayer.play();
+//            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(sSound));
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+
+
             administration.setSampleMain(this);
         } catch (Exception e /*IOException*/) {
             e.printStackTrace();
@@ -474,6 +495,7 @@ public class SampleMain extends Application {
         {
             game = new bootstrapper.Main(administration.getGameAdmin(), administration.getRpl(), administration.getUser());
             try {
+                //TODO: stop the music
                 System.out.println(((List<User>) obj).size());
                 ((bootstrapper.Main) game).start(stage, (List<User>) obj);
             } catch (Exception e) {
