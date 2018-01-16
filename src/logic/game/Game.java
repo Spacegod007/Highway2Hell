@@ -59,7 +59,7 @@ public class Game
         for(User u : users)
         {
             System.out.println(u.getUsername());
-            rmiGameObjects.add(new PlayerObject(new Point(600 + j, 900),new Size(78, 54),u.getUsername(), Color.BLACK));
+            rmiGameObjects.add(new PlayerObject(new Point(600 + j, 900),new Size(78, 54),u.getUsername(), CharacterColor.black_blue));
             j = j+50;
         }
         this.gameRules = gameRules;

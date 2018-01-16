@@ -4,16 +4,15 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import bootstrapper.Main?>
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.ScoreboardController">
    <children>
-      <TableView fx:id="TableView" layoutX="34.0" layoutY="33.0" prefHeight="374.0" prefWidth="600.0" AnchorPane.bottomAnchor="26.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <TableView fx:id="TableView" layoutX="34.0" layoutY="33.0" prefHeight="368.0" prefWidth="600.0" AnchorPane.bottomAnchor="32.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="1.0">
         <columns>
-          <TableColumn fx:id="Player" maxWidth="600.0" minWidth="600.0" prefWidth="600.0" resizable="false" text="Player" />
+          <TableColumn fx:id="Player" maxWidth="598.0" minWidth="598.0" prefWidth="598.0" resizable="false" text="Player" />
           <TableColumn fx:id="Score" maxWidth="600.0" minWidth="600.0" prefWidth="600.0" resizable="false" text="Score" />
         </columns>
       </TableView>
-      <Button id="btnBackToLobby" fx:id="btnBackToLobby" layoutX="207.0" layoutY="374.0" mnemonicParsing="false" onAction="#backToLobby" prefHeight="25.0" prefWidth="187.0" text="Return to lobby" />
+      <Button id="btnBackToLobby" fx:id="btnBackToLobby" layoutX="207.0" layoutY="371.0" mnemonicParsing="false" onAction="#backToLobby" prefHeight="25.0" prefWidth="187.0" text="Return to lobby" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="207.0" AnchorPane.rightAnchor="206.0" AnchorPane.topAnchor="371.0" />
    </children>
 </AnchorPane>

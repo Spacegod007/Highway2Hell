@@ -1,6 +1,7 @@
 package logic.game;
 
-public enum CharacterColor {
+public enum CharacterColor
+{
     black_blue("characters/character_black_blue.png"),
     black_red("characters/character_black_green.png"),
     black_white("characters/character_black_red.png"),
