@@ -1,5 +1,7 @@
 package logic.administration;
 
+import logic.game.CharacterColor;
+
 import java.io.Serializable;
 
 /**
@@ -10,7 +12,7 @@ public class User implements Serializable
     /**
      * The username of the user
      */
-    private String username;
+    private final String username;
 
     /**
      * The id of the user
@@ -21,6 +23,11 @@ public class User implements Serializable
      * The lobby the user is currently located in
      */
     private Lobby activeLobby;
+
+    /**
+     * The color of the in-game character of the current user
+     */
+    private CharacterColor characterColor;
 
     /**
      * Gets the id of the user
@@ -59,15 +66,6 @@ public class User implements Serializable
     }
 
     /**
-     * Sets the username of the user
-     * @param username to be set
-     */
-    public void setUsername(String username)
-    {
-        this.username = username;
-    }
-
-    /**
      * Constructs an user object
      * @param username of the user
      * @param ID of the user
@@ -75,6 +73,16 @@ public class User implements Serializable
     public User(String username, int ID) {
         this.username = username;
         this.ID = ID;
+    }
+
+    public CharacterColor getCharacterColor()
+    {
+        return characterColor;
+    }
+
+    public void setCharacterColor(CharacterColor characterColor)
+    {
+        this.characterColor = characterColor;
     }
 
     @Override
