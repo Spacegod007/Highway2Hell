@@ -129,6 +129,7 @@ public class Main extends Application
         primaryStage.setScene(countdownScene);
         primaryStage.show();
         this.stage = primaryStage;
+        scoreboardController.setApplication(this);
         doTime(primaryStage);
     }
 
@@ -171,9 +172,11 @@ public class Main extends Application
             {
                 case LEFT:
                     movePlayer(leftPressed, Direction.LEFT);
+                    leftPressed = true;
                     break;
                 case RIGHT:
                     movePlayer(rightPressed, Direction.RIGHT);
+                    rightPressed = true;
                     break;
             }
         });
@@ -229,7 +232,6 @@ public class Main extends Application
                 playerView.setX(tempPlayer.getAnchor().getX());
                 playerView.setY(tempPlayer.getAnchor().getY());
                 mappedPlayerImage.replace(playerKey, playerView);
-                leftPressed = true;
             }
             catch (RemoteException e)
             {
@@ -434,5 +436,10 @@ public class Main extends Application
             e.printStackTrace();
         }
         scores.clear();
+    }
+
+    public void backToLobby()
+    {
+
     }
 }

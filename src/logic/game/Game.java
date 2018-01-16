@@ -118,7 +118,7 @@ public class Game
                                 System.out.println("empty");
                             }
                     }
-                }, 250, 30);
+                }, 250, 60);
             }
         }
     }

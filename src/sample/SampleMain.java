@@ -105,6 +105,7 @@ public class SampleMain extends Application {
 
     private void setUpControls() {
         //region Titlescreen
+        stage.resizableProperty().setValue(false);
         titleScreen.setStyle("-fx-background-color:  #800000");
 
         txtEnterName = new TextField();
@@ -453,13 +454,12 @@ public class SampleMain extends Application {
      * @param obj the stage of the Game
      */
     public void update(Object obj) {
-        System.out.println("updated");
         Platform.runLater(() ->
         {
             game = new bootstrapper.Main(administration.getGameAdmin(), administration.getRpl(), administration.getUser());
             try {
                 System.out.println(((List<User>) obj).size());
-                ((bootstrapper.Main) game).start(new Stage(), (List<User>) obj);
+                ((bootstrapper.Main) game).start(stage, (List<User>) obj);
             } catch (Exception e) {
                 e.printStackTrace();
             }
