@@ -24,6 +24,7 @@ public class SubMainRMI extends UnicastRemoteObject implements Serializable, IRe
         try
         {
             rpl.subscribeRemoteListener(this, "gameObjects");
+            rpl.subscribeRemoteListener(this, "allDead");
         } catch (RemoteException e)
         {
             e.printStackTrace();
@@ -38,6 +39,8 @@ public class SubMainRMI extends UnicastRemoteObject implements Serializable, IRe
         {
             case "gameObjects":
                 Platform.runLater(() -> application.update((List<GameObject>)evt.getNewValue())); break;
+            case "allDead":
+                Platform.runLater(application::setScores);
         }
     }
 }

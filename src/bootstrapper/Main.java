@@ -65,9 +65,6 @@ public class Main extends Application
     private boolean leftPressed = false;
     private boolean rightPressed = false;
 
-    private int playersDead = 0;
-    private int players = 0;
-
     // game scenes
     private Scene scene;
     private Scene scoreboardScene;
@@ -138,8 +135,6 @@ public class Main extends Application
     private void InitializeGame(Stage primaryStage) throws RemoteException
     {
         List<GameObject> gameObjects = game.getGameObjects();
-        players = getPlayerObjects(gameObjects).size();
-
         for(PlayerObject player : getPlayerObjects(gameObjects))
         {
             ImageView img = addPlayerImageView();
@@ -398,7 +393,6 @@ public class Main extends Application
             img.setRotate(po.getCurrentRotation());
             img.setX(tempPlayer.getAnchor().getX());
             img.setY(tempPlayer.getAnchor().getY());
-            checkPlayerDead(tempPlayer, playerObjects);
         }
         for (ObstacleObject obstacleObject : obstacleObjects)
         {
@@ -411,21 +405,11 @@ public class Main extends Application
         }
        distanceLabel.setText("Distance: " + Long.toString(mappedPlayerObject.get(playerKey).getDistance()));
     }
-    private void checkPlayerDead(PlayerObject tempPlayer, List<PlayerObject> playerObjects)
-    {
 
-        if(tempPlayer.getIsDead())
-        {
-            playersDead++;
-            if(playersDead == playerObjects.size())
-            {
-                setScores();
-            }
-        }
-        playersDead = 0;
-    }
-
-    private void setScores()
+    /**
+     * Called when all players are dead
+     */
+    public void setScores()
     {
         ArrayList<Score> scores = new ArrayList<>();
         try

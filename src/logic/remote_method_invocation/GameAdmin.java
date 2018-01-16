@@ -65,6 +65,7 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
         rpd.registerProperty("gameIsStarted");
         rpd.registerProperty("gameObjects");
         rpd.registerProperty("gameRules");
+        rpd.registerProperty("allDead");
         this.game = game;
         game.setRpd(publisher);
     }

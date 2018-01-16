@@ -227,8 +227,30 @@ public class Game
                     }
                 }
                 index++;
+
+                if(checkAllDead())
+                {
+                    try
+                    {
+                        publisher.inform("allDead", null, true);
+                    } catch (RemoteException e)
+                    {
+                        e.printStackTrace();
+                    }
+                };
             }
         }
+    }
+    private boolean checkAllDead()
+    {
+        for(GameObject go : gameObjects)
+        {
+            if(go instanceof PlayerObject && !((PlayerObject) go).getIsDead())
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
