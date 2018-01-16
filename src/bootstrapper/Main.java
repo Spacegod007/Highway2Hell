@@ -50,8 +50,6 @@ public class Main extends Application
     private final Image redBarrelImage = new Image("objects/barrel_red_down.png");
     private final Image blueBarrelImage = new Image("objects/barrel_blue_down.png");
     private final Image rockImage = new Image("objects/rock1.png");
-    private final List<ImageView> playerImageViews = new ArrayList<>();
-    private final List<ImageView> obstacleImageViews = new ArrayList<>();
     private final IGameAdmin game;
     private final Label distanceLabel = new Label("0");
     private List<Label> playerLabels = new ArrayList<>();
@@ -145,20 +143,19 @@ public class Main extends Application
         for(PlayerObject player : getPlayerObjects(gameObjects))
         {
             ImageView img = addPlayerImageView();
-            playerImageViews.add(img);
             mappedPlayerImage.put(player.getName(), img);
             mappedPlayerObject.put(player.getName(), player);
         }
 
         for (ObstacleObject OO : getObstacleObjects(gameObjects))
         {
-            obstacleImageViews.add(addObstacleImageView(OO));
+            ImageView img = addObstacleImageView(OO);
             mappedObstacleObject.put(OO.getId(), OO);
-            mappedObstacleImage.put(OO.getId(), addObstacleImageView(OO));
+            mappedObstacleImage.put(OO.getId(), img);
         }
 
-        gamePane.getChildren().addAll(playerImageViews);
-        gamePane.getChildren().addAll(obstacleImageViews);
+        mappedPlayerImage.forEach((k, v) -> gamePane.getChildren().add(v));
+        mappedObstacleImage.forEach((k, v) -> gamePane.getChildren().add(v));
 
         scene.setOnKeyReleased(event ->
         {
@@ -377,8 +374,6 @@ public class Main extends Application
      */
     public void update(List<GameObject> gameObjects)
     {
-
-        System.out.println("updating");
         List<GameObject> tempGameObjects;
         try
         {
@@ -390,58 +385,46 @@ public class Main extends Application
         }
         List<PlayerObject> playerObjects = getPlayerObjects(tempGameObjects);
         List<ObstacleObject> obstacleObjects = getObstacleObjects(tempGameObjects);
-
-        System.out.println(playerObjects.size());
         for(PlayerObject po : playerObjects)
         {
             mappedPlayerObject.replace(po.getName(), po);
-            System.out.println(po.getAnchor().getX());
-            System.out.println(po.getAnchor().getY());
             PlayerObject tempPlayer = mappedPlayerObject.get(po.getName());
-            System.out.println(tempPlayer.getAnchor().getX());
-            System.out.println(tempPlayer.getAnchor().getY());
             Label tempLabel = mappedPlayerLabel.get(po.getName());
             tempLabel.setTranslateX(tempPlayer.getAnchor().getX());
             tempLabel.setTranslateY(tempPlayer.getAnchor().getY()-23);
             mappedPlayerLabel.replace(po.getName(), tempLabel);
 
             ImageView img = mappedPlayerImage.get(po.getName());
+            img.setRotate(po.getCurrentRotation());
             img.setX(tempPlayer.getAnchor().getX());
             img.setY(tempPlayer.getAnchor().getY());
-
-            if(tempPlayer.getIsDead())
-            {
-                playersDead++;
-                if(playersDead == playerObjects.size())
-                {
-                    setScores();
-                }
-            }
-            playersDead = 0;
+            checkPlayerDead(tempPlayer, playerObjects);
         }
         for (ObstacleObject obstacleObject : obstacleObjects)
         {
-            if(mappedObstacleObject.containsKey(obstacleObject.getId()))
-            {
-                ObstacleObject tempObstacle = mappedObstacleObject.get(obstacleObject.getId());
-                if(mappedObstacleImage.containsKey(obstacleObject.getId()))
-                {
-                    ImageView img = mappedObstacleImage.get(obstacleObject.getId());
-                    img.setX(tempObstacle.getAnchor().getX());
-                    img.setY(tempObstacle.getAnchor().getY());
-                }
-                else
-                    {
-                        System.out.println("obstacleimage not found");
-                    }
-            }
-            else
-                {
-                    System.out.println("obstacle not found");
-                }
+            mappedObstacleObject.replace(obstacleObject.getId(), obstacleObject);
+            ObstacleObject tempObstacle = mappedObstacleObject.get(obstacleObject.getId());
+            ImageView img = mappedObstacleImage.get(obstacleObject.getId());
+            img.setX(tempObstacle.getAnchor().getX());
+            img.setY(tempObstacle.getAnchor().getY());
+            //mappedObstacleImage.replace(obstacleObject.getId(), img);
         }
-       // distanceLabel.setText("Distance: " + Long.toString(thisPlayer.getDistance()));
+       distanceLabel.setText("Distance: " + Long.toString(mappedPlayerObject.get(playerKey).getDistance()));
     }
+    private void checkPlayerDead(PlayerObject tempPlayer, List<PlayerObject> playerObjects)
+    {
+
+        if(tempPlayer.getIsDead())
+        {
+            playersDead++;
+            if(playersDead == playerObjects.size())
+            {
+                setScores();
+            }
+        }
+        playersDead = 0;
+    }
+
     private void setScores()
     {
         ArrayList<Score> scores = new ArrayList<>();
