@@ -456,7 +456,7 @@ public class SampleMain extends Application {
         System.out.println("updated");
         Platform.runLater(() ->
         {
-            game = new bootstrapper.Main(administration.getGameAdmin(), administration.getRpl());
+            game = new bootstrapper.Main(administration.getGameAdmin(), administration.getRpl(), administration.getUser());
             try {
                 System.out.println(((List<User>) obj).size());
                 ((bootstrapper.Main) game).start(new Stage(), (List<User>) obj);

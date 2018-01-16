@@ -42,6 +42,8 @@ import java.util.*;
  */
 public class Main extends Application
 {
+    private final User user;
+
     private List<ObstacleObject> obstacleObjects = new ArrayList<>();
     //Player images for creating characters for later versions that use sockets.
     private final Image playerImage = new Image("characters/character_black_blue.png");
@@ -86,8 +88,9 @@ public class Main extends Application
     //david zn shit
     private PlayerObject thisPlayer = null;
 
-    public Main(IGameAdmin game, IRemotePublisherForListener rpl)
+    public Main(IGameAdmin game, IRemotePublisherForListener rpl, User user)
     {
+        this.user = user;
         this.game = game;
         try
         {
