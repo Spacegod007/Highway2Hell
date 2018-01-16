@@ -5,11 +5,15 @@
         import javafx.application.Application;
         import javafx.application.Platform;
         import javafx.collections.ObservableList;
+        import javafx.event.ActionEvent;
+        import javafx.event.EventHandler;
         import javafx.scene.Scene;
         import javafx.scene.control.Button;
         import javafx.scene.control.Label;
         import javafx.scene.control.ListView;
         import javafx.scene.control.TextField;
+        import javafx.scene.input.KeyCode;
+        import javafx.scene.input.KeyEvent;
         import javafx.scene.layout.*;
         import javafx.scene.paint.Color;
         import javafx.scene.text.TextAlignment;
@@ -105,6 +109,7 @@ public class SampleMain extends Application {
 
     private void setUpControls() {
         //region Titlescreen
+        stage.resizableProperty().setValue(false);
         titleScreen.setStyle("-fx-background-color:  #800000");
 
         txtEnterName = new TextField();
@@ -112,6 +117,12 @@ public class SampleMain extends Application {
         txtEnterName.setPrefHeight(51);
         txtEnterName.setLayoutX(315);
         txtEnterName.setLayoutY(205);
+        txtEnterName.setOnKeyReleased(event -> {
+            if (event.getCode().equals(KeyCode.ENTER) && !event.isShiftDown() && !event.isControlDown() && !event.isAltDown() && !event.isMetaDown() && !event.isShortcutDown())
+            {
+                launchlobbyScreen(txtEnterName.getText());
+            }
+        });
 
         btnLaunchlobbyScreen = new Button();
         btnLaunchlobbyScreen.setLayoutY(202);
@@ -176,6 +187,12 @@ public class SampleMain extends Application {
         txtLobbyName.setLayoutY(205);
         txtLobbyName.setPrefHeight(51);
         txtLobbyName.setPrefWidth(412);
+        txtLobbyName.setOnKeyReleased(event -> {
+            if (event.getCode().equals(KeyCode.ENTER) && !event.isShiftDown() && !event.isControlDown() && !event.isAltDown() && !event.isMetaDown() && !event.isShortcutDown())
+            {
+                hostLobby();
+            }
+        });
 
         lblEnterLobbyName.setLayoutY(150);
         lblEnterLobbyName.setLayoutX(718);
@@ -326,13 +343,13 @@ public class SampleMain extends Application {
         Lobby lobby = listvwLobby.getSelectionModel().getSelectedItem();
         if (lobby != null) {
             listvwPlayers.setItems(lobby.getPlayers());
-            if (player != null) {
-                for (User p : listvwPlayers.getItems()) {
-                    if (p.getID() == player.getID()) {
-                        listvwPlayers.getSelectionModel().select(p);
-                    }
-                }
-            }
+//            if (player != null) { //todo check for usage, never used due to player always being null
+//                for (User p : listvwPlayers.getItems()) {
+//                    if (p.getID() == player.getID()) {
+//                        listvwPlayers.getSelectionModel().select(p);
+//                    }
+//                }
+//            }
         }
     }
 
@@ -453,13 +470,12 @@ public class SampleMain extends Application {
      * @param obj the stage of the Game
      */
     public void update(Object obj) {
-        System.out.println("updated");
         Platform.runLater(() ->
         {
             game = new bootstrapper.Main(administration.getGameAdmin(), administration.getRpl(), administration.getUser());
             try {
                 System.out.println(((List<User>) obj).size());
-                ((bootstrapper.Main) game).start(new Stage(), (List<User>) obj);
+                ((bootstrapper.Main) game).start(stage, (List<User>) obj);
             } catch (Exception e) {
                 e.printStackTrace();
             }

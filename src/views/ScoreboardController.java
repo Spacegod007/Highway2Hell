@@ -1,7 +1,9 @@
 package views;
 
+import bootstrapper.Main;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import logic.Score;
 import javafx.scene.control.TableColumn;
@@ -14,7 +16,7 @@ import java.util.ArrayList;
 public class ScoreboardController {
 
     private ObservableList<Score> scores;
-
+    private Main application;
     @FXML private TableColumn<Score, String> Player = new TableColumn<>("Player");
     @FXML private TableColumn<Score, Double> Score = new TableColumn<>("Score");
     @FXML private TableView<Score> TableView;
@@ -26,8 +28,18 @@ public class ScoreboardController {
         Score.setCellValueFactory(new PropertyValueFactory<>("score"));
     }
 
+    public void setApplication(Main application)
+    {
+        this.application = application;
+    }
+
     public void setScore(ArrayList<Score> score) {
         scores = FXCollections.observableArrayList(score);
         this.TableView.setItems(scores);
+    }
+
+    public void backToLobby(ActionEvent actionEvent)
+    {
+        application.backToLobby();
     }
 }
