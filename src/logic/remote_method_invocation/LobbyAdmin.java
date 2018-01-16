@@ -73,6 +73,7 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
      * @throws RemoteException if there is a problem in the connection
      */
     public LobbyAdmin(IRemotePublisherForDomain rpd) throws RemoteException {
+        super();
         this.rpd = rpd;
         rpd.registerProperty("lobbies");
         lobbies = new ArrayList<>();
@@ -87,16 +88,6 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
     public int getNumberOfLobbies() throws RemoteException {
         System.out.println("LobbyAdmin: Request for number of Lobbies");
         return lobbies.size();
-    }
-
-    public Lobby getLobby(int nr) throws RemoteException {
-        System.out.println("LobbyAdmin: Request for Lobby with number " + nr);
-        if (nr >= 0 && nr < lobbies.size()) {
-            return lobbies.get(nr);
-        }
-        else {
-            return null;
-        }
     }
 
     /**
@@ -211,28 +202,40 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
      */
     public Lobby setActiveLobby(int userId, Lobby lobby) throws RemoteException
     {
-        if(lobby != null)
+        System.out.println("setting lobby for user: " + userId);
+        User u = getUser(userId);
+        if(u != null)
         {
-            for(Lobby l : lobbies){
-                if(l.getId() == lobby.getId())
-                {  for(User u : users){
-                    if(u.getID() == userId)
-                    {
-                        u.setActiveLobby(l);
-                    }
-                }
-                }
-            }
-        }
-        else{
-            for(User u : users){
-                if(u.getID() == userId)
-                {
-                    u.setActiveLobby(null);
-                }
-            }
+                u.setActiveLobby(getLobby(lobby));
         }
         return getActiveLobby(userId);
+    }
+
+    private User getUser(int id)
+    {
+        User l = null;
+        for(User user : users)
+        {
+            if(id == user.getID())
+            {
+                l = user;
+            }
+        }
+        return l;
+    }
+    private Lobby getLobby(Lobby lob)
+    {
+        if(lob != null)
+        {
+            for (Lobby lobby : lobbies)
+            {
+                if (lobby.getId() == lob.getId())
+                {
+                    return lobby;
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -290,12 +293,10 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
      */
     public Lobby getActiveLobby(int userId) throws RemoteException
     {
-        for(User u : users)
+        User u = getUser(userId);
+        if(u != null)
         {
-            if(u.getID() == userId)
-            {
-                return u.getActiveLobby();
-        }
+            return u.getActiveLobby();
         }
         return null;
     }

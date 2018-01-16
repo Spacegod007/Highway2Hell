@@ -345,8 +345,6 @@ public class RMILobbyClient
     {
         try
         {
-            System.out.print("Active lobby: " + lobby.getId() + ", ");
-            System.out.println(userId);
             lobbyAdmin.setActiveLobby(userId, lobby);
         }
         catch(RemoteException ex)
