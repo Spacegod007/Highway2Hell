@@ -20,8 +20,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import logic.administration.Administration;
-        import logic.administration.InGameAdministration;
-        import logic.administration.Lobby;
+import logic.administration.Lobby;
 import logic.administration.User;
 import logic.game.CharacterColor;
 
@@ -72,7 +71,6 @@ public class SampleMain extends Application {
     private static Administration administration;
     private final int MIN_CHARS_NAME = 4;
     private final int MIN_CHARS_LOBBY_NAME = 4;
-    private InGameAdministration ingameAdministration;
 
     private Clip clip;
     private final static String S_SOUND = "asset\\sound\\Main_Theme.wav";
