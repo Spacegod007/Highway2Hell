@@ -20,7 +20,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import logic.administration.Administration;
-import logic.administration.Lobby;
+        import logic.administration.InGameAdministration;
+        import logic.administration.Lobby;
 import logic.administration.User;
 import logic.game.CharacterColor;
 
@@ -69,8 +70,8 @@ public class SampleMain extends Application {
     private CharacterColor currentColor = CharacterColor.black_blue;
     //endregion
     private static Administration administration;
-    private final int minCharsName = 4;
-    private final int minCharsLobbyName = 4;
+    private final int MIN_CHARS_NAME = 4;
+    private final int MIN_CHARS_LOBBY_NAME = 4;
     private InGameAdministration ingameAdministration;
 
     private Clip clip;
