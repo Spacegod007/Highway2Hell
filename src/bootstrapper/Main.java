@@ -32,7 +32,11 @@ import views.BackgroundController;
 import views.ScoreboardController;
 
 import javax.sound.midi.Soundbank;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import java.beans.PropertyChangeEvent;
+import java.io.File;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -83,6 +87,8 @@ public class Main extends Application
     //david zn shit
     private String playerKey = null;
 
+    Clip clip;
+
     public Main(IGameAdmin game, IRemotePublisherForListener rpl, User user)
     {
         this.user = user;
@@ -131,6 +137,11 @@ public class Main extends Application
         this.stage = primaryStage;
         scoreboardController.setApplication(this);
         doTime(primaryStage);
+
+        String sSound = "asset\\sound\\Game_theme.wav";
+        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(sSound));
+        clip = AudioSystem.getClip();
+        clip.open(audioInputStream);
     }
 
     private void InitializeGame(Stage primaryStage) throws RemoteException
@@ -321,6 +332,8 @@ public class Main extends Application
                         time.stop();
                         InitializeGame(primaryStage);
                         game.startGame();
+                        clip.start();
+                        clip.loop(Clip.LOOP_CONTINUOUSLY);
                     }
                     catch (RemoteException e)
                     {
@@ -429,6 +442,7 @@ public class Main extends Application
         scoreboardController.setScore(scores);
         try
         {
+            clip.stop();
             Platform.runLater(() -> stage.setScene(scoreboardScene));
             List<PlayerObject> players = game.endGame(); //(scoreboardScene, primaryStage) todo use returnvalue and show scoreboard scene
         } catch (RemoteException e)
