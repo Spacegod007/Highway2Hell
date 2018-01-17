@@ -304,8 +304,6 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
 
     public void startGame(Lobby l)
     {
-        l.startGame();
-
         try
         {
             rpd.inform(Integer.toString(l.getId()), null, l.getPlayers().size());
@@ -314,11 +312,6 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
         {
             e.printStackTrace();
         }
-    }
-
-    private void getUserInLobby(int id, CharacterColor userColor)
-    {
-
     }
 
     @Override

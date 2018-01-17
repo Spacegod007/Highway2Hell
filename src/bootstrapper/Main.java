@@ -28,6 +28,7 @@ import logic.fontyspublisher.IRemotePublisherForDomain;
 import logic.fontyspublisher.IRemotePublisherForListener;
 import logic.game.*;
 import logic.remote_method_invocation.IGameAdmin;
+import sample.SampleMain;
 import views.BackgroundController;
 import views.ScoreboardController;
 
@@ -46,8 +47,9 @@ import java.util.*;
  */
 public class Main extends Application
 {
+    private SampleMain application;
     private final User user;
-
+    private Scene previousScene;
     private List<ObstacleObject> obstacleObjects = new ArrayList<>();
     //Player images for creating characters for later versions that use sockets.
     private final Image redBarrelImage = new Image("objects/barrel_red_down.png");
@@ -103,7 +105,9 @@ public class Main extends Application
         }
     }
 
-    public void start(Stage primaryStage, List<User> userList) throws Exception {
+    public void start(Stage primaryStage, List<User> userList, Scene scene, SampleMain application) throws Exception {
+        this.application = application;
+        previousScene = scene;
         // set primary stage size and name
         primaryStage.setTitle("Game");
         primaryStage.setWidth(1200);
@@ -113,7 +117,7 @@ public class Main extends Application
         FXMLLoader fxmlLoaderBackground = new FXMLLoader(getClass().getResource("/Background.fxml"));
         Parent parent1 = fxmlLoaderBackground.load();
         backgroundController = fxmlLoaderBackground.getController();
-        scene = new Scene(parent1);
+        this.scene = new Scene(parent1);
         gamePane = (Pane) parent1.lookup("#gamePane");
 
         // scoreboard scene
@@ -418,7 +422,6 @@ public class Main extends Application
             ImageView img = mappedObstacleImage.get(obstacleObject.getId());
             img.setX(tempObstacle.getAnchor().getX());
             img.setY(tempObstacle.getAnchor().getY());
-            //mappedObstacleImage.replace(obstacleObject.getId(), img);
         }
        distanceLabel.setText("Distance: " + Long.toString(mappedPlayerObject.get(playerKey).getDistance()));
     }
@@ -446,7 +449,7 @@ public class Main extends Application
         {
             clip.stop();
             Platform.runLater(() -> stage.setScene(scoreboardScene));
-            List<PlayerObject> players = game.endGame(); //(scoreboardScene, primaryStage) todo use returnvalue and show scoreboard scene
+            List<PlayerObject> players = game.endGame();
         } catch (RemoteException e)
         {
             e.printStackTrace();
@@ -454,11 +457,9 @@ public class Main extends Application
         scores.clear();
     }
 
-    public void setScaling()
-    {
-    }
     public void backToLobby()
     {
-
+        application.endGame();
+        stage.setScene(previousScene);
     }
 }

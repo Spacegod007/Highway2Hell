@@ -380,7 +380,7 @@ public class SampleMain extends Application {
                     lblErrorMessage.setText("Error: username was already taken");
                 });
             }
-            lblPlayerChooseGame.setText(administration.getUser().getUsername() + ", choose a lobby!");
+            lblPlayerChooseGame.setText(administration.getUser().getUsername() + " choose a lobby!");
         }
     }
 
@@ -523,10 +523,16 @@ public class SampleMain extends Application {
             try {
                 clip.stop();
                 System.out.println(((List<User>) obj).size());
-                ((bootstrapper.Main) game).start(stage, (List<User>) obj);
+                ((bootstrapper.Main) game).start(stage, (List<User>) obj, inLobbyScene, this);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
+    }
+
+    public void endGame()
+    {
+        administration.endGame();
+        //leaveLobby();
     }
 }

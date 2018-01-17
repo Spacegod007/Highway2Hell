@@ -18,14 +18,7 @@ public class HostAdministration implements Runnable
     /**
      * The lobby from which the host starts the game
      */
-    private List<RMIGameClient> clientsConnected;
     private final Lobby lobby;
-
-    /**
-     * The RMI connector where clients connect to
-     */
-    private RMIGameServer server;
-
 
     /**
      * Constructs the game administration object
@@ -42,16 +35,6 @@ public class HostAdministration implements Runnable
     @Override
     public void run()
     {
-        server = new RMIGameServer(new Game(new ArrayList<>(), lobby.getPlayers()));
-        clientsConnected = new ArrayList<>();
-    }
-
-    /**
-     * Starts the game when the Administration says everyone is connected
-     */
-    public synchronized void startGame(List<RMIGameClient> clientsConnected)
-    {
-        this.clientsConnected = clientsConnected;
-
+        new RMIGameServer(new Game(new ArrayList<>(), lobby.getPlayers()));
     }
 }

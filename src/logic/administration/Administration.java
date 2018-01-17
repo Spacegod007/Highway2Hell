@@ -293,7 +293,6 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
      */
     public void startConnectingToGame()
     {
-        System.out.println("starting");
         Lobby lobby = rmiClient.getActiveLobby();
 
         if(lobby != null)
@@ -318,6 +317,12 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
         {
             System.out.println("null lobby");
         }
+    }
+
+    public void endGame()
+    {
+        gameThread.stop();
+        rmiGameClient = null;
     }
 
     public IRemotePublisherForListener getRpl()

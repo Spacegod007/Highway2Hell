@@ -115,7 +115,7 @@ public class Game
                                 System.out.println("empty");
                             }
                     }
-                }, 250, 60);
+                }, 250, 17);
             }
         }
     }
@@ -265,16 +265,13 @@ public class Game
     {
         timer.cancel();
         List<PlayerObject> returnable = new ArrayList<>();
-        //Scene newScene, Stage stage todo move to client
         synchronized (synchronizer)
         {
             for (GameObject GO : getGameObjects())
             {
                 if (GO instanceof PlayerObject)
                 {
-                    //stage.setScene(newScene); todo move to client
                     returnable.add((PlayerObject) GO);
-                    //System.out.println("Player: " + PO.getName() + " = " + PO.getDistance() + " Points"); todo move to client
                 }
             }
         }

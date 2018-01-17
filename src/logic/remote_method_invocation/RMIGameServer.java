@@ -5,9 +5,11 @@ import logic.game.Game;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 
 public class RMIGameServer
 {
