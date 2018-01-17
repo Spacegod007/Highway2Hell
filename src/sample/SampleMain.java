@@ -20,7 +20,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import logic.administration.Administration;
-import logic.administration.Lobby;
+        import logic.administration.InGameAdministration;
+        import logic.administration.Lobby;
 import logic.administration.User;
 import logic.game.CharacterColor;
 
@@ -69,8 +70,9 @@ public class SampleMain extends Application {
     private CharacterColor currentColor = CharacterColor.black_blue;
     //endregion
     private static Administration administration;
-    private static final int MIN_CHARS_NAME = 4;
-    private static final int MIN_CHARS_LOBBY_NAME = 4;
+    private final int MIN_CHARS_NAME = 4;
+    private final int MIN_CHARS_LOBBY_NAME = 4;
+    private InGameAdministration ingameAdministration;
 
     private Clip clip;
     private final static String S_SOUND = "asset\\sound\\Main_Theme.wav";
@@ -287,12 +289,13 @@ public class SampleMain extends Application {
         btnLeaveLobby.setPrefHeight(30);
         btnLeaveLobby.setText("Leave lobby");
         btnLeaveLobby.setOnAction(event -> leaveLobby());
-        
-        imageViewSelectedPlayer.setLayoutX(740);
-        imageViewSelectedPlayer.setLayoutY(200);
-        imageViewSelectedPlayer.setFitHeight(36);
-        imageViewSelectedPlayer.setFitWidth(53);
-        imageViewSelectedPlayer.setImage(new Image(CharacterColor.black_blue.getPath()));
+
+        javafx.scene.image.ImageView imageViewSelectedPlayer = new javafx.scene.image.ImageView();
+        imageViewSelectedPlayer.setLayoutX(500);
+        imageViewSelectedPlayer.setLayoutY(360);
+        imageViewSelectedPlayer.setFitHeight(54);
+        imageViewSelectedPlayer.setFitWidth(79);
+
 
         int x = 500;
         int y = 200;
