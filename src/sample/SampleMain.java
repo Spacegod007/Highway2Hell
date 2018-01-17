@@ -430,7 +430,7 @@ public class SampleMain extends Application {
         try {
             administration.leaveLobby();
         } catch (Exception ignored) {
-
+            ignored.printStackTrace();
         }
     }
 
