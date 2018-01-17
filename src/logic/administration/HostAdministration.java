@@ -52,13 +52,6 @@ public class HostAdministration implements Runnable
     public synchronized void startGame(List<RMIGameClient> clientsConnected)
     {
         this.clientsConnected = clientsConnected;
-        System.out.println("Start game");
-        //gameApplication = new Main();
-        for(RMIGameClient client : clientsConnected)
-        {
-            System.out.println(client.toString());
-        }
-        //todo fetch stage (or scenes or something like that) from gameApplication
 
     }
 }

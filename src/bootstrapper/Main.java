@@ -50,7 +50,6 @@ public class Main extends Application
 
     private List<ObstacleObject> obstacleObjects = new ArrayList<>();
     //Player images for creating characters for later versions that use sockets.
-    private final Image playerImage = new Image("characters/character_black_blue.png");
     private final Image redBarrelImage = new Image("objects/barrel_red_down.png");
     private final Image blueBarrelImage = new Image("objects/barrel_blue_down.png");
     private final Image rockImage = new Image("objects/rock1.png");
@@ -139,9 +138,11 @@ public class Main extends Application
         doTime(primaryStage);
 
         String sSound = "asset\\sound\\Game_theme.wav";
-        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(sSound));
-        clip = AudioSystem.getClip();
-        clip.open(audioInputStream);
+        try (AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(sSound)))
+        {
+            clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+        }
     }
 
     private void InitializeGame(Stage primaryStage) throws RemoteException
@@ -149,7 +150,8 @@ public class Main extends Application
         List<GameObject> gameObjects = game.getGameObjects();
         for(PlayerObject player : getPlayerObjects(gameObjects))
         {
-            ImageView img = addPlayerImageView();
+            System.out.println(player.getColor());
+            ImageView img = addPlayerImageView(new Image(player.getColor().getPath()));
             mappedPlayerImage.put(player.getName(), img);
             mappedPlayerObject.put(player.getName(), player);
         }
@@ -251,7 +253,7 @@ public class Main extends Application
         }
     }
 
-    private ImageView addPlayerImageView() {
+    private ImageView addPlayerImageView(Image playerImage) {
         ImageView imageView = new ImageView();
         imageView.setImage(playerImage);
         imageView.setFitWidth(78);

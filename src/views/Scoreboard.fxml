@@ -4,15 +4,19 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.ScoreboardController">
+<AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.ScoreboardController">
    <children>
-      <TableView fx:id="TableView" layoutX="34.0" layoutY="33.0" prefHeight="368.0" prefWidth="600.0" AnchorPane.bottomAnchor="32.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="1.0">
+      <TableView fx:id="TableView" layoutY="74.0" prefHeight="331.0" prefWidth="600.0" AnchorPane.bottomAnchor="-5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="74.0">
         <columns>
           <TableColumn fx:id="Player" maxWidth="598.0" minWidth="598.0" prefWidth="598.0" resizable="false" text="Player" />
           <TableColumn fx:id="Score" maxWidth="600.0" minWidth="600.0" prefWidth="600.0" resizable="false" text="Score" />
         </columns>
       </TableView>
-      <Button id="btnBackToLobby" fx:id="btnBackToLobby" layoutX="207.0" layoutY="371.0" mnemonicParsing="false" onAction="#backToLobby" prefHeight="25.0" prefWidth="187.0" text="Return to lobby" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="207.0" AnchorPane.rightAnchor="206.0" AnchorPane.topAnchor="371.0" />
+      <Button fx:id="btnBackToLobby" layoutX="4.0" layoutY="3.0" mnemonicParsing="false" onAction="#backToLobby" prefHeight="66.0" prefWidth="1192.0" text="Return the lobby">
+         <font>
+            <Font size="23.0" />
+         </font></Button>
    </children>
 </AnchorPane>
