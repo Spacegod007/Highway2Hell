@@ -295,10 +295,10 @@ public class SampleMain extends Application {
         btnLeaveLobby.setOnAction(event -> leaveLobby());
 
         javafx.scene.image.ImageView imageViewSelectedPlayer = new javafx.scene.image.ImageView();
-        imageViewSelectedPlayer.setLayoutX(740);
-        imageViewSelectedPlayer.setLayoutY(200);
-        imageViewSelectedPlayer.setFitHeight(36);
-        imageViewSelectedPlayer.setFitWidth(53);
+        imageViewSelectedPlayer.setLayoutX(500);
+        imageViewSelectedPlayer.setLayoutY(360);
+        imageViewSelectedPlayer.setFitHeight(54);
+        imageViewSelectedPlayer.setFitWidth(79);
 
 
         int x = 500;
