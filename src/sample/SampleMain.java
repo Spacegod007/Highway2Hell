@@ -79,8 +79,8 @@ public class SampleMain extends Application {
     private final int minCharsLobbyName = 4;
     private InGameAdministration ingameAdministration;
 
-    Clip clip;
-
+    private Clip clip;
+    private final static String S_SOUND = "asset\\sound\\Main_Theme.wav";
     public static void launchView(String[] args, Administration admin) {
         administration = admin;
         System.out.println("launching");
@@ -89,7 +89,7 @@ public class SampleMain extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        try {
+        try(AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(S_SOUND))) {
             Repository repo = new Repository(new LocalContext());
             System.out.println("Connection to database: " + Boolean.toString(repo.testConnection()));
             stage = primaryStage;
@@ -117,8 +117,6 @@ public class SampleMain extends Application {
             primaryStage.show();
 
             //sound stuff
-            String sSound = "asset\\sound\\Main_Theme.wav";
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(sSound));
             clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             clip.start();
@@ -358,20 +356,12 @@ public class SampleMain extends Application {
         }
     }
 
-    private boolean contains() {
-        for (User u : listvwPlayersInLobby.getItems()) {
-            if (u.getID() == administration.getUser().getID()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void checkForKicked() {
-        if (stage.getScene() == inLobbyScene && !contains()) {
+    private void checkIfInLobby()
+    {
+        if(stage.getScene() == inLobbyScene && !administration.userInLobby())
+        {
             stage.setScene(lobbyScene);
         }
-
     }
 
     private void launchlobbyScreen(String username) {
@@ -510,7 +500,7 @@ public class SampleMain extends Application {
                 listvwLobby.getSelectionModel().select(finalSelectLobby);
                 listvwPlayers.setItems(finalSelectLobby.getPlayers());
                 listvwPlayersInLobby.setItems(finalSelectLobby.getPlayers());
-                checkForKicked();
+                checkIfInLobby();
             }
         });
     }

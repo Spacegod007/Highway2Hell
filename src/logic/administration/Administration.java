@@ -323,4 +323,9 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     {
         return rmiGameClient.getRpl();
     }
+
+    public boolean userInLobby()
+    {
+        return (rmiClient.getActiveLobby() != null);
+    }
 }
