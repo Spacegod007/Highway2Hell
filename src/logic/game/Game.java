@@ -232,8 +232,12 @@ public class Game
                 {
                     try
                     {
-                        publisher.inform("allDead", null, true);
-                    } catch (RemoteException e)
+                        if (publisher != null)
+                        {
+                            publisher.inform("allDead", null, true);
+                        }
+                    }
+                    catch (RemoteException e)
                     {
                         e.printStackTrace();
                     }

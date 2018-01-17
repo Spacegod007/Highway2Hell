@@ -7,112 +7,168 @@ import static junit.framework.TestCase.assertEquals;
 
 public class PlayerObjectTest {
 
-    private final PlayerObject PO = new PlayerObject(new Point(0,0),new Size(78, 54), "Player1", CharacterColor.black_blue);
+    private long defaultDistance;
+    private double defaultRotation;
+
+    private double x;
+    private double y;
+    private Point anchor;
+
+    private double width;
+    private double height;
+    private Size size;
+
+    private String name;
+
+    private CharacterColor characterColor;
+
+    private PlayerObject PO;
 
     @Before
     public void setUp() throws Exception {
-        PO.setDistance(100);
-        PO.setCurrentRotation(180d);
-        PO.setAnchor(new Point(50,50));
-        PO.setPlayerSize(new Size(10, 11));
+
+        defaultDistance = 0;
+        defaultRotation = 180;
+
+        x = 1;
+        y = 2;
+        anchor = new Point(x, y);
+
+        width = 50;
+        height = 60;
+        size = new Size(width, height);
+
+        name = "name";
+
+        characterColor = CharacterColor.black_blue;
+
+        PO = new PlayerObject(anchor, size, name, characterColor);
+
+        PO.setDistance(defaultDistance);
+        PO.setCurrentRotation(defaultRotation);
+        PO.setColor(characterColor);
     }
 
     @Test
     public void getDistance() throws Exception {
-        assertEquals(100, PO.getDistance());
+        assertEquals("Player distance should be 0 by default",defaultDistance, PO.getDistance());
     }
 
     @Test
     public void setDistance() throws Exception {
-        PO.setDistance(50);
-        assertEquals(50, PO.getDistance());
+        assertEquals("Player distance should be 0 by default",defaultDistance, PO.getDistance());
+
+        long newDistance = 50;
+
+        PO.setDistance(newDistance);
+
+        assertEquals("Player distance should be the set value", newDistance, PO.getDistance());
     }
 
     @Test
     public void getIsDead() throws Exception {
-        assertEquals(false, PO.getIsDead());
-        PO.setIsDead(true);
-        assertEquals(true, PO.getIsDead());
+        assertEquals("Players should not be dead by default",false, PO.getIsDead());
     }
 
     @Test
     public void setIsDead() throws Exception {
-        assertEquals(false, PO.getIsDead());
-        PO.setIsDead(true);
-        assertEquals(true, PO.getIsDead());
+        assertEquals("Players should not be dead by default",false, PO.getIsDead());
+
+        boolean newIsDead = true;
+
+        PO.setIsDead(newIsDead);
+
+        assertEquals("Players should be dead when set dead", newIsDead, PO.getIsDead());
     }
 
     @Test
     public void getCurrentRotation() throws Exception {
-        assertEquals(180d, PO.getCurrentRotation(), 0.001);
+        assertEquals("rotation is not the default rotation", defaultRotation, PO.getCurrentRotation(), 0.001);
     }
 
     @Test
     public void setCurrentRotation() throws Exception {
-        assertEquals(180d, PO.getCurrentRotation(), 0.001);
-        PO.setCurrentRotation(170d);
-        assertEquals(170d, PO.getCurrentRotation(), 0.001);
+        assertEquals("rotation is not the default rotation", defaultRotation, PO.getCurrentRotation(), 0.001);
+
+        double newRotation = 170;
+
+        PO.setCurrentRotation(newRotation);
+
+        assertEquals("rotation is not the set rotation", newRotation, PO.getCurrentRotation(), 0.001);
     }
 
     @Test
     public void getPlayerSize() throws Exception {
-        assertEquals(10d, PO.getPlayerSize().getWidth(), 0.001);
-        assertEquals(11d, PO.getPlayerSize().getHeight(), 0.001);
+        assertEquals("size value is not equal to the given value in the constructor", size, PO.getSize());
     }
 
     @Test
     public void setPlayerSize() throws Exception {
-        assertEquals(10d, PO.getPlayerSize().getWidth(), 0.001);
-        PO.setPlayerSize(new Size(5, 6));
-        assertEquals(5d, PO.getPlayerSize().getWidth(), 0.001);
-        assertEquals(6d, PO.getPlayerSize().getHeight(), 0.001);
+        assertEquals("size value is not equal to the given value in the constructor", size, PO.getSize());
+
+        Size newSize = new Size(5, 6);
+
+        PO.setPlayerSize(newSize);
+
+        assertEquals("size value is not equal to the set size", newSize, PO.getSize());
     }
 
     @Test
     public void getName() throws Exception {
-        assertEquals("Player1", PO.getName());
+        assertEquals("name value is not equal to the value given in the constructor", name, PO.getName());
     }
 
     @Test
     public void setName() throws Exception {
-        assertEquals("Player1", PO.getName());
-        PO.setName("Player2");
-        assertEquals("Player2", PO.getName());
+        assertEquals("name value is not equal to the value given in the constructor", name, PO.getName());
+
+        String newName = "another name";
+
+        PO.setName(newName);
+        assertEquals("name value is not equal to the set value", newName, PO.getName());
     }
 
     @Test
     public void getColor() throws Exception {
-        assertEquals(CharacterColor.black_blue, PO.getColor());
+        assertEquals("character color is not equal to the default value", characterColor, PO.getColor());
     }
 
     @Test
     public void setColor() throws Exception {
-        assertEquals(CharacterColor.black_blue, PO.getColor());
-        PO.setColor(CharacterColor.black_green);
-        assertEquals(CharacterColor.black_green, PO.getColor());
+        assertEquals("character color is not equal to the default value", characterColor, PO.getColor());
+
+        CharacterColor newColor = CharacterColor.black_green;
+
+        PO.setColor(newColor);
+
+        assertEquals("character color value is not equal to the set value", newColor, PO.getColor());
     }
 
     @Test
     public void move() throws Exception {
+        double leftRotation = 170;
+        double rightRotation = 190;
+
         PO.move(Direction.LEFT);
-        assertEquals(170d, PO.getCurrentRotation(), 0.001);
+        assertEquals("left rotation should be 170 degrees", leftRotation, PO.getCurrentRotation(), 0.001);
 
         PO.move(Direction.RIGHT);
-        assertEquals(190d, PO.getCurrentRotation(), 0.001);
+        assertEquals("right rotation should be 190 degrees", rightRotation, PO.getCurrentRotation(), 0.001);
     }
 
-    /*
-    TODO: FIX TEST WITH NEW RANDOM OBSTACLE OBJECT MECHANISM, SIZE (WIDTH/HEIGHT) IS NO LONGER GIVEN THROUGH THE CONSTRUCTOR
     @Test
     public void CheckForObstacleCollision() throws Exception {
         ObstacleObject OO = new ObstacleObject();
 
         //Assert default.
-        assertEquals(false, PO.checkForObstacleCollision(OO));
+        assertEquals("Objects should not collide if they don't touch each other", false, PO.checkForObstacleCollision(OO));
+
+        Point playerAnchor = PO.getAnchor();
+        Point obstacleAnchor = OO.getAnchor();
+        playerAnchor.setX(obstacleAnchor.getX() - 5);
+        playerAnchor.setY(obstacleAnchor.getY() - 5);
 
         //Change the anchor
-        OO.setAnchor(new Point(0,0));
-        assertEquals(true, PO.checkForObstacleCollision(OO));
+        assertEquals("Objects should collide if they touch each other", true, PO.checkForObstacleCollision(OO));
     }
-    */
 }

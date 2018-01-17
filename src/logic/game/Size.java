@@ -68,4 +68,22 @@ public class Size implements Serializable
         
         this.height = height;
     }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+
+        if (obj instanceof Size)
+        {
+            Size other = (Size) obj;
+
+            return this.width == other.width && this.height == other.height;
+        }
+
+        return false;
+    }
 }

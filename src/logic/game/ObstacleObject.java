@@ -38,7 +38,7 @@ public class ObstacleObject extends GameObject
      * Sets the width of the object
      * @param width to be set
      */
-    public void setWidth(int width)
+    private void setWidth(int width)
     {
         getSize().setWidth(width);
     }
@@ -56,7 +56,7 @@ public class ObstacleObject extends GameObject
      * Sets the height of the object
      * @param height to be set
      */
-    public void setHeight(int height)
+    private void setHeight(int height)
     {
         getSize().setHeight(height);
     }

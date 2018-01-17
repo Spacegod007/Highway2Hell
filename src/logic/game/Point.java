@@ -63,6 +63,23 @@ public class Point implements Serializable
     public String toString() {
         return  "x=" + x +
                 ", y=" + y;
+    }
 
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+
+        if (obj instanceof Point)
+        {
+            Point other = (Point) obj;
+
+            return this.x == other.x && this.y == other.y;
+        }
+
+        return false;
     }
 }
