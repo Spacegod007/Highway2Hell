@@ -35,6 +35,7 @@
         import javax.sound.sampled.AudioSystem;
         import javax.sound.sampled.Clip;
         import java.io.File;
+        import javax.swing.text.html.ImageView;
         import java.util.List;
 
 public class SampleMain extends Application {
@@ -78,6 +79,8 @@ public class SampleMain extends Application {
     private final int minCharsLobbyName = 4;
     private InGameAdministration ingameAdministration;
 
+    Clip clip;
+
     public static void launchView(String[] args, Administration admin) {
         administration = admin;
         System.out.println("launching");
@@ -115,12 +118,8 @@ public class SampleMain extends Application {
 
             //sound stuff
             String sSound = "asset\\sound\\Main_Theme.wav";
-//            Media sound = new Media(new File(sSound).toURI().toString());
-//            MediaPlayer mediaPlayer = new MediaPlayer(sound);
-//            mediaPlayer.play();
-//            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(sSound));
-            Clip clip = AudioSystem.getClip();
+            clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             clip.start();
             clip.loop(Clip.LOOP_CONTINUOUSLY);
@@ -529,6 +528,7 @@ public class SampleMain extends Application {
             game = new bootstrapper.Main(administration.getGameAdmin(), administration.getRpl(), administration.getUser());
             try {
                 //TODO: stop the music
+                clip.stop();
                 System.out.println(((List<User>) obj).size());
                 ((bootstrapper.Main) game).start(stage, (List<User>) obj);
             } catch (Exception e) {

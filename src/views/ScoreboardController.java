@@ -26,7 +26,7 @@ public class ScoreboardController {
         Player.setCellValueFactory(new PropertyValueFactory<>("name"));
 
         Score.setCellValueFactory(new PropertyValueFactory<>("score"));
-        application.setScaling();
+     //   application.setScaling();
     }
 
     public void setApplication(Main application)
