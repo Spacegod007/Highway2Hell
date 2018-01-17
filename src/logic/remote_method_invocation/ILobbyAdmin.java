@@ -2,6 +2,7 @@ package logic.remote_method_invocation;
 
 import logic.administration.Lobby;
 import logic.administration.User;
+import logic.game.CharacterColor;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -79,4 +80,6 @@ public interface ILobbyAdmin extends Remote
     User addUser(String name) throws RemoteException;
 
     void startGame(Lobby l) throws RemoteException;
+
+    void setUserColor(int id, CharacterColor userColor) throws RemoteException;
 }

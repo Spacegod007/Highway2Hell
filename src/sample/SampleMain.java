@@ -1,42 +1,34 @@
         package sample;
 
-        import com.sun.deploy.util.SessionState;
         import database.Contexts.LocalContext;
-        import database.Repositories.Repository;
-        import javafx.application.Application;
-        import javafx.application.Platform;
-        import javafx.beans.value.ObservableValue;
-        import javafx.collections.ObservableList;
-        import javafx.event.ActionEvent;
-        import javafx.event.EventHandler;
-        import javafx.scene.Scene;
-        import javafx.scene.control.Button;
-        import javafx.scene.control.Label;
-        import javafx.scene.control.ListView;
-        import javafx.scene.control.TextField;
-        import javafx.scene.image.Image;
-        import javafx.scene.input.KeyCode;
-        import javafx.scene.input.KeyEvent;
-        import javafx.scene.input.MouseButton;
-        import javafx.scene.input.MouseEvent;
-        import javafx.scene.layout.*;
-        import javafx.scene.media.Media;
-        import javafx.scene.media.MediaPlayer;
-        import javafx.scene.paint.Color;
-        import javafx.scene.text.TextAlignment;
-        import javafx.stage.Stage;
-        import logic.administration.Administration;
-        import logic.administration.InGameAdministration;
-        import logic.administration.Lobby;
-        import logic.administration.User;
-        import logic.game.CharacterColor;
+import database.Repositories.Repository;
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.collections.ObservableList;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
+import logic.administration.Administration;
+import logic.administration.Lobby;
+import logic.administration.User;
+import logic.game.CharacterColor;
 
-        import javax.sound.sampled.AudioInputStream;
-        import javax.sound.sampled.AudioSystem;
-        import javax.sound.sampled.Clip;
-        import java.io.File;
-        import javax.swing.text.html.ImageView;
-        import java.util.List;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import java.io.File;
+import java.util.List;
 
 public class SampleMain extends Application {
 
@@ -45,8 +37,8 @@ public class SampleMain extends Application {
     private Stage stage;
     private Pane titleScreen;
     private Scene titleScene;
-    private final ListView<Lobby> listvwLobby = new ListView<>();
-    private final ListView<User> listvwPlayers = new ListView<>();
+    private final ListView<Lobby> lvLobby = new ListView<>();
+    private final ListView<User> lvPlayers = new ListView<>();
     private final Label lblEnterLobbyName = new Label();
     private final Label lblLobbiesList = new Label();
     private final Label lblPlayersList = new Label();
@@ -61,6 +53,7 @@ public class SampleMain extends Application {
     private final Button btnStartGame = new Button();
     private final Button btnLeaveLobby = new Button();
     private final Button btnAccCharacter = new Button();
+    private javafx.scene.image.ImageView imageViewSelectedPlayer = new javafx.scene.image.ImageView();
     private AnchorPane lobbyScreen;
     private Scene lobbyScene;
     private Label lblDoIKnowYou;
@@ -72,12 +65,12 @@ public class SampleMain extends Application {
     private final Label waitingMessage = new Label();
     private AnchorPane waitingScreen;
     private Scene inLobbyScene;
-    private final ListView<User> listvwPlayersInLobby = new ListView<>();
+    private final ListView<User> lvPlayersInLobby = new ListView<>();
+    private CharacterColor currentColor = CharacterColor.black_blue;
     //endregion
     private static Administration administration;
-    private final int minCharsName = 4;
-    private final int minCharsLobbyName = 4;
-    private InGameAdministration ingameAdministration;
+    private final int MIN_CHARS_NAME = 4;
+    private final int MIN_CHARS_LOBBY_NAME = 4;
 
     private Clip clip;
     private final static String S_SOUND = "asset\\sound\\Main_Theme.wav";
@@ -194,16 +187,16 @@ public class SampleMain extends Application {
         btnRefresh.setPrefWidth(163);
         btnRefresh.setText("Refresh");
 
-        listvwLobby.setLayoutX(19);
-        listvwLobby.setLayoutY(132);
-        listvwLobby.setPrefHeight(851);
-        listvwLobby.setPrefWidth(306);
-        listvwLobby.setOnMouseClicked(this::listvwLobbyClicked);
+        lvLobby.setLayoutX(19);
+        lvLobby.setLayoutY(132);
+        lvLobby.setPrefHeight(851);
+        lvLobby.setPrefWidth(306);
+        lvLobby.setOnMouseClicked(this::lvLobbyClicked);
 
-        listvwPlayers.setLayoutX(332);
-        listvwPlayers.setLayoutY(132);
-        listvwPlayers.setPrefWidth(306);
-        listvwPlayers.setPrefHeight(851);
+        lvPlayers.setLayoutX(332);
+        lvPlayers.setLayoutY(132);
+        lvPlayers.setPrefWidth(306);
+        lvPlayers.setPrefHeight(851);
 
         txtLobbyName.setLayoutX(718);
         txtLobbyName.setLayoutY(205);
@@ -245,7 +238,7 @@ public class SampleMain extends Application {
         lblPlayerChooseGame.setTextAlignment(TextAlignment.CENTER);
         lblPlayerChooseGame.setStyle("-fx-font-size: 36");
 
-        lobbyScreen.getChildren().addAll(btnHostLobby, btnJoinLobby, txtLobbyName, listvwLobby, listvwPlayers, btnRefresh, lblLobbiesList, lblLobbyName, lblPlayerChooseGame, lblPlayersList);
+        lobbyScreen.getChildren().addAll(btnHostLobby, btnJoinLobby, txtLobbyName, lvLobby, lvPlayers, btnRefresh, lblLobbiesList, lblLobbyName, lblPlayerChooseGame, lblPlayersList);
         //endregion
 
         //region InLobbyScreen
@@ -257,10 +250,10 @@ public class SampleMain extends Application {
         lblPlayersInLobby.setText("Players:");
         lblPlayersInLobby.setStyle("-fx-font-size: 28");
 
-        listvwPlayersInLobby.setLayoutX(14);
-        listvwPlayersInLobby.setLayoutY(140);
-        listvwPlayersInLobby.setPrefHeight(889);
-        listvwPlayersInLobby.setPrefWidth(327);
+        lvPlayersInLobby.setLayoutX(14);
+        lvPlayersInLobby.setLayoutY(140);
+        lvPlayersInLobby.setPrefHeight(889);
+        lvPlayersInLobby.setPrefWidth(327);
 
         lblLobbyName.setLayoutX(600);
         lblLobbyName.setLayoutY(17);
@@ -285,7 +278,8 @@ public class SampleMain extends Application {
         btnAccCharacter.setLayoutY(475);
         btnAccCharacter.setPrefWidth(132);
         btnAccCharacter.setPrefHeight(30);
-        btnAccCharacter.setText("Accept character");
+        btnAccCharacter.setText("Set color");
+        btnAccCharacter.setOnAction(event -> pickColor());
 
         btnLeaveLobby.setLayoutX(7);
         btnLeaveLobby.setLayoutY(10);
@@ -295,10 +289,10 @@ public class SampleMain extends Application {
         btnLeaveLobby.setOnAction(event -> leaveLobby());
 
         javafx.scene.image.ImageView imageViewSelectedPlayer = new javafx.scene.image.ImageView();
-        imageViewSelectedPlayer.setLayoutX(740);
-        imageViewSelectedPlayer.setLayoutY(200);
-        imageViewSelectedPlayer.setFitHeight(36);
-        imageViewSelectedPlayer.setFitWidth(53);
+        imageViewSelectedPlayer.setLayoutX(500);
+        imageViewSelectedPlayer.setLayoutY(360);
+        imageViewSelectedPlayer.setFitHeight(54);
+        imageViewSelectedPlayer.setFitWidth(79);
 
 
         int x = 500;
@@ -317,7 +311,7 @@ public class SampleMain extends Application {
             imageView.setStyle("-fx-background-color: black");
             imageView.setStyle("-fx-padding: 1px");
             imageView.setId(color.toString());
-            imageView.setOnMouseClicked(event -> imageViewSelectedPlayer.setImage(new Image(color.getPath())));
+            imageView.setOnMouseClicked(event -> changePlayerImage(color));
             inLobbyScreen.getChildren().add(imageView);
 
             x = x + 53;
@@ -331,16 +325,27 @@ public class SampleMain extends Application {
 
             System.out.println(imageView.getLayoutX() + ";" + imageView.getLayoutY());
         }
-
-        inLobbyScreen.getChildren().addAll(imageViewSelectedPlayer, lblLobbyName, btnAccCharacter, lblPlayersInLobby, btnLeaveLobby, btnKickPlayer, btnStartGame, listvwPlayersInLobby);
+        inLobbyScreen.getChildren().addAll(imageViewSelectedPlayer, lblLobbyName, btnAccCharacter, lblPlayersInLobby, btnLeaveLobby, btnKickPlayer, btnStartGame, lvPlayersInLobby);
         //endregion
     }
 
-    private void listvwLobbyClicked(MouseEvent event)
+    private void changePlayerImage(CharacterColor color)
+    {
+        currentColor = color;
+        imageViewSelectedPlayer.setImage(new Image(color.getPath()));
+    }
+
+    private void pickColor()
+    {
+        System.out.println("Setting color: " + currentColor);
+        administration.setUserColor(currentColor);
+    }
+
+    private void lvLobbyClicked(MouseEvent event)
     {
         if (event.getButton() == MouseButton.PRIMARY)
         {
-            Lobby selectedItem = listvwLobby.getSelectionModel().getSelectedItem();
+            Lobby selectedItem = lvLobby.getSelectionModel().getSelectedItem();
 
             if (selectedItem != null)
             {
@@ -376,30 +381,30 @@ public class SampleMain extends Application {
                     lblErrorMessage.setText("Error: username was already taken");
                 });
             }
-            lblPlayerChooseGame.setText(administration.getUser().getUsername() + " Choose a lobby!");
+            lblPlayerChooseGame.setText(administration.getUser().getUsername() + " choose a lobby!");
         }
     }
 
     private boolean validUsername(String username) {
-        if ((username).trim().length() >= minCharsName) {
+        if ((username).trim().length() >= MIN_CHARS_NAME) {
             return true;
         } else {
-            System.out.println("Enter a name of at least " + minCharsName + " characters");
+            System.out.println("Enter a name of at least " + MIN_CHARS_NAME + " characters");
             return false;
         }
     }
 
     private void viewLobby(User player) {
-        Lobby lobby = listvwLobby.getSelectionModel().getSelectedItem();
+        Lobby lobby = lvLobby.getSelectionModel().getSelectedItem();
         if (lobby != null) {
-            listvwPlayers.setItems(lobby.getPlayers());
+            lvPlayers.setItems(lobby.getPlayers());
         }
     }
 
     private void hostLobby() {
         if (!administration.inLobby()) {
-            if ((txtLobbyName.getText()).trim().length() >= minCharsLobbyName) {
-                listvwLobby.getSelectionModel().select(administration.hostLobby(txtLobbyName.getText()));
+            if ((txtLobbyName.getText()).trim().length() >= MIN_CHARS_LOBBY_NAME) {
+                lvLobby.getSelectionModel().select(administration.hostLobby(txtLobbyName.getText()));
                 lblLobbyName.setText(txtLobbyName.getText());
 
                 txtLobbyName.clear();
@@ -414,7 +419,7 @@ public class SampleMain extends Application {
 
     private void joinLobby() {
         try {
-            Lobby lobby = listvwLobby.getSelectionModel().getSelectedItem();
+            Lobby lobby = lvLobby.getSelectionModel().getSelectedItem();
             if (lobby != null) {
                 if (administration.inLobby()) {
                     administration.leaveLobby();
@@ -445,7 +450,7 @@ public class SampleMain extends Application {
 
     private void kickPlayer() {
         try {
-            User player = listvwPlayersInLobby.getSelectionModel().getSelectedItem();
+            User player = lvPlayersInLobby.getSelectionModel().getSelectedItem();
             if (player != null) {
                 int id = player.getID();
                 if (id != administration.getUser().getID()) {
@@ -480,10 +485,10 @@ public class SampleMain extends Application {
         Platform.runLater(() -> waitingMessage.setText("Waiting for " + x + " players"));
     }
 
-    public void setListvwLobby(ObservableList<Lobby> lobbies) {
+    public void setLvLobby(ObservableList<Lobby> lobbies) {
         Lobby selectLobby = null;
-        if (listvwLobby.getSelectionModel().getSelectedItem() != null) {
-            int selectedId = listvwLobby.getSelectionModel().getSelectedItem().getId();
+        if (lvLobby.getSelectionModel().getSelectedItem() != null) {
+            int selectedId = lvLobby.getSelectionModel().getSelectedItem().getId();
 
             for (Lobby lobby : lobbies) {
                 if (lobby.getId() == selectedId) {
@@ -495,11 +500,11 @@ public class SampleMain extends Application {
         Lobby finalSelectLobby = selectLobby;
         Platform.runLater(() ->
         {
-            listvwLobby.setItems(lobbies);
+            lvLobby.setItems(lobbies);
             if (finalSelectLobby != null) {
-                listvwLobby.getSelectionModel().select(finalSelectLobby);
-                listvwPlayers.setItems(finalSelectLobby.getPlayers());
-                listvwPlayersInLobby.setItems(finalSelectLobby.getPlayers());
+                lvLobby.getSelectionModel().select(finalSelectLobby);
+                lvPlayers.setItems(finalSelectLobby.getPlayers());
+                lvPlayersInLobby.setItems(finalSelectLobby.getPlayers());
                 checkIfInLobby();
             }
         });
@@ -517,13 +522,18 @@ public class SampleMain extends Application {
         {
             game = new bootstrapper.Main(administration.getGameAdmin(), administration.getRpl(), administration.getUser());
             try {
-                //TODO: stop the music
                 clip.stop();
                 System.out.println(((List<User>) obj).size());
-                ((bootstrapper.Main) game).start(stage, (List<User>) obj);
+                ((bootstrapper.Main) game).start(stage, (List<User>) obj, inLobbyScene, this);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
+    }
+
+    public void endGame()
+    {
+        administration.endGame();
+        //leaveLobby();
     }
 }

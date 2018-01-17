@@ -73,6 +73,7 @@ public class User implements Serializable
     public User(String username, int ID) {
         this.username = username;
         this.ID = ID;
+        this.characterColor = CharacterColor.black_blue;
     }
 
     public CharacterColor getCharacterColor()

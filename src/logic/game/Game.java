@@ -59,16 +59,13 @@ public class Game
         for(User u : users)
         {
             System.out.println(u.getUsername());
-            rmiGameObjects.add(new PlayerObject(new Point(600 + j, 900),new Size(78, 54),u.getUsername(), CharacterColor.black_blue));
+            System.out.println("Char color: " + u.getCharacterColor());
+            rmiGameObjects.add(new PlayerObject(new Point(600 + j, 900),new Size(78, 54),u.getUsername(), u.getCharacterColor()));
             j = j+50;
         }
         this.gameRules = gameRules;
         gameObjects = rmiGameObjects;
         addObstacles();
-
-        //Add players here
-        //gameObjects.add(new PlayerObject(new Point(600, 900),name, Color.BLACK));
-        //gameObjects.add(new PlayerObject(new Point(540, 900),"Player2", Color.BLACK));
 
         //Adds obstacles
         for (int i=0; i<obstacleCount; i++)
@@ -118,7 +115,7 @@ public class Game
                                 System.out.println("empty");
                             }
                     }
-                }, 250, 60);
+                }, 250, 17);
             }
         }
     }
@@ -272,16 +269,13 @@ public class Game
     {
         timer.cancel();
         List<PlayerObject> returnable = new ArrayList<>();
-        //Scene newScene, Stage stage todo move to client
         synchronized (synchronizer)
         {
             for (GameObject GO : getGameObjects())
             {
                 if (GO instanceof PlayerObject)
                 {
-                    //stage.setScene(newScene); todo move to client
                     returnable.add((PlayerObject) GO);
-                    //System.out.println("Player: " + PO.getName() + " = " + PO.getDistance() + " Points"); todo move to client
                 }
             }
         }

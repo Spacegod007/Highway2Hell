@@ -3,6 +3,7 @@ package logic.administration;
 import javafx.collections.FXCollections;
 import logic.fontyspublisher.IRemotePropertyListener;
 import logic.fontyspublisher.IRemotePublisherForListener;
+import logic.game.CharacterColor;
 import logic.remote_method_invocation.IGameAdmin;
 import logic.remote_method_invocation.RMIGameClient;
 import logic.remote_method_invocation.RMILobbyClient;
@@ -73,7 +74,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
         if (preUser != null)
         {
             this.setUser(preUser);
-            sampleMain.setListvwLobby(FXCollections.observableList(rmiClient.getLobbies()));
+            sampleMain.setLvLobby(FXCollections.observableList(rmiClient.getLobbies()));
             return true;
         }
 
@@ -199,7 +200,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
      */
     private void setListViewLobby(PropertyChangeEvent evt)
     {
-        sampleMain.setListvwLobby(FXCollections.observableList((List<Lobby>) evt.getNewValue()));
+        sampleMain.setLvLobby(FXCollections.observableList((List<Lobby>) evt.getNewValue()));
         System.out.println("property changed: " + evt.getPropertyName());
     }
 
@@ -292,7 +293,6 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
      */
     public void startConnectingToGame()
     {
-        System.out.println("starting");
         Lobby lobby = rmiClient.getActiveLobby();
 
         if(lobby != null)
@@ -319,6 +319,12 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
         }
     }
 
+    public void endGame()
+    {
+        gameThread.stop();
+        rmiGameClient = null;
+    }
+
     public IRemotePublisherForListener getRpl()
     {
         return rmiGameClient.getRpl();
@@ -327,5 +333,10 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     public boolean userInLobby()
     {
         return (rmiClient.getActiveLobby() != null);
+    }
+
+    public void setUserColor(CharacterColor userColor)
+    {
+        rmiClient.setUserColor(userColor);
     }
 }

@@ -3,6 +3,7 @@ package logic.remote_method_invocation;
 import logic.fontyspublisher.IRemotePublisherForDomain;
 import logic.administration.Lobby;
 import logic.administration.User;
+import logic.game.CharacterColor;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -303,8 +304,6 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
 
     public void startGame(Lobby l)
     {
-        l.startGame();
-
         try
         {
             rpd.inform(Integer.toString(l.getId()), null, l.getPlayers().size());
@@ -312,6 +311,29 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
         catch (RemoteException e)
         {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void setUserColor(int id, CharacterColor userColor)
+    {
+        User u = getUser(id);
+        if(u != null)
+        {
+            for (User us : u.getActiveLobby().getPlayers())
+            {
+                if (us.getID() == id)
+                {
+                    us.setCharacterColor(userColor);
+                }
+            }
+            try
+            {
+                rpd.inform("lobbies", null, lobbies);
+            } catch (RemoteException ex)
+            {
+                ex.printStackTrace();
+            }
         }
     }
 }

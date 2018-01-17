@@ -19,8 +19,6 @@ public class Lobby implements Serializable
      */
     private final int id;
 
-    private boolean started = false;
-
     /**
      * The host of the lobby
      */
@@ -47,14 +45,9 @@ public class Lobby implements Serializable
     private final String ipAddress;
 
     /**
-     * The port the server will be run on
-     */
-    private final int port = 1111;
-
-    /**
      * The maximum amount of players allowed
      */
-    private final static int maxSize = 64; // static?
+    private static final int MAX_SIZE = 64; // static?
 
     /**
      * Gets the host of this lobby
@@ -74,17 +67,6 @@ public class Lobby implements Serializable
         return id;
     }
 
-    /**
-     * Sets the host of this lobby
-     * @param host to be set
-     */
-//    public void setHost(User host, String ipAddress)
-//    {
-//
-//        this.host = host;
-//        this.ipAddress = ipAddress;
-//    }
-//
     public void setHost(User host)
     {
         this.host = host;
@@ -96,16 +78,11 @@ public class Lobby implements Serializable
      */
     public ObservableList<User> getPlayers()
     {
+        for(User u : players)
+        {
+            System.out.println(u.getCharacterColor());
+        }
         return FXCollections.unmodifiableObservableList(FXCollections.observableList(players));
-    }
-
-    /**
-     * Gets a list of all the game rules bound to this lobby
-     * @return a list of all game rules bound to this lobby
-     */
-    public List<Gamerule> getGamerules()
-    {
-        return Collections.unmodifiableList(gameRules);
     }
 
     /**
@@ -161,7 +138,6 @@ public class Lobby implements Serializable
      * @param player to be added to this lobby
      * @return true if the player was added, false if the adding of the player failed
      */
-    // TODO: 4-12-2017 fix ipAddress 
     public boolean join(User player)
     {
         try
@@ -181,33 +157,9 @@ public class Lobby implements Serializable
         }
     }
 
-    /**
-     * Changes the game rules
-     */
-    public void editGameRules()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Starts the game
-     */
-    public void startGame()
-    {
-        started = true;
-    }
-
-    /**
-     * Migrates the host if the host left the lobby
-     */
-    public void migrateHost()
-    {
-        throw new UnsupportedOperationException();
-    }
-
     @Override
     public String toString() {
-        return name + ": (" + players.size() + "/" + Lobby.maxSize + ")";
+        return name + ": (" + players.size() + "/" + MAX_SIZE+ ")";
     }
 
     public String getIpAddress()

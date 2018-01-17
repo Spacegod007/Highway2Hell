@@ -8,6 +8,7 @@ import logic.administration.Administration;
 import logic.fontyspublisher.IRemotePublisherForListener;
 import logic.administration.Lobby;
 import logic.administration.User;
+import logic.game.CharacterColor;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -426,5 +427,16 @@ public class RMILobbyClient
         }
 
         return properties;
+    }
+
+    public void setUserColor(CharacterColor userColor)
+    {
+        try
+        {
+            lobbyAdmin.setUserColor(user.getID(), userColor);
+        } catch (RemoteException e)
+        {
+            e.printStackTrace();
+        }
     }
 }
