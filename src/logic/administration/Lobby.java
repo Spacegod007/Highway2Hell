@@ -96,6 +96,10 @@ public class Lobby implements Serializable
      */
     public ObservableList<User> getPlayers()
     {
+        for(User u : players)
+        {
+            System.out.println(u.getCharacterColor());
+        }
         return FXCollections.unmodifiableObservableList(FXCollections.observableList(players));
     }
 

@@ -59,16 +59,13 @@ public class Game
         for(User u : users)
         {
             System.out.println(u.getUsername());
-            rmiGameObjects.add(new PlayerObject(new Point(600 + j, 900),new Size(78, 54),u.getUsername(), CharacterColor.black_blue));
+            System.out.println("Char color: " + u.getCharacterColor());
+            rmiGameObjects.add(new PlayerObject(new Point(600 + j, 900),new Size(78, 54),u.getUsername(), u.getCharacterColor()));
             j = j+50;
         }
         this.gameRules = gameRules;
         gameObjects = rmiGameObjects;
         addObstacles();
-
-        //Add players here
-        //gameObjects.add(new PlayerObject(new Point(600, 900),name, Color.BLACK));
-        //gameObjects.add(new PlayerObject(new Point(540, 900),"Player2", Color.BLACK));
 
         //Adds obstacles
         for (int i=0; i<obstacleCount; i++)
