@@ -36,7 +36,6 @@ public class SampleMain extends Application {
     private Application game;
     private Stage stage;
     private Pane titleScreen;
-    private Scene titleScene;
     private final ListView<Lobby> lvLobby = new ListView<>();
     private final ListView<User> lvPlayers = new ListView<>();
     private final Label lblEnterLobbyName = new Label();
@@ -53,24 +52,19 @@ public class SampleMain extends Application {
     private final Button btnStartGame = new Button();
     private final Button btnLeaveLobby = new Button();
     private final Button btnAccCharacter = new Button();
-    private javafx.scene.image.ImageView imageViewSelectedPlayer = new javafx.scene.image.ImageView();
+    private final javafx.scene.image.ImageView imageViewSelectedPlayer = new javafx.scene.image.ImageView();
     private AnchorPane lobbyScreen;
     private Scene lobbyScene;
-    private Label lblDoIKnowYou;
     private TextField txtEnterName = new TextField();
-    private Button btnLaunchlobbyScreen = new Button();
     private final Label lblErrorMessage = new Label();
     private AnchorPane inLobbyScreen;
     private Scene waitingScene;
     private final Label waitingMessage = new Label();
-    private AnchorPane waitingScreen;
     private Scene inLobbyScene;
     private final ListView<User> lvPlayersInLobby = new ListView<>();
     private CharacterColor currentColor = CharacterColor.black_blue;
     //endregion
     private static Administration administration;
-    private final int MIN_CHARS_NAME = 4;
-    private final int MIN_CHARS_LOBBY_NAME = 4;
 
     private Clip clip;
     private final static String S_SOUND = "asset\\sound\\Main_Theme.wav";
@@ -91,7 +85,7 @@ public class SampleMain extends Application {
             titleScreen = new AnchorPane();
             lobbyScreen = new AnchorPane();
             inLobbyScreen = new AnchorPane();
-            waitingScreen = new AnchorPane();
+            AnchorPane waitingScreen = new AnchorPane();
             //root = FXMLLoader.load(getClass().getResource("main.fxml"));
             //these things like 'root' must be come from a fxml file
 
@@ -100,7 +94,7 @@ public class SampleMain extends Application {
             waitingScreen.getChildren().addAll(waitingMessage);
 
 
-            titleScene = new Scene(titleScreen, 750, 750);
+            Scene titleScene = new Scene(titleScreen, 750, 750);
             lobbyScene = new Scene(lobbyScreen, 1200, 1000);
             inLobbyScene = new Scene(inLobbyScreen, 1200, 1000);
             waitingScene = new Scene(waitingScreen, 1200, 1000);
@@ -139,7 +133,7 @@ public class SampleMain extends Application {
             }
         });
 
-        btnLaunchlobbyScreen = new Button();
+        Button btnLaunchlobbyScreen = new Button();
         btnLaunchlobbyScreen.setLayoutY(202);
         btnLaunchlobbyScreen.setLayoutX(131);
         btnLaunchlobbyScreen.setPrefHeight(51);
@@ -147,7 +141,7 @@ public class SampleMain extends Application {
         btnLaunchlobbyScreen.setOnAction(event -> launchlobbyScreen(txtEnterName.getText()));
         btnLaunchlobbyScreen.setText("Yeah I'm:");
 
-        lblDoIKnowYou = new Label();
+        Label lblDoIKnowYou = new Label();
         lblDoIKnowYou.setLayoutX(176);
         lblDoIKnowYou.setLayoutY(123);
         lblDoIKnowYou.setPrefWidth(500);
@@ -355,7 +349,7 @@ public class SampleMain extends Application {
                 }
                 else
                 {
-                    viewLobby(null);
+                    viewLobby();
                 }
             }
         }
@@ -386,6 +380,7 @@ public class SampleMain extends Application {
     }
 
     private boolean validUsername(String username) {
+        int MIN_CHARS_NAME = 4;
         if ((username).trim().length() >= MIN_CHARS_NAME) {
             return true;
         } else {
@@ -394,7 +389,7 @@ public class SampleMain extends Application {
         }
     }
 
-    private void viewLobby(User player) {
+    private void viewLobby() {
         Lobby lobby = lvLobby.getSelectionModel().getSelectedItem();
         if (lobby != null) {
             lvPlayers.setItems(lobby.getPlayers());
@@ -403,6 +398,7 @@ public class SampleMain extends Application {
 
     private void hostLobby() {
         if (!administration.inLobby()) {
+            int MIN_CHARS_LOBBY_NAME = 4;
             if ((txtLobbyName.getText()).trim().length() >= MIN_CHARS_LOBBY_NAME) {
                 lvLobby.getSelectionModel().select(administration.hostLobby(txtLobbyName.getText()));
                 lblLobbyName.setText(txtLobbyName.getText());
@@ -455,7 +451,7 @@ public class SampleMain extends Application {
                 int id = player.getID();
                 if (id != administration.getUser().getID()) {
                     administration.leaveLobby(id);
-                    viewLobby(null);
+                    viewLobby();
                 } else {
                     System.out.println("Can't kick self");
                 }

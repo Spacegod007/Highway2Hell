@@ -28,11 +28,6 @@ public class RMIGameClient extends Observable implements Serializable
     private User user;
 
     /**
-     * The session id of the user
-     */
-    private long sessionId;
-
-    /**
      * Gets the user object from the game
      * @return a user object
      */
@@ -78,25 +73,25 @@ public class RMIGameClient extends Observable implements Serializable
      */
     public RMIGameClient(String ipAddress, Administration admin)
     {
-        callClient(ipAddress, 1111, admin);
+        callClient(ipAddress, admin);
     }
 
     /**
      * used to create and initiate the RMI client
      * @param ipAddress of the host
-     * @param portNumber of the server-lobby
+     *
      */
-    private void callClient(String ipAddress, int portNumber, Administration admin)
+    private void callClient(String ipAddress, Administration admin)
     {
         this.user = admin.getUser();
 
         // Print IP address and port number for registry
         System.out.println("GameClient: IP Address: " + ipAddress);
-        System.out.println("GameClient: Port number " + portNumber);
+        System.out.println("GameClient: Port number " + 1111);
 
         // Locate registry at IP address and port number
         try {
-            registry = LocateRegistry.getRegistry(ipAddress, portNumber);
+            registry = LocateRegistry.getRegistry(ipAddress, 1111);
         } catch (RemoteException ex) {
             System.out.println("Client: Cannot locate registry");
             System.out.println("GameClient: RemoteException: " + ex.getMessage());
@@ -181,7 +176,10 @@ public class RMIGameClient extends Observable implements Serializable
         try
         {
             System.out.println("CONNECTED!");
-            sessionId = gameAdmin.connect(user);
+            /*
+      The session id of the user
+     */
+            long sessionId = gameAdmin.connect(user);
         } catch (RemoteException e)
         {
             e.printStackTrace();
@@ -248,16 +246,6 @@ public class RMIGameClient extends Observable implements Serializable
             System.out.println("Client: Cannot show list of names bound in registry");
             System.out.println("Client: RemoteException: " + ex.getMessage());
         }
-    }
-
-    /**
-     * Test RMI connection
-     * !Should implement working test
-     */
-    // TODO: 4-12-2017 : implement RMI test
-    private void testConnection()
-    {
-
     }
 
     /**

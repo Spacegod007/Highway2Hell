@@ -15,7 +15,6 @@ import java.util.ArrayList;
 
 public class ScoreboardController {
 
-    private ObservableList<Score> scores;
     private Main application;
     @FXML private TableColumn<Score, String> Player = new TableColumn<>("Player");
     @FXML private TableColumn<Score, Double> Score = new TableColumn<>("Score");
@@ -35,7 +34,7 @@ public class ScoreboardController {
     }
 
     public void setScore(ArrayList<Score> score) {
-        scores = FXCollections.observableArrayList(score);
+        ObservableList<logic.Score> scores = FXCollections.observableArrayList(score);
         this.TableView.setItems(scores);
     }
 

@@ -1,4 +1,3 @@
-import javafx.scene.paint.Color;
 import logic.Gamerule;
 import logic.Gamerules;
 import logic.game.*;

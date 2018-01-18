@@ -1,5 +1,6 @@
 package logic.game;
 
+@SuppressWarnings("SpellCheckingInspection")
 public enum CharacterColor
 {
     /**
@@ -69,7 +70,7 @@ public enum CharacterColor
 
     /**
      * Gets the path of the player image
-     * @return
+     * @return a string object containing the path to the image
      */
     public final String getPath()
     {

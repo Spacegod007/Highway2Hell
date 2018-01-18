@@ -2,7 +2,6 @@ package logic.game;
 
 import bootstrapper.Main;
 import javafx.application.Platform;
-import logic.fontyspublisher.IPropertyListener;
 import logic.fontyspublisher.IRemotePropertyListener;
 import logic.fontyspublisher.IRemotePublisherForListener;
 
@@ -23,11 +22,6 @@ public class SubMainRMI extends UnicastRemoteObject implements Serializable, IRe
     private final transient Main application;
 
     /**
-     * The object which this class listens to
-     */
-    private final IRemotePublisherForListener rpl;
-
-    /**
      * The constructor of the listener class
      * @param application (client) where the game is being played
      * @param rpl where this class is listening to
@@ -36,7 +30,9 @@ public class SubMainRMI extends UnicastRemoteObject implements Serializable, IRe
     public SubMainRMI(Main application, IRemotePublisherForListener rpl) throws RemoteException
     {
         this.application = application;
-        this.rpl = rpl;
+        /*
+      The object which this class listens to
+     */
         try
         {
             rpl.subscribeRemoteListener(this, "gameObjects");

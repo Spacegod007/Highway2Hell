@@ -12,12 +12,12 @@ public class ObstacleObject extends GameObject
     /**
      * The next available id for obstacles
      */
-    private static AtomicInteger nextId = new AtomicInteger(0);
+    private static final AtomicInteger nextId = new AtomicInteger(0);
 
     /**
      * The id of the obstacle object
      */
-    private int id;
+    private final int id;
     public int getId(){return id;}
     private ObstacleType type;
 

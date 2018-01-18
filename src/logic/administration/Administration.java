@@ -114,7 +114,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
      * Sets the user object
      * @param user to be set
      */
-    public void setUser(User user)
+    private void setUser(User user)
     {
         this.user = user;
     }
@@ -145,9 +145,9 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
      * Leave the current lobby the user is located in
      * @return true if leaving succeeded, false if leaving failed
      */
-    public boolean leaveLobby()
+    public void leaveLobby()
     {
-        return leaveLobby(rmiClient.getUser().getID());
+        leaveLobby(rmiClient.getUser().getID());
     }
 
     /**
@@ -155,17 +155,14 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
      * @param leaverId the id of the user which will leave the server
      * @return true if leaving succeeded, false if leaving failed
      */
-    public boolean leaveLobby(int leaverId)
+    public void leaveLobby(int leaverId)
     {
         try{
             Lobby lobby = rmiClient.getActiveLobby();
 
             if (lobby != null)
             {
-                if (rmiClient.leaveLobby(lobby.getId(), leaverId))
-                {
-                    return true;
-                }
+                rmiClient.leaveLobby(lobby.getId(), leaverId);
             }
             else
             {
@@ -175,10 +172,8 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
         catch (Exception e)
         {
             e.printStackTrace();
-            return false;
         }
 
-        return false;
     }
 
     /**
@@ -309,18 +304,11 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
 
         if(lobby != null)
         {
-            try
-            {
-                hostAdministration = new HostAdministration(lobby);
-                gameThread = new Thread(hostAdministration);
+            hostAdministration = new HostAdministration(lobby);
+            gameThread = new Thread(hostAdministration);
 
-                //Starts the hostAdministration on a new thread. The only thing this class does at this point is starting the server
-                gameThread.start();
-            }
-            catch (RemoteException e)
-            {
-                e.printStackTrace();
-            }
+            //Starts the hostAdministration on a new thread. The only thing this class does at this point is starting the server
+            gameThread.start();
 
             //Says to the lobby -through the client- that he can inform all his listeners to start connecting
             rmiClient.startConnectingToGame(lobby);

@@ -6,17 +6,22 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.ScoreboardController">
-   <children>
-      <TableView fx:id="TableView" layoutY="74.0" prefHeight="331.0" prefWidth="600.0" AnchorPane.bottomAnchor="-5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="74.0">
-        <columns>
-          <TableColumn fx:id="Player" maxWidth="598.0" minWidth="598.0" prefWidth="598.0" resizable="false" text="Player" />
-          <TableColumn fx:id="Score" maxWidth="600.0" minWidth="600.0" prefWidth="600.0" resizable="false" text="Score" />
-        </columns>
-      </TableView>
-      <Button fx:id="btnBackToLobby" layoutX="4.0" layoutY="3.0" mnemonicParsing="false" onAction="#backToLobby" prefHeight="66.0" prefWidth="1192.0" text="Return the lobby">
-         <font>
-            <Font size="23.0" />
-         </font></Button>
-   </children>
+<AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.111"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.ScoreboardController">
+    <TableView fx:id="TableView" layoutY="74.0" prefHeight="331.0" prefWidth="600.0" AnchorPane.bottomAnchor="-5.0"
+               AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="74.0">
+      <columns>
+          <TableColumn fx:id="Player" maxWidth="598.0" minWidth="598.0" prefWidth="598.0" resizable="false"
+                       text="Player"/>
+          <TableColumn fx:id="Score" maxWidth="600.0" minWidth="600.0" prefWidth="600.0" resizable="false"
+                       text="Score"/>
+      </columns>
+    </TableView>
+    <!--suppress JavaFxUnresolvedFxIdReference -->
+    <Button fx:id="btnBackToLobby" layoutX="4.0" layoutY="3.0" mnemonicParsing="false" onAction="#backToLobby"
+            prefHeight="66.0" prefWidth="1192.0" text="Return the lobby">
+        <font>
+          <Font size="23.0"/>
+        </font>
+    </Button>
 </AnchorPane>

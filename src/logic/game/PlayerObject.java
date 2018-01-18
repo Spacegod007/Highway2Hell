@@ -1,7 +1,5 @@
 package logic.game;
 
-import javafx.scene.paint.Color;
-
 /**
  * A player in the game
  */

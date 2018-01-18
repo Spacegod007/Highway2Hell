@@ -11,14 +11,14 @@ import java.util.List;
 /**
  * The allowed methods for interaction on the lobbyAdmin
  */
-public interface ILobbyAdmin extends Remote
+interface ILobbyAdmin extends Remote
 {
     /**
      * Gets the number of lobbies available
      * @return the number of lobbies
      * @throws RemoteException if there is a problem in the connection
      */
-    int getNumberOfLobbies() throws RemoteException;
+    void getNumberOfLobbies() throws RemoteException;
 
     /**
      * Gets the active lobby of the specified user
@@ -69,7 +69,7 @@ public interface ILobbyAdmin extends Remote
      * @return the lobby which was set active
      * @throws RemoteException if there is a problem in the connection
      */
-    Lobby setActiveLobby(int userId, Lobby lobby) throws RemoteException;
+    void setActiveLobby(int userId, Lobby lobby) throws RemoteException;
 
     /**
      * Adds a user to the list of users

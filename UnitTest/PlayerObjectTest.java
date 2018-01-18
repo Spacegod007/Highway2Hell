@@ -1,4 +1,3 @@
-import javafx.scene.paint.Color;
 import logic.game.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,12 +9,6 @@ public class PlayerObjectTest {
     private long defaultDistance;
     private double defaultRotation;
 
-    private double x;
-    private double y;
-    private Point anchor;
-
-    private double width;
-    private double height;
     private Size size;
 
     private String name;
@@ -30,12 +23,12 @@ public class PlayerObjectTest {
         defaultDistance = 0;
         defaultRotation = 180;
 
-        x = 1;
-        y = 2;
-        anchor = new Point(x, y);
+        double x = 1;
+        double y = 2;
+        Point anchor = new Point(x, y);
 
-        width = 50;
-        height = 60;
+        double width = 50;
+        double height = 60;
         size = new Size(width, height);
 
         name = "name";
@@ -76,9 +69,9 @@ public class PlayerObjectTest {
 
         boolean newIsDead = true;
 
-        PO.setIsDead(newIsDead);
+        PO.setIsDead(true);
 
-        assertEquals("Players should be dead when set dead", newIsDead, PO.getIsDead());
+        assertEquals("Players should be dead when set dead", true, PO.getIsDead());
     }
 
     @Test

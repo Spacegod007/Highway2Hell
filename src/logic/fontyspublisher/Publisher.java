@@ -25,7 +25,7 @@ import java.util.logging.Logger;
  *
  * @author Frank Peeters, Nico Kuijpers
  */
-public class Publisher
+class Publisher
 {
 
     /**
@@ -47,11 +47,6 @@ public class Publisher
      * creation is reduced.
      */
     private final ExecutorService pool;
-
-    /**
-     * Number of threads in thread pool.
-     */
-    private final int nrThreads = 10;
 
     /**
      * Default no-arg constructor for Publisher.
@@ -86,6 +81,10 @@ public class Publisher
         setPropertiesString();
 
         // Initialize thread pool
+        /*
+      Number of threads in thread pool.
+     */
+        int nrThreads = 10;
         pool = Executors.newFixedThreadPool(nrThreads);
     }
 
@@ -362,12 +361,12 @@ public class Publisher
     {
 
         // Property listener to be informed
-        IPropertyListener listener;
+        final IPropertyListener listener;
 
         // Property change event to be sent to listener
-        PropertyChangeEvent event;
+        final PropertyChangeEvent event;
 
-        public InformListenerRunnable(IPropertyListener listener, PropertyChangeEvent event)
+        InformListenerRunnable(IPropertyListener listener, PropertyChangeEvent event)
         {
             this.listener = listener;
             this.event = event;

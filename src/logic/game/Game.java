@@ -1,6 +1,5 @@
 package logic.game;
 
-import javafx.scene.paint.Color;
 import logic.Gamerule;
 import logic.administration.User;
 import logic.fontyspublisher.IRemotePublisherForDomain;
@@ -29,16 +28,6 @@ public class Game
     private List<Gamerule> gameRules;
 
     /**
-     * Determines the speed at which the game scrolls
-     */
-    private final double scrollSpeed = 1.5;
-
-    /**
-     * The amount of obstacles in the game
-     */
-    private final int obstacleCount = 1;
-
-    /**
      * The timer which updates the game
      */
     private final Timer timer;
@@ -52,11 +41,6 @@ public class Game
      * Synchronises communication over multiple threads
      */
     private final Object synchronizer;
-
-    /**
-     * The total amount of obstacle objects allowed at any given time
-     */
-    private final int amountOfObstacleObjects = 8;
 
     /**
      * Constructs the game object
@@ -81,7 +65,11 @@ public class Game
         addObstacles();
 
         //Adds obstacles
-        for (int i=0; i<obstacleCount; i++)
+        /*
+      The amount of obstacles in the game
+     */
+        int obstacleCount = 1;
+        for (int i = 0; i< obstacleCount; i++)
         {
             gameObjects.add(new ObstacleObject());
             System.out.println("item " + i + " added");
@@ -95,6 +83,10 @@ public class Game
      */
     private void addObstacles()
     {
+        /*
+      The total amount of obstacle objects allowed at any given time
+     */
+        int amountOfObstacleObjects = 8;
         for (int i = 0; i < amountOfObstacleObjects; i++)
         {
             gameObjects.add(new ObstacleObject());
@@ -198,6 +190,10 @@ public class Game
             for (GameObject GO : gameObjects)
             {
                 //GO scroll.
+                /*
+      Determines the speed at which the game scrolls
+     */
+                double scrollSpeed = 1.5;
                 if (GO instanceof ObstacleObject)
                 {
                     GO.setAnchor(new Point(GO.getAnchor().getX(), GO.getAnchor().getY() + scrollSpeed * 3));
@@ -257,14 +253,14 @@ public class Game
                     {
                         e.printStackTrace();
                     }
-                };
+                }
             }
         }
     }
 
     /**
      * Checks if all players are dead
-     * @return
+     * @return true if all players are dead otherwise false
      */
     private boolean checkAllDead()
     {

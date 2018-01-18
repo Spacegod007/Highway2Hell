@@ -5,11 +5,9 @@ import logic.game.Game;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 
 public class RMIGameServer
 {
@@ -30,21 +28,6 @@ public class RMIGameServer
     private static final String bindingNamePublisher = "publisher";
 
     /**
-     * The registry where all communication objects are being stored in
-     */
-    private Registry registry = null;
-
-    /**
-     * The game administration object where clients interact with
-     */
-    private GameAdmin gameAdmin;
-
-    /**
-     * The publisher which informs users of changes on the game server
-     */
-    private RemotePublisher publisher = null;
-
-    /**
      * Constructs the RMI server
      * @param game the game
      */
@@ -55,6 +38,14 @@ public class RMIGameServer
         System.out.println("Server: Port number " + portNumber);
 
         // Create student administration
+        /*
+      The publisher which informs users of changes on the game server
+     */
+        RemotePublisher publisher = null;
+        /*
+      The game administration object where clients interact with
+     */
+        GameAdmin gameAdmin;
         try
         {
             publisher = new RemotePublisher();
@@ -69,6 +60,10 @@ public class RMIGameServer
         }
 
         // Create registry at port number
+        /*
+      The registry where all communication objects are being stored in
+     */
+        Registry registry;
         try
         {
             registry = LocateRegistry.createRegistry(portNumber);
@@ -83,6 +78,7 @@ public class RMIGameServer
 
         try
         {
+            assert registry != null;
             registry.rebind(bindingNamePublisher, publisher);
         }
         catch(RemoteException ex)

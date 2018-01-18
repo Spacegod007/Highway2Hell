@@ -1,7 +1,6 @@
 package logic.remote_method_invocation;
 
 import logic.Gamerule;
-import logic.administration.Lobby;
 import logic.administration.User;
 import logic.fontyspublisher.IRemotePublisherForDomain;
 import logic.game.*;
@@ -35,23 +34,9 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
     private final List<User> playerList;
 
     /**
-     * The lobby which the game was started from
-     */
-    private Lobby lobby = null;
-
-    /**
      * A synchronise object to synchronise the connection over multiple threads
      */
     private final Object connectSynchronizer;
-
-    /**
-     * Sets the lobby
-     * @param lobby to be set
-     */
-    public void setLobby(Lobby lobby)
-    {
-        this.lobby = lobby;
-    }
 
     /**
      * Gets the amount of players currently connected

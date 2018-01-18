@@ -1,18 +1,14 @@
 package logic.administration;
 
-import bootstrapper.Main;
 import logic.game.Game;
-import logic.remote_method_invocation.RMIGameClient;
 import logic.remote_method_invocation.RMIGameServer;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * SampleMain entry point to start the game server as host
  */
-public class HostAdministration implements Runnable
+class HostAdministration implements Runnable
 {
 
     /**
@@ -24,7 +20,7 @@ public class HostAdministration implements Runnable
      * Constructs the game administration object
      * @param lobby from which the game is being started
      */
-    HostAdministration(Lobby lobby) throws RemoteException
+    HostAdministration(Lobby lobby)
     {
         this.lobby = lobby;
     }

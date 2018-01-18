@@ -11,10 +11,8 @@ import javafx.util.Duration;
 //todo move to more logical location, example "view"
 
 public class BackgroundController {
-	
-	private final int backgroundHeight = 2000;
-	
-	@FXML
+
+    @FXML
 	ImageView background1;
 	@FXML
 	ImageView background2;
@@ -27,13 +25,14 @@ public class BackgroundController {
 		TranslateTransition translateTransition =
 				new TranslateTransition(Duration.millis(22500), background1);
 		translateTransition.setFromY(0);
-		translateTransition.setToY(1 * backgroundHeight);
+        int backgroundHeight = 2000;
+        translateTransition.setToY(backgroundHeight);
 		translateTransition.setInterpolator(Interpolator.LINEAR);
 	
 		TranslateTransition translateTransition2 =
             new TranslateTransition(Duration.millis(22500), background2);
 		translateTransition2.setFromY(0);
-		translateTransition2.setToY(1 * backgroundHeight);
+		translateTransition2.setToY(backgroundHeight);
 		translateTransition2.setInterpolator(Interpolator.LINEAR);
 
 		parallelTransition = 

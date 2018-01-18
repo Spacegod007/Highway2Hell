@@ -5,22 +5,17 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 
-<StackPane maxHeight="1000.0" maxWidth="1200.0" minHeight="1000.0" minWidth="1200.0" prefHeight="1000.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.BackgroundController">
-   <children>
-      <Pane fx:id="backgroundPane">
-         <children>
-            <ImageView fx:id="background1" layoutY="-1000.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@background-images/BackgroundBasic1.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="background2" layoutY="-3000.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@background-images/BackgroundBasic1.png" />
-               </image>
-            </ImageView>
-         </children>
-      </Pane>
-      <Pane id="gamePane" prefHeight="200.0" prefWidth="200.0" />
-   </children>
+<StackPane maxHeight="1000.0" maxWidth="1200.0" minHeight="1000.0" minWidth="1200.0" prefHeight="1000.0"
+           prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="views.BackgroundController">
+    <!--suppress JavaFxUnresolvedFxIdReference -->
+    <Pane fx:id="backgroundPane">
+        <ImageView fx:id="background1" layoutY="-1000.0" pickOnBounds="true" preserveRatio="true">
+            <Image url="@background-images/BackgroundBasic1.png"/>
+        </ImageView>
+        <ImageView fx:id="background2" layoutY="-3000.0" pickOnBounds="true" preserveRatio="true">
+            <Image url="@background-images/BackgroundBasic1.png"/>
+        </ImageView>
+    </Pane>
+    <Pane id="gamePane" prefHeight="200.0" prefWidth="200.0"/>
 </StackPane>

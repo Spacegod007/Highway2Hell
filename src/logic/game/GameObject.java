@@ -21,7 +21,7 @@ public abstract class GameObject implements Serializable
      * Constructs an object in the game
      * @param anchor the position of the object
      */
-    public GameObject(Point anchor, Size size) {
+    GameObject(Point anchor, Size size) {
         this.anchor = anchor;
         this.size = size;
     }
@@ -55,7 +55,7 @@ public abstract class GameObject implements Serializable
      * Sets the size of the game object
      * @param size to be set
      */
-    public void setSize(Size size)
+    void setSize(Size size)
     {
         this.size = size;
     }

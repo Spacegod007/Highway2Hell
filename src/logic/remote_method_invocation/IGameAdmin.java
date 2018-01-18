@@ -1,7 +1,6 @@
 package logic.remote_method_invocation;
 
 import logic.Gamerule;
-import logic.administration.Lobby;
 import logic.administration.User;
 import logic.game.Direction;
 import logic.game.GameObject;
@@ -31,13 +30,6 @@ public interface IGameAdmin extends Remote
      * @throws RemoteException if something goes wrong in the connection
      */
     int getPlayersConnected() throws RemoteException;
-
-    /**
-     * Sets the lobby
-     * @param lobby to be set
-     * @throws RemoteException if something goes wrong in the connection
-     */
-    void setLobby(Lobby lobby) throws RemoteException;
 
     /**
      * Gets the list of players

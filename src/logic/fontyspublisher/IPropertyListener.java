@@ -9,6 +9,6 @@ import java.util.*;
  * 
  * @author Frank Peeters, Nico Kuijpers
  */
-public interface IPropertyListener extends EventListener  {
+interface IPropertyListener extends EventListener  {
 
 }

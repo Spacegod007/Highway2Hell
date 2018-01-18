@@ -1,14 +1,10 @@
 package bootstrapper;
 
-import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -23,8 +19,6 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import logic.Score;
 import logic.administration.User;
-import logic.fontyspublisher.IRemotePropertyListener;
-import logic.fontyspublisher.IRemotePublisherForDomain;
 import logic.fontyspublisher.IRemotePublisherForListener;
 import logic.game.*;
 import logic.remote_method_invocation.IGameAdmin;
@@ -32,13 +26,10 @@ import sample.SampleMain;
 import views.BackgroundController;
 import views.ScoreboardController;
 
-import javax.sound.midi.Soundbank;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import java.beans.PropertyChangeEvent;
 import java.io.File;
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.*;
 
@@ -48,21 +39,18 @@ import java.util.*;
 public class Main extends Application
 {
     private SampleMain application;
-    private final User user;
     private Scene previousScene;
-    private List<ObstacleObject> obstacleObjects = new ArrayList<>();
     //Player images for creating characters for later versions that use sockets.
     private final Image redBarrelImage = new Image("objects/barrel_red_down.png");
     private final Image blueBarrelImage = new Image("objects/barrel_blue_down.png");
     private final Image rockImage = new Image("objects/rock1.png");
     private final IGameAdmin game;
     private final Label distanceLabel = new Label("0");
-    private List<Label> playerLabels = new ArrayList<>();
-    private Map<String, ImageView> mappedPlayerImage = new HashMap<>();
-    private Map<String, PlayerObject> mappedPlayerObject = new HashMap<>();
-    private Map<String, Label> mappedPlayerLabel = new HashMap<>();
-    private Map<Integer, ObstacleObject> mappedObstacleObject = new HashMap<>();
-    private Map<Integer, ImageView> mappedObstacleImage = new HashMap<>();
+    private final Map<String, ImageView> mappedPlayerImage = new HashMap<>();
+    private final Map<String, PlayerObject> mappedPlayerObject = new HashMap<>();
+    private final Map<String, Label> mappedPlayerLabel = new HashMap<>();
+    private final Map<Integer, ObstacleObject> mappedObstacleObject = new HashMap<>();
+    private final Map<Integer, ImageView> mappedObstacleImage = new HashMap<>();
 
     private Stage stage;
 
@@ -73,7 +61,6 @@ public class Main extends Application
     // game scenes
     private Scene scene;
     private Scene scoreboardScene;
-    private Scene countdownScene;
 
     private Pane gamePane;
 
@@ -88,11 +75,10 @@ public class Main extends Application
     //david zn shit
     private String playerKey = null;
 
-    Clip clip;
+    private Clip clip;
 
     public Main(IGameAdmin game, IRemotePublisherForListener rpl, User user)
     {
-        this.user = user;
         this.playerKey = user.getUsername();
         System.out.println(playerKey);
         this.game = game;
@@ -129,7 +115,7 @@ public class Main extends Application
         // countdown scene
         AnchorPane anchorPane = new AnchorPane();
         anchorPane.getChildren().add(label);
-        countdownScene = new Scene(anchorPane);
+        Scene countdownScene = new Scene(anchorPane);
         Font font = new Font("Comic Sans MS", 400);
         label.setTranslateX(310);
         label.setTranslateY(190);
@@ -204,13 +190,13 @@ public class Main extends Application
         distanceLabel.setTranslateX(6);
         distanceLabel.setTranslateY(3);
         gamePane.getChildren().add(distanceLabel);
-        playerLabels = getPlayerLabels(gameObjects);
+        List<Label> playerLabels = getPlayerLabels(gameObjects);
         gamePane.getChildren().addAll(FXCollections.observableArrayList(playerLabels));
         //endregion
 
         // start animation for background
         backgroundController.startAnimation();
-        obstacleObjects = getObstacleObjects(gameObjects);
+        List<ObstacleObject> obstacleObjects = getObstacleObjects(gameObjects);
     }
 
     private PlayerObject getPlayer(PlayerObject po)
@@ -219,9 +205,9 @@ public class Main extends Application
         {
             for(GameObject go : game.getGameObjects())
             {
-                if(go instanceof PlayerObject)
+                if (go instanceof PlayerObject)
                 {
-                    if(po.getName() == ((PlayerObject) go).getName())
+                    if (po.getName().equals(((PlayerObject) go).getName()))
                     {
                         return (PlayerObject) go;
                     }
@@ -304,7 +290,7 @@ public class Main extends Application
         launch(args);
     }
 
-    private List<Label> getPlayerLabels(List<GameObject> gameObjects) throws RemoteException
+    private List<Label> getPlayerLabels(List<GameObject> gameObjects)
     {
         List<Label> list = new ArrayList<>();
         for (PlayerObject player : getPlayerObjects(gameObjects)) {
@@ -322,29 +308,24 @@ public class Main extends Application
     private void doTime(Stage primaryStage) {
         Timeline time = new Timeline();
         time.setCycleCount(Timeline.INDEFINITE);
-        if(time != null){
-            time.stop();
-        }
-        KeyFrame frame = new KeyFrame(Duration.seconds(1),new EventHandler<ActionEvent>(){
-            @Override
-            public void handle(ActionEvent event){
-                seconds --;
-                label.setText(" " + seconds.toString());
-                if(seconds <= 0){
-                    primaryStage.setScene(scene);
-                    try
-                    {
-                        System.out.println("Initialize game");
-                        time.stop();
-                        InitializeGame(primaryStage);
-                        game.startGame();
-                        clip.start();
-                        clip.loop(Clip.LOOP_CONTINUOUSLY);
-                    }
-                    catch (RemoteException e)
-                    {
-                        e.printStackTrace();
-                    }
+        time.stop();
+        KeyFrame frame = new KeyFrame(Duration.seconds(1), event -> {
+            seconds --;
+            label.setText(" " + seconds.toString());
+            if(seconds <= 0){
+                primaryStage.setScene(scene);
+                try
+                {
+                    System.out.println("Initialize game");
+                    time.stop();
+                    InitializeGame(primaryStage);
+                    game.startGame();
+                    clip.start();
+                    clip.loop(Clip.LOOP_CONTINUOUSLY);
+                }
+                catch (RemoteException e)
+                {
+                    e.printStackTrace();
                 }
             }
         });
@@ -385,7 +366,7 @@ public class Main extends Application
     }
 
     /**
-     * This is called by the propertychange, and executes the update code
+     * This is called by the property change, and executes the update code
      * @param gameObjects are the new gameobjects, according to the server
      */
     public void update(List<GameObject> gameObjects)

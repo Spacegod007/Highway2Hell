@@ -5,7 +5,6 @@ import logic.administration.Lobby;
 import logic.administration.User;
 import logic.game.CharacterColor;
 
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -44,7 +43,7 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
     /**
      * A synchronizer object for the lobby system
      */
-    private final Object lobbieSynchronizer = new Object();
+    private final Object lobbySynchronizer = new Object();
 
     /**
      * Gets the next lobby Id
@@ -61,7 +60,7 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
      * Gets the next user Id
      * @return the next user id
      */
-    static int getNextUserID()
+    private static int getNextUserID()
     {
         int i = nextUserID;
         nextUserID++;
@@ -86,9 +85,9 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
      * @return the number of lobbies
      * @throws RemoteException if there is a problem in the connection
      */
-    public int getNumberOfLobbies() throws RemoteException {
+    public void getNumberOfLobbies() throws RemoteException {
         System.out.println("LobbyAdmin: Request for number of Lobbies");
-        return lobbies.size();
+        lobbies.size();
     }
 
     /**
@@ -100,7 +99,7 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
      */
     public Lobby addLobby(String name, User user, String ipAddress) throws RemoteException {
         Lobby lobby = new Lobby(name, getNextID(), ipAddress);
-        synchronized (lobbieSynchronizer)
+        synchronized (lobbySynchronizer)
         {
             lobbies.add(lobby);
             rpd.registerProperty(Integer.toString(lobby.getId()));
@@ -121,7 +120,7 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
     // TODO: 4-12-2017 Migrate host : make sure ipAddress is forwarded
     public boolean leaveLobby(int lobbyId, int userId, int issuerId) throws RemoteException
     {
-        synchronized (lobbieSynchronizer)
+        synchronized (lobbySynchronizer)
         {
             try
             {
@@ -176,7 +175,7 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
     public boolean joinLobby(Lobby lobby, User user) throws RemoteException
     {
         boolean ret = false;
-        synchronized (lobbieSynchronizer)
+        synchronized (lobbySynchronizer)
         {
             for (Lobby l : lobbies)
             {
@@ -201,7 +200,7 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
      * @return the lobby which was set active
      * @throws RemoteException if there is a problem in the connection
      */
-    public Lobby setActiveLobby(int userId, Lobby lobby) throws RemoteException
+    public void setActiveLobby(int userId, Lobby lobby) throws RemoteException
     {
         System.out.println("setting lobby for user: " + userId);
         User u = getUser(userId);
@@ -209,11 +208,11 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
         {
                 u.setActiveLobby(getLobby(lobby));
         }
-        return getActiveLobby(userId);
+        getActiveLobby(userId);
     }
 
     /**
-     * Thets the specified user by id
+     * Gets the specified user by id
      * @param id of the user
      * @return the user object linked to the id
      */
@@ -276,7 +275,7 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
      */
     public void cleanLobbies()
     {
-        synchronized (lobbieSynchronizer)
+        synchronized (lobbySynchronizer)
         {
             boolean changed = false;
             for (int i = 0; i < lobbies.size(); i++)

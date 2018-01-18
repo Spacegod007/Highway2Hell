@@ -6,7 +6,6 @@ import logic.Gamerule;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -33,11 +32,6 @@ public class Lobby implements Serializable
      * The players that are currently in the lobby
      */
     private final List<User> players;
-
-    /**
-     * The game rules bound to this lobby by the host
-     */
-    private final List<Gamerule> gameRules;
 
     /**
      * The ipAddress used to connect to the server when the game starts
@@ -103,7 +97,10 @@ public class Lobby implements Serializable
     public Lobby(String name, int id, String ipAddress)
     {
         players = new ArrayList<>();
-        gameRules = new ArrayList<>();
+        /*
+      The game rules bound to this lobby by the host
+     */
+        List<Gamerule> gameRules = new ArrayList<>();
         this.name = name;
         this.id = id;
         this.ipAddress = ipAddress;
@@ -114,7 +111,7 @@ public class Lobby implements Serializable
      * @param userId of the user who will be removed from the lobby
      * @return true if the user was removed, false if the user was not removed
      */
-    public boolean leave(int userId)
+    public void leave(int userId)
     {
         try
         {
@@ -122,15 +119,12 @@ public class Lobby implements Serializable
                 if(p.getID() == userId)
                 {
                     this.players.remove(p);
-                    return true;
+                    return;
                 }
             }
-            return false;
         }
-        catch(Exception e)
-        {
-            return false;
-        }
+        catch(Exception ignored)
+        { }
     }
 
     /**

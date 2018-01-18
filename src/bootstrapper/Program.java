@@ -10,7 +10,7 @@ import java.util.Properties;
 /**
  * Bootstrap class to initiate the entire client application
  */
-public class Program
+class Program
 {
     /**
      * Main entry point of client application

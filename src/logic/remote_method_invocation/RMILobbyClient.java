@@ -316,7 +316,7 @@ public class RMILobbyClient
         }
         catch(RemoteException ex){
             System.out.println("Client: RemoteException: " + ex.getMessage());
-            return ret;
+            return false;
         }
     }
 
@@ -360,7 +360,7 @@ public class RMILobbyClient
      * @param userId of the user
      * @return true if the specified player left the specified lobby, false if the specified player failed to leave the specified lobby
      */
-    public boolean leaveLobby(int lobbyId, int userId)
+    public void leaveLobby(int lobbyId, int userId)
     {
         try
         {
@@ -368,12 +368,10 @@ public class RMILobbyClient
             {
                 setActiveLobby(null, userId);
             }
-            return true;
         }
         catch(RemoteException ex)
         {
             System.out.println("Client: RemoteException: " + ex.getMessage());
-            return false;
         }
     }
 

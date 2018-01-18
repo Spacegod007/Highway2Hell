@@ -11,7 +11,7 @@ import java.rmi.registry.Registry;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class RMILobbyServer
+class RMILobbyServer
 {
     /**
      * The port number of the server
@@ -29,19 +29,9 @@ public class RMILobbyServer
     private static final String bindingNamePublisher = "publisher";
 
     /**
-     * The registry which the clients communicate with
-     */
-    private Registry registry = null;
-
-    /**
      * The lobby admin the clients interact with
      */
     private LobbyAdmin lobbyAdmin = null;
-
-    /**
-     * The publisher which informs the clients of changes in the lobby system
-     */
-    private RemotePublisher publisher = null;
 
     /**
      * Constructs the RMI server
@@ -53,6 +43,10 @@ public class RMILobbyServer
         System.out.println("Server: Port number " + portNumber);
 
         // Create student administration
+        /*
+      The publisher which informs the clients of changes in the lobby system
+     */
+        RemotePublisher publisher = null;
         try
         {
             publisher = new RemotePublisher();
@@ -70,6 +64,10 @@ public class RMILobbyServer
         updateLobbies();
 
         // Create registry at port number
+        /*
+      The registry which the clients communicate with
+     */
+        Registry registry;
         try
         {
             registry = LocateRegistry.createRegistry(portNumber);
@@ -84,6 +82,7 @@ public class RMILobbyServer
 
         try
         {
+            assert registry != null;
             registry.rebind(bindingNamePublisher, publisher);
         }
         catch(RemoteException ex)

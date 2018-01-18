@@ -9,7 +9,7 @@ import java.beans.*;
  * 
  * @author Frank Peeters, Nico Kuijpers
  */
-public interface ILocalPropertyListener extends IPropertyListener  {
+interface ILocalPropertyListener extends IPropertyListener  {
 
     /**
      * Inform listener about change of a property in the domain. On the basis
