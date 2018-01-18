@@ -2,7 +2,7 @@ package bootstrapper;
 
 import logic.remote.method.invocation.RMILobbyClient;
 import logic.administration.Administration;
-import sample.SampleMain;
+import views.LobbyView;
 
 import java.rmi.RemoteException;
 import java.util.Properties;
@@ -17,7 +17,7 @@ class Program
     private static final Logger LOGGER = Logger.getLogger(Program.class.getName());
 
     /**
-     * Main entry point of client application
+     * GameView entry point of client application
      * @param args array of arguments
      */
     public static void main(String[] args)
@@ -33,7 +33,7 @@ class Program
             Administration administration = new Administration(rmiClient);
             LOGGER.log(Level.INFO, "administration created");
 
-            SampleMain.launchView(args, administration);
+            LobbyView.launchView(args, administration);
         }
         catch(RemoteException ex)
         {

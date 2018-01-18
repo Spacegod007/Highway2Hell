@@ -1,6 +1,6 @@
 package logic.game;
 
-import bootstrapper.Main;
+import views.GameView;
 import javafx.application.Platform;
 import logic.fontyspublisher.IRemotePropertyListener;
 import logic.fontyspublisher.IRemotePublisherForListener;
@@ -23,7 +23,7 @@ public class SubMainRMI extends UnicastRemoteObject implements Serializable, IRe
     /**
      * The class where the game is being displayed
      */
-    private final transient Main application;
+    private final transient GameView application;
 
     /**
      * The constructor of the listener class
@@ -31,7 +31,7 @@ public class SubMainRMI extends UnicastRemoteObject implements Serializable, IRe
      * @param rpl where this class is listening to
      * @throws RemoteException if something goes wrong while setting up the remote connection
      */
-    public SubMainRMI(Main application, IRemotePublisherForListener rpl) throws RemoteException
+    public SubMainRMI(GameView application, IRemotePublisherForListener rpl) throws RemoteException
     {
         this.application = application;
         /*

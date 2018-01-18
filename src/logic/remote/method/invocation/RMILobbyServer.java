@@ -13,7 +13,7 @@ import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-class RMILobbyServer
+public class RMILobbyServer
 {
     private static final Logger LOGGER = Logger.getLogger(RMILobbyServer.class.getName());
     /**
@@ -39,7 +39,7 @@ class RMILobbyServer
     /**
      * Constructs the RMI server
      */
-    private RMILobbyServer()
+    public RMILobbyServer()
     {
 
         // Print port number for registry
@@ -125,7 +125,7 @@ class RMILobbyServer
     /**
      * Print IP addresses and network interfaces
      */
-    private static void printIPAddresses()
+    public static void printIPAddresses()
     {
         try
         {
@@ -151,18 +151,5 @@ class RMILobbyServer
         }
     }
 
-    /**
-     * Starts the RMI server
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
 
-        // Welcome message
-        LOGGER.log(Level.INFO, "LobbyServer using registry");
-        // Print IP addresses and network interfaces
-        printIPAddresses();
-
-        // Create server
-        new RMILobbyServer();
-    }
 }

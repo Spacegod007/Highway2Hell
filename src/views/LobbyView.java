@@ -1,4 +1,4 @@
-package sample;
+package views;
 
 import database.contexts.LocalContext;
 import database.repositories.Repository;
@@ -32,8 +32,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SampleMain extends Application {
-    private static final Logger LOGGER = Logger.getLogger(SampleMain.class.getName());
+public class LobbyView extends Application {
+    private static final Logger LOGGER = Logger.getLogger(LobbyView.class.getName());
     private static final String GENERAL_EXCEPTION_MESSAGE = "An error occurred";
 
     //region Form controls
@@ -113,7 +113,7 @@ public class SampleMain extends Application {
             clip.loop(Clip.LOOP_CONTINUOUSLY);
 
 
-            administration.setSampleMain(this);
+            administration.setLobbyView(this);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, GENERAL_EXCEPTION_MESSAGE, e);
         }
@@ -521,11 +521,11 @@ public class SampleMain extends Application {
     public void update(Object obj) {
         Platform.runLater(() ->
         {
-            game = new bootstrapper.Main(administration.getGameAdmin(), administration.getRpl(), administration.getUser());
+            game = new GameView(administration.getGameAdmin(), administration.getRpl(), administration.getUser());
             try {
                 clip.stop();
                 LOGGER.log(Level.INFO, String.valueOf(((List<User>) obj).size()));
-                ((bootstrapper.Main) game).start(stage, (List<User>) obj, inLobbyScene, this);
+                ((GameView) game).start(stage, (List<User>) obj, inLobbyScene, this);
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, GENERAL_EXCEPTION_MESSAGE, e);
             }

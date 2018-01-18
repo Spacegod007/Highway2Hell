@@ -6,7 +6,7 @@ import logic.remote.method.invocation.RMIGameServer;
 import java.util.ArrayList;
 
 /**
- * SampleMain entry point to start the game server as host
+ * LobbyView entry point to start the game server as host
  */
 class HostAdministration implements Runnable
 {

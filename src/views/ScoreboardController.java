@@ -1,6 +1,5 @@
 package views;
 
-import bootstrapper.Main;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -13,7 +12,7 @@ import java.util.List;
 
 public class ScoreboardController {
 
-    private Main application;
+    private GameView application;
     @FXML private TableColumn<Score, String> player = new TableColumn<>("player");
     @FXML private TableColumn<Score, Double> score = new TableColumn<>("score");
     @FXML private TableView<Score> tableView;
@@ -25,7 +24,7 @@ public class ScoreboardController {
         score.setCellValueFactory(new PropertyValueFactory<>("score"));
     }
 
-    public void setApplication(Main application)
+    public void setApplication(GameView application)
     {
         this.application = application;
     }

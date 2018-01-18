@@ -8,7 +8,7 @@ import logic.remote.method.invocation.IGameAdmin;
 import logic.remote.method.invocation.LobbyAdmin;
 import logic.remote.method.invocation.RMIGameClient;
 import logic.remote.method.invocation.RMILobbyClient;
-import sample.SampleMain;
+import views.LobbyView;
 
 import java.beans.PropertyChangeEvent;
 import java.rmi.RemoteException;
@@ -52,7 +52,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     /**
      * The view where the effect of the actions in this class will be shown
      */
-    private transient SampleMain sampleMain;
+    private transient LobbyView lobbyView;
 
     /**
      * The constructor of the administration object
@@ -95,7 +95,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
         if (preUser != null)
         {
             this.setUser(preUser);
-            sampleMain.setLvLobby(FXCollections.observableList(rmiClient.getLobbies()));
+            lobbyView.setLvLobby(FXCollections.observableList(rmiClient.getLobbies()));
             return true;
         }
 
@@ -209,7 +209,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
      */
     private void setListViewLobby(PropertyChangeEvent evt)
     {
-        sampleMain.setLvLobby(FXCollections.observableList((List<Lobby>) evt.getNewValue()));
+        lobbyView.setLvLobby(FXCollections.observableList((List<Lobby>) evt.getNewValue()));
         String propertyChanged = String.format("property changed: %s", evt.getPropertyName());
         LOGGER.log(Level.INFO, propertyChanged);
     }
@@ -223,7 +223,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
         String playersConnected = String.format("players connected: %s", evt.getNewValue());
         LOGGER.log(Level.INFO, playersConnected);
         int waitingPlayers = (rmiClient.getActiveLobby().getPlayers().size()) - (int) evt.getNewValue();
-        sampleMain.setWaitingPlayers(waitingPlayers);
+        lobbyView.setWaitingPlayers(waitingPlayers);
 
         if (waitingPlayers <= 0 && hostAdministration != null && rmiGameClient != null)
         {
@@ -237,7 +237,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     private void gameIsStarted(PropertyChangeEvent evt)
     {
         LOGGER.log(Level.INFO, "game is started");
-        sampleMain.update(evt.getNewValue());
+        lobbyView.update(evt.getNewValue());
     }
 
     private void startConnecting(PropertyChangeEvent evt)
@@ -247,8 +247,8 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
             rmiGameClient = new RMIGameClient(rmiClient.getActiveLobby().getIpAddress(), this);
         }
 
-        sampleMain.setWaitingScreen();
-        sampleMain.setWaitingPlayers((int)evt.getNewValue());
+        lobbyView.setWaitingScreen();
+        lobbyView.setWaitingPlayers((int)evt.getNewValue());
         LOGGER.log(Level.INFO, "lobby started");
     }
 
@@ -281,12 +281,12 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     }
 
     /**
-     * Sets the sampleMain
-     * @param sampleMain to be set
+     * Sets the lobbyView
+     * @param lobbyView to be set
      */
-    public void setSampleMain(SampleMain sampleMain)
+    public void setLobbyView(LobbyView lobbyView)
     {
-        this.sampleMain = sampleMain;
+        this.lobbyView = lobbyView;
     }
 
     /**
