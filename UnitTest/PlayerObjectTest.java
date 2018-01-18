@@ -165,8 +165,8 @@ public class PlayerObjectTest {
 
         Point playerAnchor = PO.getAnchor();
         Point obstacleAnchor = OO.getAnchor();
-        playerAnchor.setX(obstacleAnchor.getX() - 5);
-        playerAnchor.setY(obstacleAnchor.getY() - 5);
+        playerAnchor.setX(obstacleAnchor.getX());
+        playerAnchor.setY(obstacleAnchor.getY());
 
         //Change the anchor
         assertEquals("Objects should collide if they touch each other", true, PO.checkForObstacleCollision(OO));
