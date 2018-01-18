@@ -1,17 +1,21 @@
 package bootstrapper;
 
-import logic.remote_method_invocation.RMILobbyClient;
+import logic.remote.method.invocation.RMILobbyClient;
 import logic.administration.Administration;
 import sample.SampleMain;
 
 import java.rmi.RemoteException;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Bootstrap class to initiate the entire client application
  */
 class Program
 {
+    private static final Logger LOGGER = Logger.getLogger(Program.class.getName());
+
     /**
      * Main entry point of client application
      * @param args array of arguments
@@ -21,19 +25,19 @@ class Program
         try
         {
             Properties properties = RMILobbyClient.getConnectionProperties();
-            System.out.println("properties made");
+            LOGGER.log(Level.INFO, "properties made");
 
             RMILobbyClient rmiClient = new RMILobbyClient(properties);
-            System.out.println("rmi client created");
+            LOGGER.log(Level.INFO,"rmi client created");
 
             Administration administration = new Administration(rmiClient);
-            System.out.println("administration created");
+            LOGGER.log(Level.INFO, "administration created");
 
             SampleMain.launchView(args, administration);
         }
         catch(RemoteException ex)
         {
-            System.out.println("RemoteException: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "An error occurred while launching the client application", ex);
         }
     }
 }

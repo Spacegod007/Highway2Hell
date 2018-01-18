@@ -10,12 +10,16 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Listener class of the game server (client side)
  */
 public class SubMainRMI extends UnicastRemoteObject implements Serializable, IRemotePropertyListener
 {
+    private static final Logger LOGGER = Logger.getLogger(SubMainRMI.class.getName());
+
     /**
      * The class where the game is being displayed
      */
@@ -39,7 +43,7 @@ public class SubMainRMI extends UnicastRemoteObject implements Serializable, IRe
             rpl.subscribeRemoteListener(this, "allDead");
         } catch (RemoteException e)
         {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error in connection", e);
         }
     }
 
@@ -47,12 +51,28 @@ public class SubMainRMI extends UnicastRemoteObject implements Serializable, IRe
     @Override
     public void propertyChange(PropertyChangeEvent evt) throws RemoteException
     {
-        switch (evt.getPropertyName())
+        String s = evt.getPropertyName();
+        if (s.equals("gameObjects"))
         {
-            case "gameObjects":
-                Platform.runLater(() -> application.update((List<GameObject>)evt.getNewValue())); break;
-            case "allDead":
-                Platform.runLater(application::setScores);
+            Platform.runLater(() -> application.update((List<GameObject>) evt.getNewValue()));
+
+            Platform.runLater(application::setScores);
         }
+        else if (s.equals("allDead"))
+        {
+            Platform.runLater(application::setScores);
+        }
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return super.hashCode();
     }
 }

@@ -2,26 +2,32 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package logic.remote_method_invocation;
+package logic.remote.method.invocation;
 
 import logic.administration.Administration;
 import logic.administration.User;
 import logic.fontyspublisher.IRemotePublisherForListener;
+import logic.fontyspublisher.RemotePublisher;
 
 import java.io.*;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The client for RMI
  */
 public class RMIGameClient extends Observable implements Serializable
 {
+    private static final Logger LOGGER = Logger.getLogger(RMIGameClient.class.getName());
+
     /**
      * The user on who's behalf the client operates
      */
@@ -36,27 +42,27 @@ public class RMIGameClient extends Observable implements Serializable
     /**
      * The binding name for the administration
      */
-    private static final String bindingName = "gameAdmin";
+    private static final String BINDING_NAME = "gameAdmin";
 
     /**
      * The binding name for the publisher
      */
-    private static final String bindingNamePublisher = "publisher";
+    private static final String BINDING_NAME_PUBLISHER = "publisher";
 
     /**
      * References to registry and lobby administration
      */
-    private Registry registry = null;
+    private transient Registry registry = null;
 
     /**
      * The lobby admin which acts as the local lobby admin
      */
-    private IGameAdmin gameAdmin = null;
+    private transient IGameAdmin gameAdmin = null;
 
     /**
      * The publisher for listener
      */
-    private IRemotePublisherForListener remotePublisherForListener;
+    private transient IRemotePublisherForListener remotePublisherForListener;
 
     /**
      * Gets the publisher for listener
@@ -86,24 +92,26 @@ public class RMIGameClient extends Observable implements Serializable
         this.user = admin.getUser();
 
         // Print IP address and port number for registry
-        System.out.println("GameClient: IP Address: " + ipAddress);
-        System.out.println("GameClient: Port number " + 1111);
+        String ipAddressMessage = String.format("GameClient: ip address: %s", ipAddress);
+        LOGGER.log(Level.INFO, ipAddressMessage);
+        String portNumberMessage = String.format("GameClient: port number: %s", 1111);
+        LOGGER.log(Level.INFO, portNumberMessage);
 
         // Locate registry at IP address and port number
         try {
             registry = LocateRegistry.getRegistry(ipAddress, 1111);
         } catch (RemoteException ex) {
-            System.out.println("Client: Cannot locate registry");
-            System.out.println("GameClient: RemoteException: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "GameClient: Cannot locate registry");
+            LOGGER.log(Level.SEVERE, "GameClient: remote exception", ex);
             registry = null;
         }
 
         // Print result locating registry
         if (registry != null) {
-            System.out.println("Client: Registry located");
+            LOGGER.log(Level.INFO, "GameClient: Registry located");
         } else {
-            System.out.println("Client: Cannot locate registry");
-            System.out.println("Client: Registry is null pointer");
+            LOGGER.log(Level.WARNING, "GameClient: cannot locate registry");
+            LOGGER.log(Level.WARNING, "GameClient: registry is null pointer");
         }
 
         // Print contents of registry
@@ -115,18 +123,16 @@ public class RMIGameClient extends Observable implements Serializable
         if (registry != null) {
             try
             {
-                gameAdmin = (IGameAdmin) registry.lookup(bindingName);
+                gameAdmin = (IGameAdmin) registry.lookup(BINDING_NAME);
             }
             catch (RemoteException ex)
             {
-                System.out.println("GameClient: Cannot bind lobby administration");
-                System.out.println("Client: RemoteException: " + ex.getMessage());
+                LOGGER.log(Level.SEVERE, "GameClient: cannot bind game administration, remote exception", ex);
                 gameAdmin = null;
             }
             catch (NotBoundException ex)
             {
-                System.out.println("Client: Cannot bind lobby administration");
-                System.out.println("Client: NotBoundException: " + ex.getMessage());
+                LOGGER.log(Level.SEVERE, "GameClient: cannot bind game administration, not bound exception", ex);
                 gameAdmin = null;
             }
         }
@@ -136,18 +142,18 @@ public class RMIGameClient extends Observable implements Serializable
         {
             try
             {
-                remotePublisherForListener = (IRemotePublisherForListener) registry.lookup(bindingNamePublisher);
+                remotePublisherForListener = (IRemotePublisherForListener) registry.lookup(BINDING_NAME_PUBLISHER);
             }
             catch (RemoteException ex)
             {
-                System.out.println("GameClient: Cannot bind lobby administration");
-                System.out.println("Client: RemoteException: " + ex.getMessage());
+                LOGGER.log(Level.SEVERE, "GameClient: cannot bind game registry");
+                LOGGER.log(Level.SEVERE, "GameClient: remote exception", ex);
                 remotePublisherForListener = null;
             }
             catch (NotBoundException ex)
             {
-                System.out.println("Client: Cannot bind lobby administration");
-                System.out.println("Client: NotBoundException: " + ex.getMessage());
+                LOGGER.log(Level.SEVERE, "GameClient: cannot bind game administration");
+                LOGGER.log(Level.SEVERE, "GameClient: not bound exception", ex);
                 remotePublisherForListener = null;
             }
         }
@@ -155,11 +161,11 @@ public class RMIGameClient extends Observable implements Serializable
         // Print result binding student administration
         if (gameAdmin != null)
         {
-            System.out.println("Client: Student administration bound");
+            LOGGER.log(Level.INFO, "GameClient: game administration bound");
         }
         else
         {
-            System.out.println("Client: Student administration is null pointer");
+            LOGGER.log(Level.WARNING, "GameClient: game administration is null pointer");
         }
 
         try
@@ -168,21 +174,21 @@ public class RMIGameClient extends Observable implements Serializable
             remotePublisherForListener.subscribeRemoteListener(admin, "gameIsStarted");
         } catch (RemoteException e)
         {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, RemotePublisher.ERROR_MESSAGE, e);
         }
 
         // Test RMI connection
 
         try
         {
-            System.out.println("CONNECTED!");
+            LOGGER.log(Level.INFO, "GameClient: CONNECTED!");
             /*
       The session id of the user
      */
-            long sessionId = gameAdmin.connect(user);
+            gameAdmin.connect(user);
         } catch (RemoteException e)
         {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Remote exception thrown", e);
         }
     }
 
@@ -197,7 +203,7 @@ public class RMIGameClient extends Observable implements Serializable
             return gameAdmin.getPlayersConnected();
         } catch (RemoteException e)
         {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, RemotePublisher.ERROR_MESSAGE, e);
             return 0;
         }
     }
@@ -211,10 +217,11 @@ public class RMIGameClient extends Observable implements Serializable
         try
         {
             return gameAdmin.getPlayerlist();
-        } catch (RemoteException e)
+        }
+        catch (RemoteException e)
         {
-            e.printStackTrace();
-            return null;
+            LOGGER.log(Level.SEVERE, RemotePublisher.ERROR_MESSAGE, e);
+            return new ArrayList<>();
         }
     }
 
@@ -227,24 +234,24 @@ public class RMIGameClient extends Observable implements Serializable
         try
         {
             String[] listOfNames = registry.list();
-            System.out.println("GameClient: list of names bound in registry:");
+            LOGGER.log(Level.INFO, "GameClient: list of names bound in registry");
 
             if (listOfNames.length != 0)
             {
                 for (String s : registry.list())
                 {
-                    System.out.println(s);
+                    LOGGER.log(Level.INFO, s);
                 }
             }
             else
             {
-                System.out.println("Client: list of names bound in registry is empty");
+                LOGGER.log(Level.INFO, "GameClient: list of names bound in registry is empty");
             }
         }
         catch (RemoteException ex)
         {
-            System.out.println("Client: Cannot show list of names bound in registry");
-            System.out.println("Client: RemoteException: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "GameClient: Cannot show list of names bound in registry");
+            LOGGER.log(Level.SEVERE, "GameClient: Remote exception", ex);
         }
     }
 
@@ -252,7 +259,6 @@ public class RMIGameClient extends Observable implements Serializable
      * Gets the connection properties from the properties file
      * @return a properties object containing the connection values
      */
-    // TODO: 4-12-2017 Create properties for GameClient
     public static Properties getConnectionProperties()
     {
         Properties properties = new Properties();
@@ -264,7 +270,7 @@ public class RMIGameClient extends Observable implements Serializable
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            LOGGER.log(Level.CONFIG, "Error reading properties", e);
         }
 
         return properties;
@@ -280,7 +286,7 @@ public class RMIGameClient extends Observable implements Serializable
             gameAdmin.gameIsStarted();
         } catch (RemoteException e)
         {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, RemotePublisher.ERROR_MESSAGE, e);
         }
     }
 

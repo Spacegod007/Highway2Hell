@@ -8,8 +8,6 @@ import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
-//todo move to more logical location, example "view"
-
 public class BackgroundController {
 
     @FXML

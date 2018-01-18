@@ -1,4 +1,4 @@
-package logic.remote_method_invocation;
+package logic.remote.method.invocation;
 
 import logic.administration.Lobby;
 import logic.administration.User;

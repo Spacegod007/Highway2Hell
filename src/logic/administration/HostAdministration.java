@@ -1,7 +1,7 @@
 package logic.administration;
 
 import logic.game.Game;
-import logic.remote_method_invocation.RMIGameServer;
+import logic.remote.method.invocation.RMIGameServer;
 
 import java.util.ArrayList;
 

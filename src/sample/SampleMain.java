@@ -1,7 +1,7 @@
-        package sample;
+package sample;
 
-        import database.Contexts.LocalContext;
-import database.Repositories.Repository;
+import database.contexts.LocalContext;
+import database.repositories.Repository;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -29,8 +29,12 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import java.io.File;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SampleMain extends Application {
+    private static final Logger LOGGER = Logger.getLogger(SampleMain.class.getName());
+    private static final String GENERAL_EXCEPTION_MESSAGE = "An error occurred";
 
     //region Form controls
     private Application game;
@@ -62,15 +66,15 @@ public class SampleMain extends Application {
     private final Label waitingMessage = new Label();
     private Scene inLobbyScene;
     private final ListView<User> lvPlayersInLobby = new ListView<>();
-    private CharacterColor currentColor = CharacterColor.black_blue;
+    private CharacterColor currentColor = CharacterColor.BLACK_BLUE;
     //endregion
     private static Administration administration;
 
     private Clip clip;
-    private final static String S_SOUND = "asset\\sound\\Main_Theme.wav";
+    private static final String S_SOUND = "asset\\sound\\Main_Theme.wav";
     public static void launchView(String[] args, Administration admin) {
         administration = admin;
-        System.out.println("launching");
+        LOGGER.log(Level.INFO, "launching");
         launch(args);
     }
 
@@ -78,7 +82,7 @@ public class SampleMain extends Application {
     public void start(Stage primaryStage) throws Exception {
         try(AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(S_SOUND))) {
             Repository repo = new Repository(new LocalContext());
-            System.out.println("Connection to database: " + Boolean.toString(repo.testConnection()));
+            LOGGER.log(Level.INFO, String.format("connection to database: %s", repo.testConnection()));
             stage = primaryStage;
 
             //Initialize Screens
@@ -86,7 +90,6 @@ public class SampleMain extends Application {
             lobbyScreen = new AnchorPane();
             inLobbyScreen = new AnchorPane();
             AnchorPane waitingScreen = new AnchorPane();
-            //root = FXMLLoader.load(getClass().getResource("main.fxml"));
             //these things like 'root' must be come from a fxml file
 
             setUpControls();
@@ -111,8 +114,8 @@ public class SampleMain extends Application {
 
 
             administration.setSampleMain(this);
-        } catch (Exception e /*IOException*/) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, GENERAL_EXCEPTION_MESSAGE, e);
         }
     }
 
@@ -282,11 +285,11 @@ public class SampleMain extends Application {
         btnLeaveLobby.setText("Leave lobby");
         btnLeaveLobby.setOnAction(event -> leaveLobby());
 
-        javafx.scene.image.ImageView imageViewSelectedPlayer = new javafx.scene.image.ImageView();
-        imageViewSelectedPlayer.setLayoutX(500);
-        imageViewSelectedPlayer.setLayoutY(360);
-        imageViewSelectedPlayer.setFitHeight(54);
-        imageViewSelectedPlayer.setFitWidth(79);
+        javafx.scene.image.ImageView newImageViewSelectedPlayer = new javafx.scene.image.ImageView();
+        newImageViewSelectedPlayer.setLayoutX(500);
+        newImageViewSelectedPlayer.setLayoutY(360);
+        newImageViewSelectedPlayer.setFitHeight(54);
+        newImageViewSelectedPlayer.setFitWidth(79);
 
 
         int x = 500;
@@ -311,15 +314,17 @@ public class SampleMain extends Application {
             x = x + 53;
 
             if(counter >= 4){
-                System.out.println(x);
+                String xMessage = String.valueOf(x);
+                LOGGER.log(Level.INFO, xMessage);
                 x = 500;
                 y = y + 36;
                 counter = 0;
             }
 
-            System.out.println(imageView.getLayoutX() + ";" + imageView.getLayoutY());
+            String imageViewLayoutMessage = imageView.getLayoutX() + ";" + imageView.getLayoutY();
+            LOGGER.log(Level.INFO, imageViewLayoutMessage);
         }
-        inLobbyScreen.getChildren().addAll(imageViewSelectedPlayer, lblLobbyName, btnAccCharacter, lblPlayersInLobby, btnLeaveLobby, btnKickPlayer, btnStartGame, lvPlayersInLobby);
+        inLobbyScreen.getChildren().addAll(newImageViewSelectedPlayer, lblLobbyName, btnAccCharacter, lblPlayersInLobby, btnLeaveLobby, btnKickPlayer, btnStartGame, lvPlayersInLobby);
         //endregion
     }
 
@@ -331,7 +336,8 @@ public class SampleMain extends Application {
 
     private void pickColor()
     {
-        System.out.println("Setting color: " + currentColor);
+        String settingColorMessage = String.format("Setting color: %s", currentColor);
+        LOGGER.log(Level.INFO, settingColorMessage);
         administration.setUserColor(currentColor);
     }
 
@@ -380,11 +386,12 @@ public class SampleMain extends Application {
     }
 
     private boolean validUsername(String username) {
-        int MIN_CHARS_NAME = 4;
-        if ((username).trim().length() >= MIN_CHARS_NAME) {
+        int minCharsName = 4;
+        if ((username).trim().length() >= minCharsName) {
             return true;
         } else {
-            System.out.println("Enter a name of at least " + MIN_CHARS_NAME + " characters");
+            String enterNameOfCharactersMessage = String.format("Enter a name of at least %s characters", minCharsName);
+            LOGGER.log(Level.WARNING, enterNameOfCharactersMessage);
             return false;
         }
     }
@@ -398,18 +405,19 @@ public class SampleMain extends Application {
 
     private void hostLobby() {
         if (!administration.inLobby()) {
-            int MIN_CHARS_LOBBY_NAME = 4;
-            if ((txtLobbyName.getText()).trim().length() >= MIN_CHARS_LOBBY_NAME) {
+            int minCharsLobbyName = 4;
+            if ((txtLobbyName.getText()).trim().length() >= minCharsLobbyName) {
                 lvLobby.getSelectionModel().select(administration.hostLobby(txtLobbyName.getText()));
                 lblLobbyName.setText(txtLobbyName.getText());
 
                 txtLobbyName.clear();
                 stage.setScene(inLobbyScene);
             } else {
-                System.out.println("Enter a name of at least 4 characters");
+                String minCharactersLobbyNameMessage = String.format("Enter a name of at least %s characters", minCharsLobbyName);
+                LOGGER.log(Level.WARNING, minCharactersLobbyNameMessage);
             }
         } else {
-            System.out.println("Please leave your current lobby before hosting a new one");
+            LOGGER.log(Level.WARNING, "Please leave your current lobby before hosting a new one");
         }
     }
 
@@ -426,21 +434,21 @@ public class SampleMain extends Application {
                     lblLobbyName.setText(txtLobbyName.getText());
                 } else {
                     //fail join lobby
-                    System.out.println("Failed join");
+                    LOGGER.log(Level.WARNING, "Failed join");
                 }
             } else {
-                System.out.println("No lobby selected");
+                LOGGER.log(Level.WARNING, "No lobby selected");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, GENERAL_EXCEPTION_MESSAGE, e);
         }
     }
 
     private void leaveLobby() {
         try {
             administration.leaveLobby();
-        } catch (Exception ignored) {
-            ignored.printStackTrace();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, GENERAL_EXCEPTION_MESSAGE, e);
         }
     }
 
@@ -448,22 +456,21 @@ public class SampleMain extends Application {
         try {
             User player = lvPlayersInLobby.getSelectionModel().getSelectedItem();
             if (player != null) {
-                int id = player.getID();
-                if (id != administration.getUser().getID()) {
+                int id = player.getId();
+                if (id != administration.getUser().getId()) {
                     administration.leaveLobby(id);
                     viewLobby();
                 } else {
-                    System.out.println("Can't kick self");
+                    LOGGER.log(Level.WARNING, "Can't kick self");
                 }
             } else {
-                System.out.println("No player selected");
+                LOGGER.log(Level.WARNING, "No player selected");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, GENERAL_EXCEPTION_MESSAGE, e);
         }
     }
 
-    // TODO: 4-12-2017 implement starting the game
     private void startGame() {
         administration.startConnectingToGame();
     }
@@ -509,8 +516,6 @@ public class SampleMain extends Application {
     /**
      * Observer pattern update
      * Is called by RMIGameClient when the game starts
-     * //TODO its a tryout to safely start the game
-     *
      * @param obj the stage of the Game
      */
     public void update(Object obj) {
@@ -519,10 +524,10 @@ public class SampleMain extends Application {
             game = new bootstrapper.Main(administration.getGameAdmin(), administration.getRpl(), administration.getUser());
             try {
                 clip.stop();
-                System.out.println(((List<User>) obj).size());
+                LOGGER.log(Level.INFO, String.valueOf(((List<User>) obj).size()));
                 ((bootstrapper.Main) game).start(stage, (List<User>) obj, inLobbyScene, this);
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, GENERAL_EXCEPTION_MESSAGE, e);
             }
         });
     }
@@ -530,6 +535,5 @@ public class SampleMain extends Application {
     public void endGame()
     {
         administration.endGame();
-        //leaveLobby();
     }
 }

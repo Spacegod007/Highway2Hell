@@ -1,4 +1,4 @@
-package database.Contexts;
+package database.contexts;
 
 import database.IContext;
 

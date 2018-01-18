@@ -2,17 +2,19 @@ package logic.administration;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import logic.Gamerule;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A lobby where users which users will be able to join before the game started
  */
 public class Lobby implements Serializable
 {
+    private static final Logger LOGGER = Logger.getLogger(Lobby.class.getName());
     /**
      * The id of the lobby
      */
@@ -72,10 +74,6 @@ public class Lobby implements Serializable
      */
     public ObservableList<User> getPlayers()
     {
-        for(User u : players)
-        {
-            System.out.println(u.getCharacterColor());
-        }
         return FXCollections.unmodifiableObservableList(FXCollections.observableList(players));
     }
 
@@ -100,7 +98,6 @@ public class Lobby implements Serializable
         /*
       The game rules bound to this lobby by the host
      */
-        List<Gamerule> gameRules = new ArrayList<>();
         this.name = name;
         this.id = id;
         this.ipAddress = ipAddress;
@@ -113,18 +110,13 @@ public class Lobby implements Serializable
      */
     public void leave(int userId)
     {
-        try
-        {
-            for(User p : players){
-                if(p.getID() == userId)
-                {
-                    this.players.remove(p);
-                    return;
-                }
+        for(User p : players){
+            if(p.getId() == userId)
+            {
+                this.players.remove(p);
+                return;
             }
         }
-        catch(Exception ignored)
-        { }
     }
 
     /**
@@ -138,15 +130,18 @@ public class Lobby implements Serializable
         {
             if (host == null)
             {
-                System.out.println("Host set: " + player.toString());
+                String hostSetMessage = String.format("Host set: %s", player.toString());
+                LOGGER.log(Level.INFO, hostSetMessage);
                 setHost(player);
             }
             this.players.add(player);
-            System.out.println("Player added: " + player.toString());
+            String playersAddedMessage = String.format("Player added: %s", player.toString());
+            LOGGER.log(Level.INFO, playersAddedMessage);
             return true;
         }
         catch(Exception e)
         {
+            LOGGER.log(Level.WARNING, "Something went wrong in adding a player or setting the host", e);
             return false;
         }
     }

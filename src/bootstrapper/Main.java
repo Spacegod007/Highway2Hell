@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -20,8 +21,9 @@ import javafx.util.Duration;
 import logic.Score;
 import logic.administration.User;
 import logic.fontyspublisher.IRemotePublisherForListener;
+import logic.fontyspublisher.RemotePublisher;
 import logic.game.*;
-import logic.remote_method_invocation.IGameAdmin;
+import logic.remote.method.invocation.IGameAdmin;
 import sample.SampleMain;
 import views.BackgroundController;
 import views.ScoreboardController;
@@ -32,12 +34,12 @@ import javax.sound.sampled.Clip;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.util.*;
-
-/**
- * //todo add java docs
- */
+import java.util.logging.Level;
+import java.util.logging.Logger;
 public class Main extends Application
 {
+    private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
+
     private SampleMain application;
     private Scene previousScene;
     //Player images for creating characters for later versions that use sockets.
@@ -80,14 +82,15 @@ public class Main extends Application
     public Main(IGameAdmin game, IRemotePublisherForListener rpl, User user)
     {
         this.playerKey = user.getUsername();
-        System.out.println(playerKey);
+        LOGGER.log(Level.INFO, playerKey);
         this.game = game;
         try
         {
-            SubMainRMI sub = new SubMainRMI(this, rpl);
-        } catch (RemoteException e)
+            new SubMainRMI(this, rpl);
+        }
+        catch (RemoteException e)
         {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, RemotePublisher.ERROR_MESSAGE, e);
         }
     }
 
@@ -135,12 +138,13 @@ public class Main extends Application
         }
     }
 
-    private void InitializeGame(Stage primaryStage) throws RemoteException
+    private void initializeGame() throws RemoteException
     {
         List<GameObject> gameObjects = game.getGameObjects();
         for(PlayerObject player : getPlayerObjects(gameObjects))
         {
-            System.out.println(player.getColor());
+            String playerColorMessage = player.getColor().toString();
+            LOGGER.log(Level.INFO, playerColorMessage);
             ImageView img = addPlayerImageView(new Image(player.getColor().getPath()));
             mappedPlayerImage.put(player.getName(), img);
             mappedPlayerObject.put(player.getName(), player);
@@ -158,29 +162,27 @@ public class Main extends Application
 
         scene.setOnKeyReleased(event ->
         {
-            switch (event.getCode())
+            if (event.getCode() == KeyCode.LEFT)
             {
-                case LEFT:
-                    leftPressed = false;
-                    break;
-                case RIGHT:
-                    rightPressed = false;
-                    break;
+                leftPressed = false;
+            }
+            else if (event.getCode() == KeyCode.RIGHT)
+            {
+                rightPressed = false;
             }
         });
 
         scene.setOnKeyPressed(event ->
         {
-            switch (event.getCode())
+            if (event.getCode() == KeyCode.LEFT)
             {
-                case LEFT:
-                    movePlayer(leftPressed, Direction.LEFT);
-                    leftPressed = true;
-                    break;
-                case RIGHT:
-                    movePlayer(rightPressed, Direction.RIGHT);
-                    rightPressed = true;
-                    break;
+                movePlayer(leftPressed, Direction.LEFT);
+                leftPressed = true;
+            }
+            else if (event.getCode() == KeyCode.RIGHT)
+            {
+                movePlayer(rightPressed, Direction.RIGHT);
+                rightPressed = true;
             }
         });
 
@@ -196,30 +198,7 @@ public class Main extends Application
 
         // start animation for background
         backgroundController.startAnimation();
-        List<ObstacleObject> obstacleObjects = getObstacleObjects(gameObjects);
-    }
-
-    private PlayerObject getPlayer(PlayerObject po)
-    {
-        try
-        {
-            for(GameObject go : game.getGameObjects())
-            {
-                if (go instanceof PlayerObject)
-                {
-                    if (po.getName().equals(((PlayerObject) go).getName()))
-                    {
-                        return (PlayerObject) go;
-                    }
-                }
-            }
-            System.out.println("Player not found");
-            return null;
-        } catch (RemoteException e)
-        {
-            e.printStackTrace();
-            return null;
-        }
+        getObstacleObjects(gameObjects);
     }
 
     private void movePlayer(Boolean pressed, Direction dir)
@@ -238,7 +217,7 @@ public class Main extends Application
             }
             catch (RemoteException e)
             {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, RemotePublisher.ERROR_MESSAGE, e);
             }
         }
     }
@@ -255,12 +234,13 @@ public class Main extends Application
         return imageView;
     }
 
-    private ImageView addObstacleImageView(ObstacleObject OO) {
+    private ImageView addObstacleImageView(ObstacleObject obstacleObject) {
         ImageView imageView = new ImageView();
-        System.out.println("Obstacle Added: " + OO.getType() + " " + OO.getWidth() + " " + OO.getHeight());
-        imageView.setFitWidth(OO.getWidth());
-        imageView.setFitHeight(OO.getHeight());
-        switch(OO.getType())
+        String obstacleAddedMessage = String.format("Obstacle added: %s %s %s", obstacleObject.getType(), obstacleObject.getWidth(), obstacleObject.getHeight());
+        LOGGER.log(Level.INFO, obstacleAddedMessage);
+        imageView.setFitWidth(obstacleObject.getWidth());
+        imageView.setFitHeight(obstacleObject.getHeight());
+        switch(obstacleObject.getType())
         {
             case RED_BARREL:
                 imageView.setImage(redBarrelImage);
@@ -316,16 +296,16 @@ public class Main extends Application
                 primaryStage.setScene(scene);
                 try
                 {
-                    System.out.println("Initialize game");
+                    LOGGER.log(Level.INFO, "initialize game");
                     time.stop();
-                    InitializeGame(primaryStage);
+                    initializeGame();
                     game.startGame();
                     clip.start();
                     clip.loop(Clip.LOOP_CONTINUOUSLY);
                 }
                 catch (RemoteException e)
                 {
-                    e.printStackTrace();
+                    LOGGER.log(Level.SEVERE, RemotePublisher.ERROR_MESSAGE, e);
                 }
             }
         });
@@ -336,7 +316,7 @@ public class Main extends Application
     @Override
     public void start(Stage primaryStage) throws Exception
     {
-
+        //method is empty and i don't know why
     }
 
     private List<PlayerObject> getPlayerObjects(List<GameObject> gameObjects)
@@ -377,7 +357,7 @@ public class Main extends Application
             tempGameObjects = game.getGameObjects();
         } catch (RemoteException e)
         {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, RemotePublisher.ERROR_MESSAGE, e);
             return;
         }
         List<PlayerObject> playerObjects = getPlayerObjects(tempGameObjects);
@@ -417,23 +397,23 @@ public class Main extends Application
         {
             for (GameObject tempGO : game.getGameObjects()) {
                 if (tempGO.getClass() == PlayerObject.class) {
-                    PlayerObject PO = (PlayerObject) tempGO;
-                    scores.add(new Score(PO.getName(), (double) PO.getDistance()));
+                    PlayerObject playerObject = (PlayerObject) tempGO;
+                    scores.add(new Score(playerObject.getName(), (double) playerObject.getDistance()));
                 }
             }
         } catch (RemoteException e)
         {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, RemotePublisher.ERROR_MESSAGE, e);
         }
         scoreboardController.setScore(scores);
         try
         {
             clip.stop();
             Platform.runLater(() -> stage.setScene(scoreboardScene));
-            List<PlayerObject> players = game.endGame();
+            game.endGame();
         } catch (RemoteException e)
         {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, RemotePublisher.ERROR_MESSAGE, e);
         }
         scores.clear();
     }

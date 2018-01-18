@@ -1,6 +1,7 @@
 package logic.game;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * the 2 dimensional size of objects
@@ -74,6 +75,12 @@ public class Size implements Serializable
             throw new IndexOutOfBoundsException("Height of object cannot be less or equal to 0.");
         
         this.height = height;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(width, height);
     }
 
     @Override

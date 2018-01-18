@@ -6,62 +6,62 @@ public enum CharacterColor
     /**
      * Character with black hair and blue body
      */
-    black_blue("characters/character_black_blue.png"),
+    BLACK_BLUE("characters/character_black_blue.png"),
 
     /**
      * Character with black hair and red body
      */
-    black_red("characters/character_black_green.png"),
+    BLACK_RED("characters/character_black_green.png"),
 
     /**
      * Character with black hair and white body
      */
-    black_white("characters/character_black_red.png"),
+    BLACK_WHITE("characters/character_black_red.png"),
 
     /**
      * Character with black hair and green body
      */
-    black_green("characters/character_black_white.png"),
+    BLACK_GREEN("characters/character_black_white.png"),
 
     /**
      * Character with blond hair and blue body
      */
-    blonde_blue("characters/character_blonde_blue.png"),
+    BLONDE_BLUE("characters/character_blonde_blue.png"),
 
     /**
      * Character with blond hair and green body
      */
-    blonde_green("characters/character_blonde_green.png"),
+    BLONDE_GREEN("characters/character_blonde_green.png"),
 
     /**
      * Character with blond hair and red body
      */
-    blonde_red("characters/character_blonde_red.png"),
+    BLONDE_RED("characters/character_blonde_red.png"),
 
     /**
      * Character with blond hair and white body
      */
-    blonde_white("characters/character_blonde_white.png"),
+    BLONDE_WHITE("characters/character_blonde_white.png"),
 
     /**
      * Character with brown hair and blue body
      */
-    brown_blue("characters/character_brown_blue.png"),
+    BROWN_BLUE("characters/character_brown_blue.png"),
 
     /**
      * Character with brown hair and green body
      */
-    brown_green("characters/character_brown_green.png"),
+    BROWN_GREEN("characters/character_brown_green.png"),
 
     /**
      * Character with brown hair and red body
      */
-    brown_red("characters/character_brown_red.png"),
+    BROWN_RED("characters/character_brown_red.png"),
 
     /**
      * Character with brown hair and white body
      */
-    brown_white("characters/character_brown_white.png");
+    BROWN_WHITE("characters/character_brown_white.png");
 
     /**
      * The location of the player image linked to the color

@@ -3,29 +3,26 @@ package views;
 import bootstrapper.Main;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import logic.Score;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import java.util.ArrayList;
+import logic.Score;
 
-//todo move to more logical location, example "view"
+import java.util.List;
 
 public class ScoreboardController {
 
     private Main application;
-    @FXML private TableColumn<Score, String> Player = new TableColumn<>("Player");
-    @FXML private TableColumn<Score, Double> Score = new TableColumn<>("Score");
-    @FXML private TableView<Score> TableView;
+    @FXML private TableColumn<Score, String> player = new TableColumn<>("player");
+    @FXML private TableColumn<Score, Double> score = new TableColumn<>("score");
+    @FXML private TableView<Score> tableView;
 
     @FXML
     public void initialize() {
-        Player.setCellValueFactory(new PropertyValueFactory<>("name"));
+        player.setCellValueFactory(new PropertyValueFactory<>("name"));
 
-        Score.setCellValueFactory(new PropertyValueFactory<>("score"));
-     //   application.setScaling();
+        score.setCellValueFactory(new PropertyValueFactory<>("score"));
     }
 
     public void setApplication(Main application)
@@ -33,12 +30,12 @@ public class ScoreboardController {
         this.application = application;
     }
 
-    public void setScore(ArrayList<Score> score) {
+    public void setScore(List<Score> score) {
         ObservableList<logic.Score> scores = FXCollections.observableArrayList(score);
-        this.TableView.setItems(scores);
+        this.tableView.setItems(scores);
     }
 
-    public void backToLobby(ActionEvent actionEvent)
+    public void backToLobby()
     {
         application.backToLobby();
     }

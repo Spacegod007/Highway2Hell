@@ -4,25 +4,30 @@ import javafx.collections.FXCollections;
 import logic.fontyspublisher.IRemotePropertyListener;
 import logic.fontyspublisher.IRemotePublisherForListener;
 import logic.game.CharacterColor;
-import logic.remote_method_invocation.IGameAdmin;
-import logic.remote_method_invocation.RMIGameClient;
-import logic.remote_method_invocation.RMILobbyClient;
+import logic.remote.method.invocation.IGameAdmin;
+import logic.remote.method.invocation.LobbyAdmin;
+import logic.remote.method.invocation.RMIGameClient;
+import logic.remote.method.invocation.RMILobbyClient;
 import sample.SampleMain;
 
 import java.beans.PropertyChangeEvent;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * An administration class which is used to interact with the server
  */
 public class Administration extends UnicastRemoteObject implements IRemotePropertyListener
 {
+    private static final Logger LOGGER = Logger.getLogger(Administration.class.getName());
+
     /**
      * The client which interacts with the server
      */
-    private final RMILobbyClient rmiClient;
+    private final transient RMILobbyClient rmiClient;
 
     /**
      * The client which interacts with the game server
@@ -32,12 +37,12 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     /**
      * The thread the game server will be run on should the local user be the host
      */
-    private Thread gameThread;
+    private transient Thread gameThread;
 
     /**
      * The adminstration which manges the server-side (host) of the game
      */
-    private HostAdministration hostAdministration;
+    private transient HostAdministration hostAdministration;
 
     /**
      * The user on who's behalf interactions will happen
@@ -47,7 +52,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     /**
      * The view where the effect of the actions in this class will be shown
      */
-    private SampleMain sampleMain;
+    private transient SampleMain sampleMain;
 
     /**
      * The constructor of the administration object
@@ -62,14 +67,18 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
         try
         {
             //subscribe to the server as a listener if there are any updates with lobbies
-            rmiClient.getRpl().subscribeRemoteListener(this, "lobbies");
+            rmiClient.getRpl().subscribeRemoteListener(this, LobbyAdmin.LOBBIES_PROPERTY);
         }
         catch(RemoteException ex)
         {
-            ex.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error in connection", ex);
         }
     }
 
+    /**
+     * Gets the game admin
+     * @return IGameAdmin object
+     */
     public IGameAdmin getGameAdmin()
     {
         return rmiGameClient.getGameAdmin();
@@ -129,14 +138,14 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
         {
             if(rmiClient.joinLobby(lobby, this))
             {
-                rmiClient.setActiveLobby(lobby, rmiClient.getUser().getID());
+                rmiClient.setActiveLobby(lobby, rmiClient.getUser().getId());
                 return true;
             }
             return false;
         }
         catch(Exception e)
         {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error joining lobby", e);
             return false;
         }
     }
@@ -147,7 +156,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
      */
     public void leaveLobby()
     {
-        leaveLobby(rmiClient.getUser().getID());
+        leaveLobby(rmiClient.getUser().getId());
     }
 
     /**
@@ -157,7 +166,6 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
      */
     public void leaveLobby(int leaverId)
     {
-        try{
             Lobby lobby = rmiClient.getActiveLobby();
 
             if (lobby != null)
@@ -166,14 +174,8 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
             }
             else
             {
-                System.out.println("Error: Lobby is null");
+                LOGGER.log(Level.SEVERE, "Lobby is null");
             }
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
     }
 
     /**
@@ -190,7 +192,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
 
             if (lobby != null)
             {
-                rmiClient.setActiveLobby(lobby, rmiClient.getUser().getID());
+                rmiClient.setActiveLobby(lobby, rmiClient.getUser().getId());
             }
 
             return lobby;
@@ -208,7 +210,8 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     private void setListViewLobby(PropertyChangeEvent evt)
     {
         sampleMain.setLvLobby(FXCollections.observableList((List<Lobby>) evt.getNewValue()));
-        System.out.println("property changed: " + evt.getPropertyName());
+        String propertyChanged = String.format("property changed: %s", evt.getPropertyName());
+        LOGGER.log(Level.INFO, propertyChanged);
     }
 
     /**
@@ -217,22 +220,14 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
      */
     private void playerConnected(PropertyChangeEvent evt)
     {
-        System.out.println("players connected: " + evt.getNewValue());
+        String playersConnected = String.format("players connected: %s", evt.getNewValue());
+        LOGGER.log(Level.INFO, playersConnected);
         int waitingPlayers = (rmiClient.getActiveLobby().getPlayers().size()) - (int) evt.getNewValue();
         sampleMain.setWaitingPlayers(waitingPlayers);
 
-        if (waitingPlayers <= 0)
+        if (waitingPlayers <= 0 && hostAdministration != null && rmiGameClient != null)
         {
-            //This only done one the host now, because host is the only one with hostAdministration
-            if(hostAdministration != null && rmiGameClient != null)
-            {
-                //add parameters
-                //startGame would mean that the game shows up and starts running, everyone was already connected at this point.
-                //TODO this makes actually no sense because only the host would be starting the game
-
-                //hostAdministration.startGame(rmiGameClient.getConnectedClients());
-                rmiGameClient.gameIsStarted();
-            }
+            rmiGameClient.gameIsStarted();
         }
     }
 
@@ -241,7 +236,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
      */
     private void gameIsStarted(PropertyChangeEvent evt)
     {
-        System.out.println("game is started");
+        LOGGER.log(Level.INFO, "game is started");
         sampleMain.update(evt.getNewValue());
     }
 
@@ -254,7 +249,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
 
         sampleMain.setWaitingScreen();
         sampleMain.setWaitingPlayers((int)evt.getNewValue());
-        System.out.println("lobby started");
+        LOGGER.log(Level.INFO, "lobby started");
     }
 
     /**
@@ -267,7 +262,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     {
         switch (evt.getPropertyName())
         {
-            case "lobbies":
+            case LobbyAdmin.LOBBIES_PROPERTY:
                 setListViewLobby(evt);
                 return;
             case "playersconnected":
@@ -315,7 +310,7 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
         }
         else
         {
-            System.out.println("null lobby");
+            LOGGER.log(Level.WARNING, "null lobby");
         }
     }
 
@@ -353,5 +348,17 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
     public void setUserColor(CharacterColor userColor)
     {
         rmiClient.setUserColor(userColor);
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return super.hashCode();
     }
 }

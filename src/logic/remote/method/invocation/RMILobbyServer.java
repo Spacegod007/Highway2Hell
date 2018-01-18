@@ -1,5 +1,5 @@
 
-package logic.remote_method_invocation;
+package logic.remote.method.invocation;
 
 import logic.fontyspublisher.RemotePublisher;
 
@@ -10,23 +10,26 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 class RMILobbyServer
 {
+    private static final Logger LOGGER = Logger.getLogger(RMILobbyServer.class.getName());
     /**
      * The port number of the server
      */
-    private static final int portNumber = 1100;
+    private static final int PORT_NUMBER = 1100;
 
     /**
      * The binding name of the lobby administration
      */
-    private static final String bindingName = "LobbyAdmin";
+    private static final String BINDING_NAME = "LobbyAdmin";
 
     /**
      * The binding name of the lobby publisher
      */
-    private static final String bindingNamePublisher = "publisher";
+    private static final String BINDING_NAME_PUBLISHER = "publisher";
 
     /**
      * The lobby admin the clients interact with
@@ -40,7 +43,8 @@ class RMILobbyServer
     {
 
         // Print port number for registry
-        System.out.println("Server: Port number " + portNumber);
+        String portNumberMessage = String.format("LobbyServer: port number %s", PORT_NUMBER);
+        LOGGER.log(Level.INFO, portNumberMessage);
 
         // Create student administration
         /*
@@ -51,12 +55,11 @@ class RMILobbyServer
         {
             publisher = new RemotePublisher();
             lobbyAdmin = new LobbyAdmin(publisher);
-            System.out.println("Server: Lobby administration created");
+            LOGGER.log(Level.INFO, "LobbyServer: lobby administration created");
         }
         catch (RemoteException ex)
         {
-            System.out.println("Server: Cannot create lobby administration");
-            System.out.println("Server: RemoteException: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "LobbyServer: cannot create lobby administration, remote exception", ex);
             lobbyAdmin = null;
         }
 
@@ -70,39 +73,36 @@ class RMILobbyServer
         Registry registry;
         try
         {
-            registry = LocateRegistry.createRegistry(portNumber);
-            System.out.println("Server: Registry created on port number " + portNumber);
+            registry = LocateRegistry.createRegistry(PORT_NUMBER);
+            String registryPortNumberMessage = String.format("LobbyServer: registry created on port number %s", PORT_NUMBER);
+            LOGGER.log(Level.INFO, registryPortNumberMessage);
         }
         catch (RemoteException ex)
         {
-            System.out.println("Server: Cannot create registry");
-            System.out.println("Server: RemoteException: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "LobbyServer: cannot create registry, remote exception", ex);
             registry = null;
         }
 
         try
         {
             assert registry != null;
-            registry.rebind(bindingNamePublisher, publisher);
+            registry.rebind(BINDING_NAME_PUBLISHER, publisher);
         }
         catch(RemoteException ex)
         {
-            System.out.println("Server: Cannot bind publisher");
-            System.out.println("Server: RemoteException: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "LobbyServer: cannot bind publisher, remote exception", ex);
         }
         catch (NullPointerException e){
-            System.out.println("Server: Cannot bind publisher");
-            System.out.println("Server: NullpointerException: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "LobbyServer: cannot bind publisher, null pointer exception", e);
         }
         // Bind student administration using registry
         try
         {
-            registry.rebind(bindingName, lobbyAdmin);
+            registry.rebind(BINDING_NAME, lobbyAdmin);
         }
         catch (RemoteException ex)
         {
-            System.out.println("Server: Cannot bind lobby administration");
-            System.out.println("Server: RemoteException: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "LobbyServer: cannot bind lobby administration, remote exception", ex);
         }
     }
 
@@ -130,23 +130,24 @@ class RMILobbyServer
         try
         {
             InetAddress localhost = InetAddress.getLocalHost();
-            System.out.println("Server: IP Address: " + localhost.getHostAddress());
+            String ipAddressMessage = String.format("LobbyServer: ip address %s", localhost.getHostAddress());
+            LOGGER.log(Level.INFO, ipAddressMessage);
             // Just in case this host has multiple IP addresses....
             InetAddress[] allMyIps = InetAddress.getAllByName(localhost.getCanonicalHostName());
             if (allMyIps != null && allMyIps.length > 1)
             {
-                System.out.println("Server: Full list of IP addresses:");
+                LOGGER.log(Level.INFO, "LobbyServer: full list of ip addresses:");
 
                 for (InetAddress allMyIp : allMyIps)
                 {
-                    System.out.println("    " + allMyIp);
+                    String myIpAddressMessage = allMyIp.toString();
+                    LOGGER.log(Level.INFO, myIpAddressMessage);
                 }
             }
         }
         catch (UnknownHostException ex)
         {
-            System.out.println("Server: Cannot get IP address of local host");
-            System.out.println("Server: UnknownHostException: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "LobbyServer: cannot get ip address of local host, unknown host exception", ex);
         }
     }
 
@@ -157,12 +158,11 @@ class RMILobbyServer
     public static void main(String[] args) {
 
         // Welcome message
-        System.out.println("SERVER USING REGISTRY");
-
+        LOGGER.log(Level.INFO, "LobbyServer using registry");
         // Print IP addresses and network interfaces
         printIPAddresses();
 
         // Create server
-        RMILobbyServer server = new RMILobbyServer();
+        new RMILobbyServer();
     }
 }

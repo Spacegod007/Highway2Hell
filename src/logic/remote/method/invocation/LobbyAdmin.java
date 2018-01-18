@@ -1,20 +1,27 @@
-package logic.remote_method_invocation;
+package logic.remote.method.invocation;
 
 import logic.fontyspublisher.IRemotePublisherForDomain;
 import logic.administration.Lobby;
 import logic.administration.User;
+import logic.fontyspublisher.RemotePublisher;
 import logic.game.CharacterColor;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The server-side of the lobby administration
  */
 public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
 {
+    private static final Logger LOGGER = Logger.getLogger(LobbyAdmin.class.getName());
+
+    public static final String LOBBIES_PROPERTY = "lobbies";
+
     /**
      * The currently active lobbies
      */
@@ -28,7 +35,7 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
     /**
      * The publisher which will notify the subscribers when a new lobby became active
      */
-    private final IRemotePublisherForDomain rpd;
+    private final transient IRemotePublisherForDomain rpd;
 
     /**
      * The next id for a lobby
@@ -43,7 +50,7 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
     /**
      * A synchronizer object for the lobby system
      */
-    private final Object lobbySynchronizer = new Object();
+    private final transient Object lobbySynchronizer = new Object();
 
     /**
      * Gets the next lobby Id
@@ -75,7 +82,7 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
     public LobbyAdmin(IRemotePublisherForDomain rpd) throws RemoteException {
         super();
         this.rpd = rpd;
-        rpd.registerProperty("lobbies");
+        rpd.registerProperty(LOBBIES_PROPERTY);
         lobbies = new ArrayList<>();
         users = new ArrayList<>();
     }
@@ -86,7 +93,7 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
      * @throws RemoteException if there is a problem in the connection
      */
     public void getNumberOfLobbies() throws RemoteException {
-        System.out.println("LobbyAdmin: Request for number of Lobbies");
+        LOGGER.log(Level.INFO, "LobbyAdmin: Request for number of lobbies");
         lobbies.size();
     }
 
@@ -105,8 +112,9 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
             rpd.registerProperty(Integer.toString(lobby.getId()));
             joinLobby(lobby, user);
         }
-        System.out.println("LobbyAdmin: Lobby " + lobby.toString() + " added to Lobby administration");
-        rpd.inform("lobbies", null, lobbies);
+        String lobbyAddedMessage = String.format("LobbyAdmin: Lobby %s added to Lobby administrator", lobby.toString());
+        LOGGER.log(Level.INFO, lobbyAddedMessage);
+        rpd.inform(LOBBIES_PROPERTY, null, lobbies);
         return lobby;
     }
 
@@ -117,7 +125,6 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
      * @return true if the user left the lobby, false if leaving the lobby failed
      * @throws RemoteException if there is a problem in the connection
      */
-    // TODO: 4-12-2017 Migrate host : make sure ipAddress is forwarded
     public boolean leaveLobby(int lobbyId, int userId, int issuerId) throws RemoteException
     {
         synchronized (lobbySynchronizer)
@@ -126,30 +133,28 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
             {
                 for (Lobby l : lobbies)
                 {
-                    if (l.getId() == lobbyId) //find matching lobby
+                    if (l.getId() == lobbyId && (userId == issuerId || issuerId == l.getHost().getId()))
                     {
-                        if (userId == issuerId || issuerId == l.getHost().getID()) //if host or self-leave
+                        l.leave(userId);
+                        if (userId == l.getHost().getId()) //if the leaver is the host
                         {
-                            l.leave(userId);
-                            if (userId == l.getHost().getID()) //if the leaver is the host
+                            if (l.getPlayers().size() > 0) //and there are players remaining
                             {
-                                if (l.getPlayers().size() > 0) //and there are players remaining
-                                {
-                                    l.setHost(l.getPlayers().get(0)); //migrate host
-                                } else
-                                {
-                                    l.setHost(null); //else, set host to null, lobby will be removed by the next tick of the timer
-                                }
+                                l.setHost(l.getPlayers().get(0)); //migrate host
                             }
-                            rpd.inform("lobbies", null, lobbies);
-                            return true;
+                            else
+                            {
+                                l.setHost(null); //else, set host to null, lobby will be removed by the next tick of the timer
+                            }
                         }
+                        rpd.inform(LOBBIES_PROPERTY, null, lobbies);
+                        return true;
                     }
                 }
             }
             catch(RemoteException ex)
             {
-                ex.printStackTrace();
+                LOGGER.log(Level.SEVERE, RemotePublisher.ERROR_MESSAGE, ex);
             }
         }
         return false;
@@ -181,8 +186,15 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
             {
                 if (l.getId() == lobby.getId())
                 {
-                    try{rpd.inform("lobbies", null, lobbies);}
-                    catch(RemoteException ex){ex.printStackTrace();}
+                    try
+                    {
+                        rpd.inform(LOBBIES_PROPERTY, null, lobbies);
+                    }
+                    catch(RemoteException ex)
+                    {
+                        LOGGER.log(Level.SEVERE, RemotePublisher.ERROR_MESSAGE, ex);
+                    }
+
                     if(l.join(user))
                     {
                         ret = true;
@@ -202,7 +214,8 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
      */
     public void setActiveLobby(int userId, Lobby lobby) throws RemoteException
     {
-        System.out.println("setting lobby for user: " + userId);
+        String settingLobbyMessage = String.format("setting lobby for user: %s", userId);
+        LOGGER.log(Level.INFO, settingLobbyMessage);
         User u = getUser(userId);
         if(u != null)
         {
@@ -221,7 +234,7 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
         User l = null;
         for(User user : users)
         {
-            if(id == user.getID())
+            if(id == user.getId())
             {
                 l = user;
             }
@@ -278,23 +291,29 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
         synchronized (lobbySynchronizer)
         {
             boolean changed = false;
-            for (int i = 0; i < lobbies.size(); i++)
+
+            for (int i = 0; i < lobbies.size();)
             {
                 if (lobbies.get(i).getPlayers().size() == 0)
                 {
-
                     lobbies.remove(i);
                     changed = true;
-                    i--;
+                }
+                else
+                {
+                    i++;
                 }
             }
 
             if(changed){
                 try
                 {
-                    rpd.inform("lobbies", null, lobbies);
+                    rpd.inform(LOBBIES_PROPERTY, null, lobbies);
                 }
-                catch(RemoteException ex){ex.printStackTrace();}
+                catch (RemoteException ex)
+                {
+                    LOGGER.log(Level.SEVERE, RemotePublisher.ERROR_MESSAGE, ex);
+                }
             }
 
         }
@@ -328,7 +347,7 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
         }
         catch (RemoteException e)
         {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, RemotePublisher.ERROR_MESSAGE, e);
         }
     }
 
@@ -340,18 +359,32 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
         {
             for (User us : u.getActiveLobby().getPlayers())
             {
-                if (us.getID() == id)
+                if (us.getId() == id)
                 {
                     us.setCharacterColor(userColor);
                 }
             }
+
             try
             {
-                rpd.inform("lobbies", null, lobbies);
-            } catch (RemoteException ex)
+                rpd.inform(LOBBIES_PROPERTY, null, lobbies);
+            }
+            catch (RemoteException ex)
             {
-                ex.printStackTrace();
+                LOGGER.log(Level.SEVERE, RemotePublisher.ERROR_MESSAGE, ex);
             }
         }
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return super.hashCode();
     }
 }

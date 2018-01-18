@@ -1,11 +1,15 @@
-package database.Repositories;
+package database.repositories;
 
 import database.*;
 
 import java.io.*;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Repository {
+    private static final Logger LOGGER = Logger.getLogger(Repository.class.getName());
+
     private final IContext context;
     private final Properties properties;
 
@@ -22,18 +26,18 @@ public class Repository {
 
     private Properties getDatabaseProperties()
     {
-        Properties properties = new Properties();
+        Properties loadedProperties = new Properties();
 
-        File file = new File("properties/database.properties");
+        File file = new File("loadedProperties/database.loadedProperties");
         try (InputStream inputStream = new FileInputStream(file))
         {
-            properties.load(inputStream);
+            loadedProperties.load(inputStream);
         } catch (IOException e)
         {
-            e.printStackTrace();
+            LOGGER.log(Level.CONFIG, "Exception in loading database properties", e);
         }
 
-        return properties;
+        return loadedProperties;
     }
 
     public boolean closeConnection(){

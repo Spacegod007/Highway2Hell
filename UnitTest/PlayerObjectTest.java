@@ -33,7 +33,7 @@ public class PlayerObjectTest {
 
         name = "name";
 
-        characterColor = CharacterColor.black_blue;
+        characterColor = CharacterColor.BLACK_BLUE;
 
         PO = new PlayerObject(anchor, size, name, characterColor);
 
@@ -130,7 +130,7 @@ public class PlayerObjectTest {
     public void setColor() throws Exception {
         assertEquals("character color is not equal to the default value", characterColor, PO.getColor());
 
-        CharacterColor newColor = CharacterColor.black_green;
+        CharacterColor newColor = CharacterColor.BLACK_GREEN;
 
         PO.setColor(newColor);
 

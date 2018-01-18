@@ -1,6 +1,7 @@
 package logic.game;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * A 2 dimensional location
@@ -63,6 +64,12 @@ public class Point implements Serializable
     public String toString() {
         return  "x=" + x +
                 ", y=" + y;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(x, y);
     }
 
     @Override

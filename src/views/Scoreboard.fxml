@@ -8,12 +8,12 @@
 
 <AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.111"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.ScoreboardController">
-    <TableView fx:id="TableView" layoutY="74.0" prefHeight="331.0" prefWidth="600.0" AnchorPane.bottomAnchor="-5.0"
+    <TableView fx:id="tableView" layoutY="74.0" prefHeight="331.0" prefWidth="600.0" AnchorPane.bottomAnchor="-5.0"
                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="74.0">
       <columns>
-          <TableColumn fx:id="Player" maxWidth="598.0" minWidth="598.0" prefWidth="598.0" resizable="false"
+          <TableColumn fx:id="player" maxWidth="598.0" minWidth="598.0" prefWidth="598.0" resizable="false"
                        text="Player"/>
-          <TableColumn fx:id="Score" maxWidth="600.0" minWidth="600.0" prefWidth="600.0" resizable="false"
+          <TableColumn fx:id="score" maxWidth="600.0" minWidth="600.0" prefWidth="600.0" resizable="false"
                        text="Score"/>
       </columns>
     </TableView>

@@ -14,8 +14,9 @@ import java.util.List;
  * 
  * @author Frank Peeters, Nico Kuijpers
  */
-public class RemotePublisher extends UnicastRemoteObject 
-    implements IRemotePublisherForListener, IRemotePublisherForDomain {
+public class RemotePublisher extends UnicastRemoteObject implements IRemotePublisherForListener, IRemotePublisherForDomain {
+
+    public static final String ERROR_MESSAGE = "An error occurred in the connection";
 
     // Local publisher
     private final Publisher publisher;

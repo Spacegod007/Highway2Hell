@@ -2,12 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package logic.remote_method_invocation;
+package logic.remote.method.invocation;
 
 import logic.administration.Administration;
 import logic.fontyspublisher.IRemotePublisherForListener;
 import logic.administration.Lobby;
 import logic.administration.User;
+import logic.fontyspublisher.RemotePublisher;
 import logic.game.CharacterColor;
 
 import java.io.File;
@@ -23,21 +24,25 @@ import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The client for RMI
  */
 public class RMILobbyClient
 {
+    private static final Logger LOGGER = Logger.getLogger(RMILobbyClient.class.getName());
+
     /**
      * The binding name for the administration
      */
-    private static final String bindingName = "LobbyAdmin";
+    private static final String BINDING_NAME = "LobbyAdmin";
 
     /**
      * The binding name for the publisher
      */
-    private static final String bindingNamePublisher = "publisher";
+    private static final String BINDING_NAME_PUBLISHER = "publisher";
 
     /**
      * The current user
@@ -107,24 +112,25 @@ public class RMILobbyClient
     private void callClient(String ipAddress, int portNumber)
     {
         // Print IP address and port number for registry
-        System.out.println("Client: IP Address: " + ipAddress);
-        System.out.println("Client: Port number " + portNumber);
+        String ipAddressMessage = String.format("LobbyClient: ip address %s", ipAddress);
+        LOGGER.log(Level.INFO, ipAddressMessage);
+        String portNumberMessage = String.format("LobbyClient: port number %s", portNumber);
+        LOGGER.log(Level.INFO, portNumberMessage);
 
         // Locate registry at IP address and port number
         try {
             registry = LocateRegistry.getRegistry(ipAddress, portNumber);
         } catch (RemoteException ex) {
-            System.out.println("Client: Cannot locate registry");
-            System.out.println("Client: RemoteException: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "LobbyClient: cannot locate registry, remote exception", ex);
             registry = null;
         }
 
         // Print result locating registry
         if (registry != null) {
-            System.out.println("Client: Registry located");
+            LOGGER.log(Level.INFO, "LobbyClient: registry located");
         } else {
-            System.out.println("Client: Cannot locate registry");
-            System.out.println("Client: Registry is null pointer");
+            LOGGER.log(Level.WARNING, "LobbyClient: cannot locate registry");
+            LOGGER.log(Level.WARNING, "LobbyClient: registry is null pointer");
         }
 
         // Print contents of registry
@@ -136,18 +142,16 @@ public class RMILobbyClient
         if (registry != null) {
             try
             {
-                lobbyAdmin = (ILobbyAdmin) registry.lookup(bindingName);
+                lobbyAdmin = (ILobbyAdmin) registry.lookup(BINDING_NAME);
             }
             catch (RemoteException ex)
             {
-                System.out.println("Client: Cannot bind lobby administration");
-                System.out.println("Client: RemoteException: " + ex.getMessage());
+                LOGGER.log(Level.SEVERE, "LobbyClient: cannot bind lobby administration, remote exception", ex);
                 lobbyAdmin = null;
             }
             catch (NotBoundException ex)
             {
-                System.out.println("Client: Cannot bind lobby administration");
-                System.out.println("Client: NotBoundException: " + ex.getMessage());
+                LOGGER.log(Level.SEVERE, "LobbyClient: cannot bind lobby administration, not bound exception", ex);
                 lobbyAdmin = null;
             }
         }
@@ -157,18 +161,16 @@ public class RMILobbyClient
         {
             try
             {
-                remotePublisherForListener = (IRemotePublisherForListener) registry.lookup(bindingNamePublisher);
+                remotePublisherForListener = (IRemotePublisherForListener) registry.lookup(BINDING_NAME_PUBLISHER);
             }
             catch (RemoteException ex)
             {
-                System.out.println("Client: Cannot bind lobby administration");
-                System.out.println("Client: RemoteException: " + ex.getMessage());
+                LOGGER.log(Level.SEVERE, "LobbyClient: cannot bind lobby administration, remote exception", ex);
                 remotePublisherForListener = null;
             }
             catch (NotBoundException ex)
             {
-                System.out.println("Client: Cannot bind lobby administration");
-                System.out.println("Client: NotBoundException: " + ex.getMessage());
+                LOGGER.log(Level.SEVERE, "LobbyClient: cannot bind lobby administration, not bound exception", ex);
                 remotePublisherForListener = null;
             }
         }
@@ -176,11 +178,11 @@ public class RMILobbyClient
         // Print result binding student administration
         if (lobbyAdmin != null)
         {
-            System.out.println("Client: Student administration bound");
+            LOGGER.log(Level.INFO, "LobbyClient: lobby administration bound");
         }
         else
         {
-            System.out.println("Client: Student administration is null pointer");
+            LOGGER.log(Level.WARNING, "LobbyClient: lobby administration is null pointer");
         }
 
         // Test RMI connection
@@ -204,7 +206,7 @@ public class RMILobbyClient
         }
         catch(RemoteException ex)
         {
-            System.out.println("Client: User not set");
+            LOGGER.log(Level.SEVERE, "LobbyClient: user not set");
             return null;
         }
     }
@@ -217,24 +219,23 @@ public class RMILobbyClient
         try
         {
             String[] listOfNames = registry.list();
-            System.out.println("Client: list of names bound in registry:");
+            LOGGER.log(Level.INFO, "LobbyClient: list of names bound in registry:");
 
             if (listOfNames.length != 0)
             {
                 for (String s : registry.list())
                 {
-                    System.out.println(s);
+                    LOGGER.log(Level.INFO, s);
                 }
             }
             else
             {
-                System.out.println("Client: list of names bound in registry is empty");
+                LOGGER.log(Level.WARNING, "LobbyClient: list of names bound in registry is empty");
             }
         }
         catch (RemoteException ex)
         {
-            System.out.println("Client: Cannot show list of names bound in registry");
-            System.out.println("Client: RemoteException: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "LobbyClient: cannot show list of names bound in registry, remote exception", ex);
         }
     }
 
@@ -251,18 +252,18 @@ public class RMILobbyClient
             ret = lobbyAdmin.addLobby(name, user, Inet4Address.getLocalHost().getHostAddress());
             if(ret != null)
             {
-                System.out.print("Subscribing on ID: ");
-                System.out.println(ret.getId());
+                String subscribingOnIdMessage = String.format("Subscribing on id: %s", ret.getId());
+                LOGGER.log(Level.INFO, subscribingOnIdMessage);
                 remotePublisherForListener.subscribeRemoteListener(admin, Integer.toString(ret.getId()));
             }
         }
         catch(RemoteException ex)
         {
-            System.out.println("Client: RemoteException: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, getRemoteExceptionMessage(), ex);
         }
         catch(UnknownHostException ex)
         {
-            System.out.println("Client: Unknown host");
+            LOGGER.log(Level.SEVERE, "LobbyClient: unknown host", ex);
         }
         return ret;
     }
@@ -279,7 +280,7 @@ public class RMILobbyClient
         }
         catch (RemoteException ex)
         {
-            System.out.println("Client: RemoteException: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, getRemoteExceptionMessage(), ex);
             return new ArrayList<>();
         }
     }
@@ -291,7 +292,8 @@ public class RMILobbyClient
     public int getNextID()
     {
         int i = LobbyAdmin.getNextID();
-        System.out.println(i);
+        String nextIdMessage = String.valueOf(i);
+        LOGGER.log(Level.INFO, nextIdMessage);
         return i;
     }
 
@@ -307,15 +309,15 @@ public class RMILobbyClient
         {
             if(lobbyAdmin.joinLobby(lobby, user))
             {
-                System.out.print("Subscribing on ID: ");
-                System.out.println(lobby.getId());
+                String subscribingOnIdMessage = String.format("Subscribing on id: %s", lobby.getId());
+                LOGGER.log(Level.INFO, subscribingOnIdMessage);
                 remotePublisherForListener.subscribeRemoteListener(admin, Integer.toString(lobby.getId()));
                 ret = true;
             }
             return ret;
         }
         catch(RemoteException ex){
-            System.out.println("Client: RemoteException: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, getRemoteExceptionMessage(), ex);
             return false;
         }
     }
@@ -328,11 +330,11 @@ public class RMILobbyClient
     {
         try
         {
-            return lobbyAdmin.getActiveLobby(user.getID());
+            return lobbyAdmin.getActiveLobby(user.getId());
         }
         catch(RemoteException ex)
         {
-            System.out.println("Client: RemoteException: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, getRemoteExceptionMessage(), ex);
             return null;
         }
     }
@@ -350,7 +352,7 @@ public class RMILobbyClient
         }
         catch(RemoteException ex)
         {
-            System.out.println("Client: RemoteException: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, getRemoteExceptionMessage(), ex);
         }
     }
 
@@ -364,14 +366,14 @@ public class RMILobbyClient
     {
         try
         {
-            if(lobbyAdmin.leaveLobby(lobbyId, userId, this.user.getID()))
+            if(lobbyAdmin.leaveLobby(lobbyId, userId, this.user.getId()))
             {
                 setActiveLobby(null, userId);
             }
         }
         catch(RemoteException ex)
         {
-            System.out.println("Client: RemoteException: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, getRemoteExceptionMessage(), ex);
         }
     }
 
@@ -383,13 +385,13 @@ public class RMILobbyClient
     {
         try
         {
-            System.out.println("starting (lc)");
-            System.out.println(l.getId());
+            String startingLobbyClientMessage = String.format("starting (lc) %s", l.getId());
+            LOGGER.log(Level.INFO, startingLobbyClientMessage);
             lobbyAdmin.startGame(l);
         }
         catch(RemoteException ex)
         {
-            ex.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error in connection", ex);
         }
     }
 
@@ -401,12 +403,12 @@ public class RMILobbyClient
         try
         {
             lobbyAdmin.getNumberOfLobbies();
-            System.out.println("Client: Connected ");
+            LOGGER.log(Level.INFO, "LobbyClient: Connected");
         }
         catch (RemoteException ex)
         {
-            System.out.println("Client: Cannot connect");
-            System.out.println("Client: RemoteException: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "LobbyClient: cannot connect");
+            LOGGER.log(Level.SEVERE, getRemoteExceptionMessage(), ex);
         }
     }
 
@@ -425,7 +427,7 @@ public class RMILobbyClient
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            LOGGER.log(Level.CONFIG, "Error in loading properties file", e);
         }
 
         return properties;
@@ -439,10 +441,15 @@ public class RMILobbyClient
     {
         try
         {
-            lobbyAdmin.setUserColor(user.getID(), userColor);
+            lobbyAdmin.setUserColor(user.getId(), userColor);
         } catch (RemoteException e)
         {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error in connection", e);
         }
+    }
+
+    private String getRemoteExceptionMessage()
+    {
+        return String.format("LobbyClient: %s", RemotePublisher.ERROR_MESSAGE);
     }
 }

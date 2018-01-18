@@ -162,29 +162,28 @@ public class PlayerObject extends GameObject
         if(!isDead)
         {
             //Changes the X and Y coordinates of the current player.
-            switch(direction)
+            if (direction == Direction.LEFT)
             {
-                case LEFT:
-                    double[] leftPoint = {this.getAnchor().getX()-16d, this.getAnchor().getY()-10d};
-                    //Adds distance in pixels to score.
-                    setDistance(getDistance() + (long)10d);
+                double[] leftPoint = {this.getAnchor().getX() - 16d, this.getAnchor().getY() - 10d};
+                //Adds distance in pixels to score.
+                setDistance(getDistance() + (long) 10d);
 
-                    //Sets the current rotation
-                    setCurrentRotation(170d);
+                //Sets the current rotation
+                setCurrentRotation(170d);
 
-                    this.setAnchor(new Point(leftPoint[0], leftPoint[1]));
-                    return;
+                this.setAnchor(new Point(leftPoint[0], leftPoint[1]));
+            }
+            else if (direction == Direction.RIGHT)
+            {
+                double[] rightPoint = {getAnchor().getX() + 16d, getAnchor().getY() - 10d};
+                //Adds distance in pixels to score.
+                setDistance(getDistance() + (long) 10d);
 
-                case RIGHT:
-                    double[] rightPoint = {getAnchor().getX()+16d, getAnchor().getY()-10d};
-                    //Adds distance in pixels to score.
-                    setDistance(getDistance() + (long)10d);
+                //Sets the current rotation
+                setCurrentRotation(190d);
 
-                    //Sets the current rotation
-                    setCurrentRotation(190d);
+                this.setAnchor(new Point(rightPoint[0], rightPoint[1]));
 
-                    this.setAnchor(new Point(rightPoint[0], rightPoint[1]));
-                    break;
             }
         }
     }
@@ -199,18 +198,18 @@ public class PlayerObject extends GameObject
         //PO = PlayerObject
         //OO = ObstacleObject
 
-        double POX = this.getAnchor().getX();
-        double POY = this.getAnchor().getY();
-        double POXWithWidth = POX + getSize().getWidth();
-        double POYWithHeight = POY + getSize().getHeight();
+        double playerObjectLeft = this.getAnchor().getX();
+        double playerObjectTop = this.getAnchor().getY();
+        double playerObjectRight = playerObjectLeft + getSize().getWidth();
+        double playerObjectBottom = playerObjectTop + getSize().getHeight();
 
-        double OOX = obstacleObject.getAnchor().getX();
-        double OOY = obstacleObject.getAnchor().getY();
-        double OOXWithWidth = OOX + obstacleObject.getWidth();
-        double OOYWithHeight = OOY + obstacleObject.getHeight();
+        double obstacleObjectLeft = obstacleObject.getAnchor().getX();
+        double obstacleObjectTop = obstacleObject.getAnchor().getY();
+        double obstacleObjectRight = obstacleObjectLeft + obstacleObject.getWidth();
+        double obstacleObjectBottom = obstacleObjectTop + obstacleObject.getHeight();
 
         //Collision is not right yet. Need to check bottom right and top left corner of player as well.
-        return POX >= OOX && POX <= OOXWithWidth && POY >= OOY && POY <= OOYWithHeight ||
-                POXWithWidth >= OOX && POXWithWidth <= OOXWithWidth && POYWithHeight >= OOY && POYWithHeight <= OOYWithHeight;
+        return playerObjectLeft >= obstacleObjectLeft && playerObjectLeft <= obstacleObjectRight && playerObjectTop >= obstacleObjectTop && playerObjectTop <= obstacleObjectBottom ||
+                playerObjectRight >= obstacleObjectLeft && playerObjectRight <= obstacleObjectRight && playerObjectBottom >= obstacleObjectTop && playerObjectBottom <= obstacleObjectBottom;
     }
 }

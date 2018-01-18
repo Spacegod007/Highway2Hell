@@ -6,12 +6,16 @@ import logic.fontyspublisher.IRemotePublisherForDomain;
 
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A class which manages the game while the game is being played
  */
 public class Game
 {
+    private static final Logger LOGGER = Logger.getLogger(Game.class.getName());
+
     /**
      *
      */
@@ -52,11 +56,10 @@ public class Game
 
         List<GameObject> rmiGameObjects = new ArrayList<>();
         int j = 0;
-        System.out.println("Users in game: " + users);
+        String usersInGame = String.format("Users in game: %s", users);
+        LOGGER.log(Level.INFO, usersInGame);
         for(User u : users)
         {
-            System.out.println(u.getUsername());
-            System.out.println("Char color: " + u.getCharacterColor());
             rmiGameObjects.add(new PlayerObject(new Point(600 + j, 900),new Size(78, 54),u.getUsername(), u.getCharacterColor()));
             j = j+50;
         }
@@ -72,7 +75,8 @@ public class Game
         for (int i = 0; i< obstacleCount; i++)
         {
             gameObjects.add(new ObstacleObject());
-            System.out.println("item " + i + " added");
+            String itemAdded = String.format("Item %s was added", i);
+            LOGGER.log(Level.INFO, itemAdded);
         }
 
         timer = new Timer();
@@ -100,7 +104,7 @@ public class Game
     {
         synchronized (synchronizer)
         {
-            System.out.println("Starting game");
+            LOGGER.log(Level.INFO, "Starting game");
             if (!timerRunning)
             {
                 timerRunning = true;
@@ -118,13 +122,13 @@ public class Game
                                 publisher.inform("gameObjects", null, gameObjects);
                             } catch (RemoteException e)
                             {
-                                e.printStackTrace();
+                                LOGGER.log(Level.SEVERE, "Error in connection", e);
                             }
                         }
                         else
-                            {
-                                System.out.println("empty");
-                            }
+                        {
+                            LOGGER.log(Level.WARNING, "no game objects found");
+                        }
                     }
                 }, 250, 17);
             }
@@ -146,8 +150,6 @@ public class Game
      */
     public void setGameObjects(List<GameObject> gameObjects)
     {
-        //todo change to set player objects
-
         synchronized (synchronizer)
         {
             this.gameObjects = gameObjects;
@@ -187,55 +189,54 @@ public class Game
         {
             int index = 0;
             //Method for scrolling the screen.
-            for (GameObject GO : gameObjects)
+            for (GameObject gameObject : gameObjects)
             {
-                //GO scroll.
+                //gameObject scroll.
                 /*
       Determines the speed at which the game scrolls
      */
                 double scrollSpeed = 1.5;
-                if (GO instanceof ObstacleObject)
+                if (gameObject instanceof ObstacleObject)
                 {
-                    GO.setAnchor(new Point(GO.getAnchor().getX(), GO.getAnchor().getY() + scrollSpeed * 3));
-                } else //GO = PlayerObject
+                    gameObject.setAnchor(new Point(gameObject.getAnchor().getX(), gameObject.getAnchor().getY() + scrollSpeed * 3));
+                } else //gameObject = PlayerObject
                 {
-                    GO.setAnchor(new Point(GO.getAnchor().getX(), GO.getAnchor().getY() + scrollSpeed));
+                    gameObject.setAnchor(new Point(gameObject.getAnchor().getX(), gameObject.getAnchor().getY() + scrollSpeed));
                 }
 
-                //Check if GO is dead.
+                //Check if gameObject is dead.
                 //Game window: 1200x1000
                 //Character size 52x36
-                if (GO instanceof PlayerObject)
+                if (gameObject instanceof PlayerObject)
                 {
                     //Setting the borders of the map for player death.
                     //Might need some tweaking, leave to the tester.
-                    PlayerObject PO = (PlayerObject) GO;
-                    Point anchor = PO.getAnchor();
-                    Size size = PO.getPlayerSize();
+                    PlayerObject playerObject = (PlayerObject) gameObject;
+                    Point anchor = playerObject.getAnchor();
+                    Size size = playerObject.getPlayerSize();
 
                     if (anchor.getX() + size.getHeight() < 0 || anchor.getX() > 1200 || anchor.getY() + (size.getHeight() / 2) > 1000 || anchor.getY() + (size.getHeight() / 2) < 0)
                     {
-                        PO.setIsDead(true);
+                        playerObject.setIsDead(true);
                     }
 
-                    for (GameObject GO2 : gameObjects)
+                    for (GameObject collisionGameObject : gameObjects)
                     {
-                        if (GO2 instanceof ObstacleObject && PO.checkForObstacleCollision((ObstacleObject) GO2))
+                        if (collisionGameObject instanceof ObstacleObject && playerObject.checkForObstacleCollision((ObstacleObject) collisionGameObject))
                         {
-                            PO.setIsDead(true);
-                            //System.out.println("RIP");
+                            playerObject.setIsDead(true);
                         }
                     }
                 }
 
-                if (GO instanceof ObstacleObject)
+                if (gameObject instanceof ObstacleObject)
                 {
-                    ObstacleObject OO = (ObstacleObject) GO;
-                    if (OO.getAnchor().getY() + (OO.getHeight()) > 1000)
+                    ObstacleObject obstacleObject = (ObstacleObject) gameObject;
+                    if (obstacleObject.getAnchor().getY() + (obstacleObject.getHeight()) > 1000)
                     {
                         ObstacleObject temp = new ObstacleObject();
-                        OO.setAnchor(temp.getAnchor());
-                        gameObjects.set(index, OO);
+                        obstacleObject.setAnchor(temp.getAnchor());
+                        gameObjects.set(index, obstacleObject);
                     }
                 }
                 index++;
@@ -251,7 +252,7 @@ public class Game
                     }
                     catch (RemoteException e)
                     {
-                        e.printStackTrace();
+                        LOGGER.log(Level.SEVERE, "Error in connection", e);
                     }
                 }
             }
@@ -320,14 +321,14 @@ public class Game
 
                     if (p.getName().equals(playerName))
                     {
-                        switch (direction)
+                        if (direction == Direction.LEFT)
                         {
-                            case LEFT:
-                                p.move(Direction.LEFT);
-                                break;
-                            case RIGHT:
-                                p.move(Direction.RIGHT);
-                                break;
+                            p.move(Direction.LEFT);
+                        }
+                        else if (direction == Direction.RIGHT)
+                        {
+                            p.move(Direction.RIGHT);
+
                         }
                         return p;
                     }

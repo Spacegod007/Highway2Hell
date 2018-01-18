@@ -3,6 +3,7 @@ package logic.administration;
 import logic.game.CharacterColor;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * A user/player who plays the game
@@ -17,7 +18,7 @@ public class User implements Serializable
     /**
      * The id of the user
      */
-    private final int ID;
+    private final int id;
 
     /**
      * The lobby the user is currently located in
@@ -33,9 +34,9 @@ public class User implements Serializable
      * Gets the id of the user
      * @return the id of the user
      */
-    public int getID()
+    public int getId()
     {
-        return ID;
+        return id;
     }
 
     /**
@@ -68,12 +69,12 @@ public class User implements Serializable
     /**
      * Constructs an user object
      * @param username of the user
-     * @param ID of the user
+     * @param id of the user
      */
-    public User(String username, int ID) {
+    public User(String username, int id) {
         this.username = username;
-        this.ID = ID;
-        this.characterColor = CharacterColor.black_blue;
+        this.id = id;
+        this.characterColor = CharacterColor.BLACK_BLUE;
     }
 
     /**
@@ -106,9 +107,15 @@ public class User implements Serializable
         {
             User other = (User) obj;
 
-            return ID == other.ID;
+            return id == other.id;
         }
 
         return false;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(id);
     }
 }

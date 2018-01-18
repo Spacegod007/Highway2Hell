@@ -1,4 +1,4 @@
-package logic.remote_method_invocation;
+package logic.remote.method.invocation;
 
 import logic.Gamerule;
 import logic.administration.User;
@@ -12,12 +12,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * the server-side (host) of the game administration
  */
 public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
 {
+    private static final Logger LOGGER = Logger.getLogger(GameAdmin.class.getName());
+
     /**
      * The next available session id for clients
      */
@@ -36,7 +40,7 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
     /**
      * A synchronise object to synchronise the connection over multiple threads
      */
-    private final Object connectSynchronizer;
+    private final transient Object connectSynchronizer;
 
     /**
      * Gets the amount of players currently connected
@@ -59,12 +63,12 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
     /**
      * Remote publisher to publish the host's data to the clients
      */
-    private final IRemotePublisherForDomain rpd;
+    private final transient IRemotePublisherForDomain rpd;
 
     /**
      * The currently being played game
      */
-    private Game game;
+    private transient Game game;
 
     /**
      * Constructs a GameAdmin object
@@ -102,7 +106,7 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
                 rpd.inform("playersconnected", null, playerList.size());
             } catch (RemoteException e)
             {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, "Error in connection", e);
             }
             return nextSessionId.get();
         }
@@ -119,7 +123,7 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
             rpd.registerProperty("gameState");
         } catch (RemoteException e)
         {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error in connection", e);
         }
     }
 
@@ -163,5 +167,17 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
     public void startGame()
     {
         game.startGame();
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return super.hashCode();
     }
 }

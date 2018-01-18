@@ -13,7 +13,7 @@ public class Score
     /**
      * The value of the score the player has
      */
-    private double score;
+    private double value;
 
     /**
      * Constructs the score object
@@ -23,7 +23,7 @@ public class Score
     public Score(String name, double score)
     {
         this.name = name;
-        this.score = score;
+        this.value = score;
     }
 
     /**
@@ -47,7 +47,7 @@ public class Score
      * @return the score of the player
      */
     public double getScore() {
-        return score;
+        return value;
     }
 
     /**
@@ -55,6 +55,6 @@ public class Score
      * @param score to be set
      */
     public void setScore(double score) {
-        this.score = score;
+        this.value = score;
     }
 }

@@ -1,4 +1,4 @@
-package logic.remote_method_invocation;
+package logic.remote.method.invocation;
 
 import logic.Gamerule;
 import logic.administration.User;
