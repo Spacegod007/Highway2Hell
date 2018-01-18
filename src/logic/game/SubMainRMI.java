@@ -55,8 +55,6 @@ public class SubMainRMI extends UnicastRemoteObject implements Serializable, IRe
         if (s.equals("gameObjects"))
         {
             Platform.runLater(() -> application.update((List<GameObject>) evt.getNewValue()));
-
-            Platform.runLater(application::setScores);
         }
         else if (s.equals("allDead"))
         {
