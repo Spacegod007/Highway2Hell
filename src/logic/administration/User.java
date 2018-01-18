@@ -76,11 +76,19 @@ public class User implements Serializable
         this.characterColor = CharacterColor.black_blue;
     }
 
+    /**
+     * Gets the character color of the user
+     * @return a CharacterColor value of the enumeration
+     */
     public CharacterColor getCharacterColor()
     {
         return characterColor;
     }
 
+    /**
+     * Sets the character color of the user
+     * @param characterColor to be set
+     */
     public void setCharacterColor(CharacterColor characterColor)
     {
         this.characterColor = characterColor;

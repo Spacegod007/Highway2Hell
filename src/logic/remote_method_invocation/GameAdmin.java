@@ -19,24 +19,53 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
 {
+    /**
+     * The next available session id for clients
+     */
     private final AtomicLong nextSessionId = new AtomicLong(0);
 
+    /**
+     * A mapping of the currently active session ids
+     */
     private final Map<Long, User> sessionMap;
 
+    /**
+     * A list of participating players
+     */
     private final List<User> playerList;
+
+    /**
+     * The lobby which the game was started from
+     */
     private Lobby lobby = null;
 
+    /**
+     * A synchronise object to synchronise the connection over multiple threads
+     */
     private final Object connectSynchronizer;
 
+    /**
+     * Sets the lobby
+     * @param lobby to be set
+     */
     public void setLobby(Lobby lobby)
     {
         this.lobby = lobby;
     }
 
+    /**
+     * Gets the amount of players currently connected
+     * @return an integer value containing the amount of connected players
+     */
     public int getPlayersConnected()
     {
         return playerList.size();
     }
+
+    /**
+     * Gets the playerlist
+     * @return a list of user objects
+     */
     public List<User> getPlayerlist()
     {
         return playerList;
@@ -47,8 +76,10 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
      */
     private final IRemotePublisherForDomain rpd;
 
+    /**
+     * The currently being played game
+     */
     private Game game;
-
 
     /**
      * Constructs a GameAdmin object
@@ -70,6 +101,11 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
         game.setRpd(publisher);
     }
 
+    /**
+     * The method which connects a client to the game
+     * @param client that connected to the game
+     * @return the sessionId linked to this client
+     */
     public long connect(User client)
     {
         synchronized (connectSynchronizer)
@@ -87,6 +123,9 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
         }
     }
 
+    /**
+     * Informs the clients the game has started
+     */
     public void gameIsStarted()
     {
         try
@@ -140,7 +179,4 @@ public class GameAdmin extends UnicastRemoteObject implements IGameAdmin
     {
         game.startGame();
     }
-
-    //todo Add game methods
-    //todo this class becomes a pipe to the Game object which will live on the Host(server), clients will call remote methods using this and from here the Game class methods will be used
 }

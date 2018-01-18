@@ -79,7 +79,18 @@ public interface ILobbyAdmin extends Remote
      */
     User addUser(String name) throws RemoteException;
 
+    /**
+     * Starts the game
+     * @param l where the game is being started from
+     * @throws RemoteException if there is a problem in the connection
+     */
     void startGame(Lobby l) throws RemoteException;
 
+    /**
+     * Sets the color of the specified user
+     * @param id of the user who's color is being set
+     * @param userColor to be set
+     * @throws RemoteException if there is a problem in the connection
+     */
     void setUserColor(int id, CharacterColor userColor) throws RemoteException;
 }

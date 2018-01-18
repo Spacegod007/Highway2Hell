@@ -38,11 +38,24 @@ public class Game
      */
     private final int obstacleCount = 1;
 
+    /**
+     * The timer which updates the game
+     */
     private final Timer timer;
+
+    /**
+     * Checks if the timer is running
+     */
     private boolean timerRunning = false;
 
+    /**
+     * Synchronises communication over multiple threads
+     */
     private final Object synchronizer;
 
+    /**
+     * The total amount of obstacle objects allowed at any given time
+     */
     private final int amountOfObstacleObjects = 8;
 
     /**
@@ -77,6 +90,9 @@ public class Game
         timer = new Timer();
     }
 
+    /**
+     * Adds an obstacle object to the game
+     */
     private void addObstacles()
     {
         for (int i = 0; i < amountOfObstacleObjects; i++)
@@ -85,6 +101,9 @@ public class Game
         }
     }
 
+    /**
+     * Starts the game
+     */
     public void startGame()
     {
         synchronized (synchronizer)
@@ -242,11 +261,16 @@ public class Game
             }
         }
     }
+
+    /**
+     * Checks if all players are dead
+     * @return
+     */
     private boolean checkAllDead()
     {
-        for(GameObject go : gameObjects)
+        for (GameObject go : gameObjects)
         {
-            if(go instanceof PlayerObject && !((PlayerObject) go).getIsDead())
+            if (go instanceof PlayerObject && !((PlayerObject) go).getIsDead())
             {
                 return false;
             }
@@ -361,6 +385,10 @@ public class Game
         return listToReturn;
     }
 
+    /**
+     * Sets the remote publisher for all participating clients
+     * @param rpd the publisher for the domain
+     */
     public void setRpd(IRemotePublisherForDomain rpd)
     {
         this.publisher = rpd;

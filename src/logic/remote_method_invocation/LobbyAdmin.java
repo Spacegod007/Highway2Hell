@@ -212,6 +212,11 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
         return getActiveLobby(userId);
     }
 
+    /**
+     * Thets the specified user by id
+     * @param id of the user
+     * @return the user object linked to the id
+     */
     private User getUser(int id)
     {
         User l = null;
@@ -224,6 +229,12 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
         }
         return l;
     }
+
+    /**
+     * Renews the information in a lobby object
+     * @param lob to be renewed
+     * @return the renewed lobby object
+     */
     private Lobby getLobby(Lobby lob)
     {
         if(lob != null)
@@ -260,6 +271,9 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
         return user;
     }
 
+    /**
+     * Removes the unused lobbies
+     */
     public void cleanLobbies()
     {
         synchronized (lobbieSynchronizer)
@@ -275,6 +289,7 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
                     i--;
                 }
             }
+
             if(changed){
                 try
                 {
@@ -302,6 +317,10 @@ public class LobbyAdmin extends UnicastRemoteObject implements ILobbyAdmin
         return null;
     }
 
+    /**
+     * Starts the game of the specified lobby
+     * @param l where the game is being started from
+     */
     public void startGame(Lobby l)
     {
         try

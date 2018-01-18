@@ -377,6 +377,10 @@ public class RMILobbyClient
         }
     }
 
+    /**
+     * Tells the lobby to start connecting to the game
+     * @param l to be informed
+     */
     public void startConnectingToGame(Lobby l)
     {
         try
@@ -429,6 +433,10 @@ public class RMILobbyClient
         return properties;
     }
 
+    /**
+     * Sets the color of the character
+     * @param userColor to be set
+     */
     public void setUserColor(CharacterColor userColor)
     {
         try

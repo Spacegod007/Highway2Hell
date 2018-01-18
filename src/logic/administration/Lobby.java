@@ -162,6 +162,10 @@ public class Lobby implements Serializable
         return name + ": (" + players.size() + "/" + MAX_SIZE+ ")";
     }
 
+    /**
+     * Gets the ip address of the host to connect to
+     * @return a string containing the ip address of the host
+     */
     public String getIpAddress()
     {
         return ipAddress;

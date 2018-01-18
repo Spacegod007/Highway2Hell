@@ -13,17 +13,34 @@ import java.util.TimerTask;
 
 public class RMILobbyServer
 {
-
-    // Set port number
+    /**
+     * The port number of the server
+     */
     private static final int portNumber = 1100;
 
-    // Set binding name for student administration
+    /**
+     * The binding name of the lobby administration
+     */
     private static final String bindingName = "LobbyAdmin";
+
+    /**
+     * The binding name of the lobby publisher
+     */
     private static final String bindingNamePublisher = "publisher";
 
-    // References to registry and student administration
+    /**
+     * The registry which the clients communicate with
+     */
     private Registry registry = null;
+
+    /**
+     * The lobby admin the clients interact with
+     */
     private LobbyAdmin lobbyAdmin = null;
+
+    /**
+     * The publisher which informs the clients of changes in the lobby system
+     */
     private RemotePublisher publisher = null;
 
     /**

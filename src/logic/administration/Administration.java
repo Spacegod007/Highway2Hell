@@ -23,8 +23,20 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
      * The client which interacts with the server
      */
     private final RMILobbyClient rmiClient;
+
+    /**
+     * The client which interacts with the game server
+     */
     private RMIGameClient rmiGameClient;
+
+    /**
+     * The thread the game server will be run on should the local user be the host
+     */
     private Thread gameThread;
+
+    /**
+     * The adminstration which manges the server-side (host) of the game
+     */
     private HostAdministration hostAdministration;
 
     /**
@@ -319,22 +331,37 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
         }
     }
 
+    /**
+     * Stops currently running game
+     */
     public void endGame()
     {
         gameThread.stop();
         rmiGameClient = null;
     }
 
+    /**
+     * Gets the publisher for server-push methods to the client
+     * @return an IRemotePublisherForListener object, which can be subscribed to and un-subscribed from
+     */
     public IRemotePublisherForListener getRpl()
     {
         return rmiGameClient.getRpl();
     }
 
+    /**
+     * Checks if the current user is in a lobby
+     * @return true if the user is in a lobby otherwise false
+     */
     public boolean userInLobby()
     {
         return (rmiClient.getActiveLobby() != null);
     }
 
+    /**
+     * sets the color of the user-picked character
+     * @param userColor the color of the user-picked character
+     */
     public void setUserColor(CharacterColor userColor)
     {
         rmiClient.setUserColor(userColor);

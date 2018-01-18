@@ -22,9 +22,20 @@ import java.util.Properties;
  */
 public class RMIGameClient extends Observable implements Serializable
 {
+    /**
+     * The user on who's behalf the client operates
+     */
     private User user;
+
+    /**
+     * The session id of the user
+     */
     private long sessionId;
 
+    /**
+     * Gets the user object from the game
+     * @return a user object
+     */
     public User getUser(){return user;}
 
     /**
@@ -177,6 +188,10 @@ public class RMIGameClient extends Observable implements Serializable
         }
     }
 
+    /**
+     * Connects the client to the game
+     * @return the session id of the connected client
+     */
     public int getConnected()
     {
         try
@@ -189,6 +204,10 @@ public class RMIGameClient extends Observable implements Serializable
         }
     }
 
+    /**
+     * Gets the amount of clients currently connected
+     * @return an integer value containing the amount of connected clients
+     */
     public List<User> getConnectedClients()
     {
         try
@@ -263,6 +282,9 @@ public class RMIGameClient extends Observable implements Serializable
         return properties;
     }
 
+    /**
+     * Informs the clients the game has started
+     */
     public void gameIsStarted()
     {
         try
@@ -274,6 +296,10 @@ public class RMIGameClient extends Observable implements Serializable
         }
     }
 
+    /**
+     * Gets an object to communicate to the game server
+     * @return an IGameAdmin object to communicate with the server
+     */
     public IGameAdmin getGameAdmin()
     {
         return gameAdmin;

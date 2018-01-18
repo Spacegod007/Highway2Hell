@@ -3,11 +3,18 @@ package logic.game;
 import java.io.Serializable;
 
 /**
- * the size of objects
+ * the 2 dimensional size of objects
  */
 public class Size implements Serializable
 {
+    /**
+     * The width of the object
+     */
     private double width;
+
+    /**
+     * The height of the object
+     */
     private double height;
 
     /**

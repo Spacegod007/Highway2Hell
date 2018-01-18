@@ -14,16 +14,34 @@ import java.rmi.server.UnicastRemoteObject;
 public class RMIGameServer
 {
 
-    // Set port number
+    /**
+     * The port number of the game server
+     */
     private static final int portNumber = 1111;
 
-    // Set binding name for student administration
+    /**
+     * The binding name of the game server
+     */
     private static final String bindingName = "gameAdmin";
+
+    /**
+     * The binding name of the game publisher
+     */
     private static final String bindingNamePublisher = "publisher";
 
-    // References to registry and student administration
+    /**
+     * The registry where all communication objects are being stored in
+     */
     private Registry registry = null;
+
+    /**
+     * The game administration object where clients interact with
+     */
     private GameAdmin gameAdmin;
+
+    /**
+     * The publisher which informs users of changes on the game server
+     */
     private RemotePublisher publisher = null;
 
     /**
