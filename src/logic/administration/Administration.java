@@ -319,8 +319,11 @@ public class Administration extends UnicastRemoteObject implements IRemoteProper
      */
     public void endGame()
     {
-        gameThread.stop();
-        rmiGameClient = null;
+        if(gameThread != null && rmiGameClient != null)
+        {
+            gameThread.stop();
+            rmiGameClient = null;
+        }
     }
 
     /**
