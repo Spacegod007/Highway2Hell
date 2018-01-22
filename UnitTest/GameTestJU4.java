@@ -82,20 +82,7 @@ public class GameTestJU4 {
         game.update();
         assertEquals(true, po4.getIsDead());
     }
-
-    @Test
-    public void convertAccountsToPlayerObjects() throws Exception {
-        //Method not implemented
-        try {
-            game.convertAccountsToPlayerObjects();
-            Assert.fail();
-        }
-        catch(UnsupportedOperationException e){
-            System.out.println(e.getMessage());
-        }
-    }
-
-
+    
     @Test
     public void ReturnPlayerObjects() throws Exception {
         //Assert the default value
