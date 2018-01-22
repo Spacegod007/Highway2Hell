@@ -9,6 +9,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ObstacleObject extends GameObject
 {
+    private static final Random RANDOM = new Random(System.currentTimeMillis());
+
     /**
      * The next available id for obstacles
      */
@@ -81,8 +83,7 @@ public class ObstacleObject extends GameObject
      */
     private void generateRandomObjectType()
     {
-        Random random = new Random(System.currentTimeMillis());
-        int randomNumber = random.nextInt(3);
+        int randomNumber = RANDOM.nextInt(3);
         switch (randomNumber)
         {
             case 0:
