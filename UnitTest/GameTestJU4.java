@@ -82,7 +82,7 @@ public class GameTestJU4 {
         game.update();
         assertEquals(true, po4.getIsDead());
     }
-    
+
     @Test
     public void ReturnPlayerObjects() throws Exception {
         //Assert the default value
