@@ -97,6 +97,11 @@ public class Game
         }
     }
 
+    public void addObstacle()
+    {
+        gameObjects.add(new ObstacleObject());
+    }
+
     /**
      * Starts the game
      */
@@ -131,6 +136,18 @@ public class Game
                         }
                     }
                 }, 250, 17);
+
+                timer.scheduleAtFixedRate(new TimerTask()
+                {
+                    @Override
+                    public void run()
+                    {
+                        synchronized (synchronizer)
+                        {
+                            addObstacle();
+                        }
+                    }
+                }, 10000, 10000);
             }
         }
     }

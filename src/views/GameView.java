@@ -195,7 +195,6 @@ public class GameView extends Application
 
         // start animation for background
         backgroundController.startAnimation();
-        getObstacleObjects(gameObjects);
     }
 
     private void movePlayer(Boolean pressed, Direction dir)
@@ -371,9 +370,24 @@ public class GameView extends Application
         }
         for (ObstacleObject obstacleObject : obstacleObjects)
         {
+
             mappedObstacleObject.replace(obstacleObject.getId(), obstacleObject);
+
             ObstacleObject tempObstacle = mappedObstacleObject.get(obstacleObject.getId());
             ImageView img = mappedObstacleImage.get(obstacleObject.getId());
+
+            if (img == null)
+            {
+                img = addObstacleImageView(obstacleObject);
+
+                mappedObstacleObject.put(obstacleObject.getId(), obstacleObject);
+                mappedObstacleImage.put(obstacleObject.getId(), img);
+
+                gamePane.getChildren().add(img);
+
+                tempObstacle = mappedObstacleObject.get(obstacleObject.getId());
+            }
+
             img.setX(tempObstacle.getAnchor().getX());
             img.setY(tempObstacle.getAnchor().getY());
         }
